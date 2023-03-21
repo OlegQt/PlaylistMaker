@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/options"
-            android:src="@drawable/back_to_mainscreen"/>
+            android:src="@drawable/back_to_mainscreen" />
 
         <TextView
             android:layout_width="wrap_content"
