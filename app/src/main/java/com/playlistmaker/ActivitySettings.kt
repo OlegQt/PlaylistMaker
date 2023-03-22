@@ -11,7 +11,7 @@ class ActivitySettings : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val imgBack: ImageView = findViewById(R.id.backToMainActivity)
-        val mainScreen = Intent(this.baseContext, MainActivity::class.java)
+        //val mainScreen = Intent(this.baseContext, MainActivity::class.java)
 
         imgBack.setOnClickListener{finish()}
     }
