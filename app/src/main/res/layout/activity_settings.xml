@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/options"
-            android:src="@drawable/back_to_mainscreen"
+            android:src="@drawable/back_to_main_screen"
             app:tint="?attr/colorOnPrimary" />
 
         <TextView
@@ -52,6 +52,7 @@
             android:text="@string/share_app" />
 
         <ImageView
+            android:id="@+id/img_share"
             style="@style/settings_img"
             android:contentDescription="@string/share_app"
             android:src="@drawable/share_app_ic" />
