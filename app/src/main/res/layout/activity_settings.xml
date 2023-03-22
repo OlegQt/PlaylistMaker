@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/settings_layout_color"
     android:layout_width="match_parent"
@@ -22,8 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/options"
-            android:foregroundTint="?attr/colorOnPrimary"
-            android:src="@drawable/back_to_mainscreen" />
+            android:src="@drawable/back_to_mainscreen"
+            app:tint="?attr/colorOnPrimary" />
 
         <TextView
             style="@style/settings_text_back"
@@ -51,9 +52,7 @@
             android:text="@string/share_app" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            style="@style/settings_img"
             android:contentDescription="@string/share_app"
             android:src="@drawable/share_app_ic" />
 
@@ -67,9 +66,7 @@
             android:text="@string/support_ask" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            style="@style/settings_img"
             android:contentDescription="@string/support_ask"
             android:src="@drawable/support_ask" />
     </LinearLayout>
@@ -82,9 +79,7 @@
             android:text="@string/user_agreement" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            style="@style/settings_img"
             android:contentDescription="@string/user_agreement"
             android:src="@drawable/agreement" />
 
