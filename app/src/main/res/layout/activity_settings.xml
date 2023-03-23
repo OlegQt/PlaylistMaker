@@ -67,6 +67,7 @@
             android:text="@string/support_ask" />
 
         <ImageView
+            android:id="@+id/ask_support"
             style="@style/settings_img"
             android:contentDescription="@string/support_ask"
             android:src="@drawable/support_ask" />
@@ -80,6 +81,7 @@
             android:text="@string/user_agreement" />
 
         <ImageView
+            android:id="@+id/agreement"
             style="@style/settings_img"
             android:contentDescription="@string/user_agreement"
             android:src="@drawable/agreement" />
