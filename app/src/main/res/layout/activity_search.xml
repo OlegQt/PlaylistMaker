@@ -1,9 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:orientation="vertical"
     tools:context=".ActivitySearch">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        >
+
+        <ImageView
+            android:id="@+id/btnBack"
+            style="@style/settings_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/arrowback" />
+
+        <TextView
+            style="@style/settings_text_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Поиск" />
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/Yp_Light_Grey"
+        android:textColor="@color/Text_Grey"
+        android:hint="Поиск"
+        android:drawableStart="@drawable/search_pic"
+        android:drawableEnd="@drawable/cls"
+
+        android:drawablePadding="14dp"
+        android:textSize="16sp"
+        android:inputType="text"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+
+        />
+</LinearLayout>

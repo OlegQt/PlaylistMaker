@@ -37,7 +37,7 @@ class ActivitySettings : AppCompatActivity() {
             //sendMail.type = ("text/plain")
             /* recipient is put as array because you may wanna send email to multiple emails
           so enter comma(,) separated emails, it will be stored in array*/
-            sendMail.putExtra(Intent.EXTRA_EMAIL, arrayOf("student"))
+            sendMail.putExtra(Intent.EXTRA_EMAIL, arrayOf("venOleg@gmail.com"))
             sendMail.putExtra(
                 Intent.EXTRA_SUBJECT,
                 "Сообщение разработчикам и разработчицам приложения Playlist Maker»."
