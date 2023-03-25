@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_left_right">16dp</dimen>
+    <dimen name="button_corner_radius">16dp</dimen>
+    <dimen name="text_size_high">22sp</dimen>
+    <dimen name="medium_txt_height">16sp</dimen>
+    <dimen name="start_txt_pad">16dp</dimen>
+    <dimen name="icon_padding_in_button">10dp</dimen>
+
+    <dimen name="settings_padding">21dp</dimen>
+    <dimen name="settings_margin_start">16dp</dimen>
+    <dimen name="settings_img_height">19dp</dimen>
+    <dimen name="zero_width">0dp</dimen>
+    <dimen name="settings_margin_end">18dp</dimen>
+
+</resources>
