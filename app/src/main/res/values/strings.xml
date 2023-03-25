@@ -7,8 +7,12 @@
     <string name="share_app">Поделиться приложением</string>
     <string name="support_ask">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
+    <string name="clear_search_txt">cls</string>
+    <string name="back_to_main_Screen">Back to main screen</string>
+
 
     <string name="android_yandex" translatable="false"> https://yandex.ru/legal/practicum_offer/ </string>
     <string name="share_type" translatable="false"> text/plain </string>
+
 
 </resources>

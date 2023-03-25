@@ -6,7 +6,7 @@
     android:layout_margin="16dp"
     android:orientation="vertical"
     tools:context=".ActivitySearch">
-
+    <!-- Back to Main Menu Layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,30 +21,49 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/arrowback" />
+            android:src="@drawable/arrow_back"
+            android:contentDescription="@string/back_to_main_Screen" />
 
         <TextView
             style="@style/settings_text_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Поиск" />
+            android:text="@string/search"
+            />
     </LinearLayout>
-
-    <EditText
+    <!-- Search EditText layout -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
         android:layout_marginTop="24dp"
-        android:background="@color/Yp_Light_Grey"
-        android:textColor="@color/Text_Grey"
-        android:hint="Поиск"
-        android:drawableStart="@drawable/search_pic"
-        android:drawableEnd="@drawable/cls"
+        android:background="@drawable/box"
+        >
+        <EditText
+            android:id="@+id/txt_search"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@drawable/box"
+            android:textColor="@color/Text_Grey"
+            android:hint="@string/search"
+            android:drawableStart="@drawable/search_pic"
+            android:drawablePadding="14dp"
+            android:textSize="16sp"
+            android:inputType="text"
+            android:maxLines="1"
+            android:autofillHints="What" />
+        <ImageView
+            android:id="@+id/cls_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/cls"
+            android:contentDescription="@string/clear_search_txt"
+            android:visibility="gone"
+            />
+    </LinearLayout>
 
-        android:drawablePadding="14dp"
-        android:textSize="16sp"
-        android:inputType="text"
-        android:maxLines="1"
-        android:paddingStart="14dp"
 
-        />
 </LinearLayout>
