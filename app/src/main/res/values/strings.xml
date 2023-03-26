@@ -9,10 +9,14 @@
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="clear_search_txt">cls</string>
     <string name="back_to_main_Screen">Back to main screen</string>
+    <string name="thanks_msg_theme">Сообщение разработчикам и разработчицам приложения "Playlist Maker"</string>
+    <string name="thanks_msg">Спасибо разработчикам и разработчицам за крутое приложение!</string>
 
 
-    <string name="android_yandex" translatable="false"> https://yandex.ru/legal/practicum_offer/ </string>
+    <string name="android_developer_course" translatable="false">https://practicum.yandex.ru/android-developer/</string>
+    <string name="android_yandex_offer" translatable="false"> https://yandex.ru/legal/practicum_offer/ </string>
     <string name="share_type" translatable="false"> text/plain </string>
+    <string name="student_email_address" translatable="false">xqjh@mail.ru</string>
 
 
 </resources>

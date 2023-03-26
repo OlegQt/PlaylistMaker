@@ -17,12 +17,17 @@ class ActivitySettings : AppCompatActivity() {
         val imgShare: ImageView = findViewById(R.id.img_share)
         val imgSupport = findViewById<View>(R.id.ask_support)
         val imgAgreement: ImageView = findViewById(R.id.agreement)
-
-
+        /////////////////////////////////////////////////////////
+        // Кнопка назад
+        /////////////////////////////////////////////////////////
         imgBack.setOnClickListener { finish() }
+
+        /////////////////////////////////////////////////////////
+        // Кнопка поделиться приложением
+        /////////////////////////////////////////////////////////
         imgShare.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.android_yandex))
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.android_developer_course))
             shareIntent.type = getString(R.string.share_type);
 
             try {
@@ -31,21 +36,18 @@ class ActivitySettings : AppCompatActivity() {
                 Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show()
             }
         }
+
+        /////////////////////////////////////////////////////////
+        // Кнопка написать в поддержку
+        /////////////////////////////////////////////////////////
         imgSupport.setOnClickListener {
             val sendMail: Intent = Intent(Intent.ACTION_SENDTO)
             sendMail.data = Uri.parse("mailto:")
-            //sendMail.type = ("text/plain")
-            /* recipient is put as array because you may wanna send email to multiple emails
-          so enter comma(,) separated emails, it will be stored in array*/
-            sendMail.putExtra(Intent.EXTRA_EMAIL, arrayOf("venOleg@gmail.com"))
-            sendMail.putExtra(
-                Intent.EXTRA_SUBJECT,
-                "Сообщение разработчикам и разработчицам приложения Playlist Maker»."
-            )
-            sendMail.putExtra(
-                Intent.EXTRA_TEXT,
-                "Спасибо разработчикам и разработчицам за крутое приложение!"
-            )
+            // recipient is put as array because you may wanna send email to multiple emails
+            // so enter comma(,) separated emails, it will be stored in array
+            sendMail.putExtra(Intent.EXTRA_EMAIL,arrayOf(getString(R.string.student_email_address)))
+            sendMail.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.thanks_msg_theme))
+            sendMail.putExtra(Intent.EXTRA_TEXT, getString(R.string.thanks_msg))
             try {
                 startActivity(sendMail)
             } catch (error: java.lang.Exception) {
@@ -53,8 +55,12 @@ class ActivitySettings : AppCompatActivity() {
                 Toast.makeText(this, error.message, Toast.LENGTH_LONG).show()
             }
         }
+
+        /////////////////////////////////////////////////////////
+        // Кнопка пользовательское соглашение
+        /////////////////////////////////////////////////////////
         imgAgreement.setOnClickListener {
-            val address: Uri = Uri.parse("https://yandex.ru/legal/practicum_offer/")
+            val address: Uri = Uri.parse(getString(R.string.android_yandex_offer))
             val openLink: Intent = Intent(Intent.ACTION_VIEW, address)
             try {
                 startActivity(openLink)
