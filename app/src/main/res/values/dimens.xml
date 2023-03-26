@@ -12,5 +12,6 @@
     <dimen name="settings_img_height">19dp</dimen>
     <dimen name="zero_width">0dp</dimen>
     <dimen name="settings_margin_end">18dp</dimen>
+    <dimen name="search_back_margin">4dp</dimen>
 
 </resources>

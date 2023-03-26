@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
+    android:layout_margin="@dimen/start_txt_pad"
     android:orientation="vertical"
     tools:context=".ActivitySearch">
 
@@ -12,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="@dimen/search_back_margin"
+        android:layout_marginTop="@dimen/search_back_margin"
         >
 
         <ImageView
@@ -33,9 +34,8 @@
             />
     </LinearLayout>
 
-    <!-- Search EditText layout
-    Так как данное поле единичное на экране, не выводил в стиль
-    -->
+    <!-- Search EditText layout -->
+    <!-- Так как данное поле единичное на экране, не выводил в стиль -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
@@ -50,11 +50,12 @@
             android:layout_height="match_parent"
             android:background="@drawable/box"
             android:textColor="@color/YP_black"
-            android:textColorHint="@color/Text_Grey"
+            android:textColorHint="?attr/colorSecondaryVariant"
             android:hint="@string/search"
             android:drawableStart="@drawable/search_pic"
+            android:drawableTint="?attr/colorSecondaryVariant"
             android:drawablePadding="14dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/medium_txt_height"
             android:inputType="text"
             android:maxLines="1"
             android:autofillHints="What" />
@@ -67,7 +68,7 @@
             android:src="@drawable/cls"
             android:contentDescription="@string/clear_search_txt"
             android:visibility="gone"
-            />
+            app:tint="?attr/colorSecondaryVariant" />
     </LinearLayout>
 
 
