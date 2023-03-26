@@ -33,8 +33,8 @@ class ActivitySearch : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) btnCls.visibility = View.GONE
                 else {
-                    btnCls.visibility = View.VISIBLE
-                    strSearch = s.toString()
+                    btnCls.visibility = View.VISIBLE // Делаем кнопку очистки видимой
+                    strSearch = s.toString() // Сохраняем значение введенного текста
                 }
             }
 
@@ -48,8 +48,8 @@ class ActivitySearch : AppCompatActivity() {
         txtSearch?.addTextChangedListener(txtSearchWatcher)
         btnCls.setOnClickListener {
             txtSearch?.setText("") // Очиста текстового поля
-            this.strSearch =
-                "" // Очистка строки, иначе даже при стертом значении текстого поля, после поворота экрана, значение восстановиться
+            // Очистка строки, иначе даже при стертом значении текстого поля, после поворота экрана, значение восстановиться
+            this.strSearch = ""
             // Убираем клавиатуру
             val inputMethodManager =
                 getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -70,10 +70,6 @@ class ActivitySearch : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         this.strSearch = savedInstanceState.getString("searchTxt").toString()
         Log.d(tag, "onRestoreInstanceState")
-        // Проверка работоспособности
-        //Toast.makeText(this,this.strSearch,Toast.LENGTH_SHORT).show()
         this.txtSearch?.setText(this.strSearch)
-        // Как записать strSearch в txtSearch???
-
     }
 }
