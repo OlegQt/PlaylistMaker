@@ -39,6 +39,7 @@ class SearchTrackViewHolder(private val item: View) : ViewHolder(item) {
         txtTrackName = item.findViewById(R.id.track_name)
         txtArtistName= item.findViewById(R.id.artist_name)
         txtTrackTime =item.findViewById(R.id.track_time)
+        imgArtCover = item.findViewById(R.id.art_work)
     }
 
     fun bind(musTrack: Track) {

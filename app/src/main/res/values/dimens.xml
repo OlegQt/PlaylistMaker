@@ -4,6 +4,7 @@
     <dimen name="button_corner_radius">16dp</dimen>
     <dimen name="text_size_high">22sp</dimen>
     <dimen name="medium_txt_height">16sp</dimen>
+    <dimen name="medium_txt_small">11sp</dimen>
     <dimen name="start_txt_pad">16dp</dimen>
     <dimen name="icon_padding_in_button">10dp</dimen>
 
