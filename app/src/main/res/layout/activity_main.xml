@@ -3,11 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Blue_back"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/padding_left_right"
     android:paddingTop="14dp"
-    android:paddingBottom="12dp">
+    android:paddingBottom="12dp"
+    android:background="?attr/colorSecondary"
+    >
 
 
     <TextView
@@ -25,16 +26,12 @@
         android:layout_height="0dp"
         android:layout_marginTop="40dp"
         android:layout_weight="1"
-        android:backgroundTint="@color/white"
         android:text="@string/search"
-        android:textColor="@color/black"
-        android:textAllCaps="false"
-        android:textSize="@dimen/text_size_high"
-        app:cornerRadius="@dimen/button_corner_radius"
         app:icon="@drawable/ic_vector"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/icon_padding_in_button"
         app:iconTint="@color/black"
+        style="@style/btn_main_screen"
 
         />
 
@@ -43,16 +40,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:backgroundTint="@color/white"
         android:text="@string/media_library"
-        android:textColor="@color/black"
-        android:textAllCaps="false"
-        android:textSize="@dimen/text_size_high"
-        app:cornerRadius="@dimen/button_corner_radius"
         app:icon="@drawable/ic_media"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/icon_padding_in_button"
-        app:iconTint="@color/black" />
+        app:iconTint="@color/black"
+        style="@style/btn_main_screen"
+        />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/settings"
@@ -60,14 +54,11 @@
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_weight="1"
-        android:backgroundTint="@color/white"
         android:text="@string/options"
-        android:textColor="@color/black"
-        android:textAllCaps="false"
-        android:textSize="@dimen/text_size_high"
-        app:cornerRadius="@dimen/button_corner_radius"
         app:icon="@drawable/ic_options"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/icon_padding_in_button"
-        app:iconTint="@color/black" />
+        app:iconTint="@color/black"
+        style="@style/btn_main_screen"
+        />
 </LinearLayout>

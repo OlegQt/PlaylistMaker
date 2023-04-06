@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="btn_main_screen"
+        parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="backgroundTint">@color/white</item>
+        <!-- font settings below -->
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/text_size_high</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="settings_layout_color">
+        <item name="background">?attr/colorPrimary</item>
+    </style>
+
+    <style name="setting_minor_layout" parent="settings_layout_color">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/settings_margin_start</item>
+        <item name="android:layout_marginEnd">14dp</item>
+        <item name="android:orientation">horizontal</item>
+        <!-- Здесь ругается на android:paddingVertical-->
+        <item name="android:paddingVertical" tools:targetApi="o">@dimen/settings_padding</item>
+    </style>
+
+    <style name='settings_text_back'>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginStart">28dp</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="settings_minor_txt">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">start</item>
+        <item name="android:textSize">@dimen/medium_txt_height</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="settings_img">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:tint">?attr/colorOnPrimary</item>
+    </style>
+</resources>

@@ -22,10 +22,6 @@ class MainActivity : AppCompatActivity() {
         val mediaScreen = Intent(this, ActivityMedia::class.java)
         val searchScreen = Intent(this, ActivitySearch::class.java)
 
-        //btnSearch.setOnClickListener { finish() }
-        // Не понял ваш комментарий по поводу исопльзования finish()
-        // он завершает тогда текущую активити и все. Объясните плз кодом, что вы имеете в виду?
-
         btnSearch.setOnClickListener { startActivity(searchScreen) }
         btnMedia.setOnClickListener { startActivity(mediaScreen) }
         btnSettings?.setOnClickListener { startActivity(settingsScreen) }

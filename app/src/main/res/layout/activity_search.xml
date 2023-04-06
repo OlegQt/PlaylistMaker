@@ -1,9 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="@dimen/start_txt_pad"
+    android:orientation="vertical"
     tools:context=".ActivitySearch">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Back to Main Menu Layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/search_back_margin"
+        android:layout_marginTop="@dimen/search_back_margin"
+        >
+
+        <ImageView
+            android:id="@+id/btnBack"
+            style="@style/settings_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/arrow_back"
+            android:contentDescription="@string/back_to_main_Screen" />
+
+        <TextView
+            style="@style/settings_text_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search"
+            />
+    </LinearLayout>
+
+    <!-- Search EditText layout -->
+    <!-- Так как данное поле единичное на экране, не выводил в стиль -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/box"
+        >
+        <EditText
+            android:id="@+id/txt_search"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@drawable/box"
+            android:textColor="@color/YP_black"
+            android:textColorHint="?attr/colorSecondaryVariant"
+            android:hint="@string/search"
+            android:drawableStart="@drawable/search_pic"
+            android:drawableTint="?attr/colorSecondaryVariant"
+            android:drawablePadding="14dp"
+            android:textSize="@dimen/medium_txt_height"
+            android:inputType="text"
+            android:maxLines="1"
+            android:autofillHints="What" />
+        <ImageView
+            android:id="@+id/cls_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/cls"
+            android:contentDescription="@string/clear_search_txt"
+            android:visibility="gone"
+            app:tint="?attr/colorSecondaryVariant" />
+    </LinearLayout>
+
+
+</LinearLayout>

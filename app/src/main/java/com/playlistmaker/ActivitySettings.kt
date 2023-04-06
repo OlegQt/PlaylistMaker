@@ -1,9 +1,12 @@
 package com.playlistmaker
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
 class ActivitySettings : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -11,8 +14,61 @@ class ActivitySettings : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val imgBack: ImageView = findViewById(R.id.backToMainActivity)
-        val mainScreen = Intent(this.baseContext, MainActivity::class.java)
+        val imgShare: ImageView = findViewById(R.id.img_share)
+        val imgSupport = findViewById<View>(R.id.ask_support)
+        val imgAgreement: ImageView = findViewById(R.id.agreement)
+        /////////////////////////////////////////////////////////
+        // Кнопка назад
+        /////////////////////////////////////////////////////////
+        imgBack.setOnClickListener { finish() }
 
-        imgBack.setOnClickListener{finish()}
+        /////////////////////////////////////////////////////////
+        // Кнопка поделиться приложением
+        /////////////////////////////////////////////////////////
+        imgShare.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.android_developer_course))
+            shareIntent.type = getString(R.string.share_type);
+
+            try {
+                startActivity(shareIntent)
+            } catch (error: Exception) {
+                Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        /////////////////////////////////////////////////////////
+        // Кнопка написать в поддержку
+        /////////////////////////////////////////////////////////
+        imgSupport.setOnClickListener {
+            val sendMail: Intent = Intent(Intent.ACTION_SENDTO)
+            sendMail.data = Uri.parse("mailto:")
+            // recipient is put as array because you may wanna send email to multiple emails
+            // so enter comma(,) separated emails, it will be stored in array
+            sendMail.putExtra(Intent.EXTRA_EMAIL,arrayOf(getString(R.string.student_email_address)))
+            sendMail.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.thanks_msg_theme))
+            sendMail.putExtra(Intent.EXTRA_TEXT, getString(R.string.thanks_msg))
+            try {
+                startActivity(sendMail)
+            } catch (error: java.lang.Exception) {
+                //get and show exception message
+                Toast.makeText(this, error.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        /////////////////////////////////////////////////////////
+        // Кнопка пользовательское соглашение
+        /////////////////////////////////////////////////////////
+        imgAgreement.setOnClickListener {
+            val address: Uri = Uri.parse(getString(R.string.android_yandex_offer))
+            val openLink: Intent = Intent(Intent.ACTION_VIEW, address)
+            try {
+                startActivity(openLink)
+            } catch (error: java.lang.Exception) {
+                //get and show exception message
+                Toast.makeText(this, error.message, Toast.LENGTH_LONG).show()
+            }
+
+        }
     }
 }
