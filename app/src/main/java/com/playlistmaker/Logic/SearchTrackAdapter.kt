@@ -53,9 +53,9 @@ class SearchTrackViewHolder(private val item: View) : ViewHolder(item) {
         if (imgArtCover != null) Glide
             .with(item.context)
             .load(musTrack.artworkUrl100)
-            .placeholder(R.drawable.brain)
+            .placeholder(R.drawable.search_pic)
             .centerCrop()
-            .transform(RoundedCorners(2))
+            .transform(RoundedCorners(2)) //Params: roundingRadius – the corner radius (in device-specific pixels).
             .into(imgArtCover!!)
     }
 }

@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.playlistmaker.Logic.SearchTrackAdapter
@@ -91,11 +92,9 @@ class ActivitySearch : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty()) btnCls.visibility = View.GONE
-                else {
-                    btnCls.visibility = View.VISIBLE // Делаем кнопку очистки видимой
-                    strSearch = s.toString() // Сохраняем значение введенного текста
-                }
+                strSearch = s.toString() // Сохраняем значение введенного текста
+                btnCls.isVisible = !s.isNullOrEmpty()
+
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -111,8 +110,6 @@ class ActivitySearch : AppCompatActivity() {
 
         btnCls.setOnClickListener {
             txtSearch?.setText("") // Очиста текстового поля
-            // Очистка строки, иначе даже при стертом значении текстого поля, после поворота экрана, значение восстановиться
-            this.strSearch = ""
             // Убираем клавиатуру
             val inputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager

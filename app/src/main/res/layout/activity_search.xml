@@ -78,7 +78,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:listitem="@layout/track_item"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/recycle_top_margin"
         />
 
 
