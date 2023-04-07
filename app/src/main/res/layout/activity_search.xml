@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,10 +12,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginStart="@dimen/search_back_margin"
         android:layout_marginTop="@dimen/search_back_margin"
-        >
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/btnBack"
@@ -24,15 +22,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/arrow_back"
-            android:contentDescription="@string/back_to_main_Screen" />
+            android:contentDescription="@string/back_to_main_Screen"
+            android:src="@drawable/arrow_back" />
 
         <TextView
             style="@style/settings_text_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/search"
-            />
+            android:text="@string/search" />
     </LinearLayout>
 
     <!-- Search EditText layout -->
@@ -42,44 +39,41 @@
         android:layout_height="36dp"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="24dp"
-        android:background="@drawable/box"
-        >
+        android:background="@drawable/box">
+
         <EditText
             android:id="@+id/txt_search"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:autofillHints="What"
             android:background="@drawable/box"
-            android:textColor="@color/YP_black"
-            android:textColorHint="?attr/colorSecondaryVariant"
-            android:hint="@string/search"
             android:drawableStart="@drawable/search_pic"
-            android:drawableTint="?attr/colorSecondaryVariant"
             android:drawablePadding="14dp"
-            android:textSize="@dimen/medium_txt_height"
+            android:drawableTint="?attr/colorSecondaryVariant"
+            android:hint="@string/search"
             android:inputType="text"
             android:maxLines="1"
-            android:autofillHints="What" />
+            android:textColor="@color/YP_black"
+            android:textColorHint="?attr/colorSecondaryVariant"
+            android:textSize="@dimen/medium_txt_height" />
+
         <ImageView
             android:id="@+id/cls_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="12dp"
-            android:src="@drawable/cls"
             android:contentDescription="@string/clear_search_txt"
+            android:src="@drawable/cls"
             android:visibility="gone"
             app:tint="?attr/colorSecondaryVariant" />
     </LinearLayout>
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_recycle_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/track_item"
         android:layout_marginTop="@dimen/recycle_top_margin"
-        />
-
-
+        tools:listitem="@layout/track_item" />
 </LinearLayout>

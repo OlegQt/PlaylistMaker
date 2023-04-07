@@ -31,31 +31,3 @@ class SearchTrackAdapter(private val trackList: ArrayList<Track>) :
         return trackList.size
     }
 }
-
-class SearchTrackViewHolder(private val item: View) : ViewHolder(item) {
-    private var txtTrackName: TextView? = null
-    private var txtArtistName: TextView? = null
-    private var txtTrackTime: TextView? = null
-    private var imgArtCover: ImageView? = null
-
-    init {
-        txtTrackName = item.findViewById(R.id.track_name)
-        txtArtistName = item.findViewById(R.id.artist_name)
-        txtTrackTime = item.findViewById(R.id.track_time)
-        imgArtCover = item.findViewById(R.id.art_work)
-    }
-
-    fun bind(musTrack: Track) {
-        txtTrackName?.text = musTrack.trackName
-        txtArtistName?.text = musTrack.artistName
-        txtTrackTime?.text = musTrack.trackTime
-
-        if (imgArtCover != null) Glide
-            .with(item.context)
-            .load(musTrack.artworkUrl100)
-            .placeholder(R.drawable.search_pic)
-            .centerCrop()
-            .transform(RoundedCorners(2)) //Params: roundingRadius – the corner radius (in device-specific pixels).
-            .into(imgArtCover!!)
-    }
-}
