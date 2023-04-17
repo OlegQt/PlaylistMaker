@@ -45,6 +45,7 @@
             android:id="@+id/txt_search"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:imeOptions="actionDone"
             android:layout_weight="1"
             android:autofillHints="What"
             android:background="@drawable/box"

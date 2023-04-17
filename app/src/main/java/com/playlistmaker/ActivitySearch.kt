@@ -4,15 +4,18 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.playlistmaker.Logic.SearchTrackAdapter
 import com.playlistmaker.Logic.Track
+import com.playlistmaker.itunes.ItunesMusic
 
 class ActivitySearch : AppCompatActivity() {
     private val tag: String = "LOGTest"
@@ -20,6 +23,7 @@ class ActivitySearch : AppCompatActivity() {
     private var txtSearch: EditText? = null
     private var recycleViewTracks: RecyclerView? = null
     private var trackList: ArrayList<Track> = ArrayList()
+    private var itunesMusic = ItunesMusic()
 
 
     // Заполнение списка треков
@@ -74,6 +78,11 @@ class ActivitySearch : AppCompatActivity() {
         return this.trackList
     }
 
+    private fun showSearchResults(songName: String) {
+        Toast.makeText(this, "Find $songName", Toast.LENGTH_LONG).show()
+        itunesMusic.search(songName)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -100,7 +109,6 @@ class ActivitySearch : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 strSearch = s.toString() // Сохраняем значение введенного текста
                 btnCls.isVisible = !s.isNullOrEmpty()
-
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -114,14 +122,22 @@ class ActivitySearch : AppCompatActivity() {
 
         txtSearch?.addTextChangedListener(txtSearchWatcher)
 
+        txtSearch?.setOnEditorActionListener { textView, i, keyEvent ->
+            if (i == EditorInfo.IME_ACTION_DONE) {
+                showSearchResults(textView.text.toString())
+                true
+            }
+            false
+        }
+
+
+
         btnCls.setOnClickListener {
             txtSearch?.setText("") // Очиста текстового поля
             // Убираем клавиатуру
             val inputMethodManager =
                 getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(txtSearch?.windowToken, 0)
-            // Лог для проверки
-            Log.d(tag, "Txt Clear")
         }
 
     }
@@ -129,7 +145,6 @@ class ActivitySearch : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("searchTxt", this.strSearch)
-        Log.d(tag, "onSaveInstanceState")
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
