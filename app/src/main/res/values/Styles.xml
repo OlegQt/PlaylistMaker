@@ -54,4 +54,13 @@
         <item name="android:layout_gravity">end</item>
         <item name="android:tint">?attr/colorOnPrimary</item>
     </style>
+
+    <style name="search_recycle_minor_txt">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">?attr/colorOnSurfaceInverse</item>
+        <item name="android:lines">1</item>
+        <item name="android:singleLine">true</item>
+    </style>
 </resources>

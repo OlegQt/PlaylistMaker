@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorSecondary"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/padding_left_right"
     android:paddingTop="14dp"
-    android:paddingBottom="12dp"
-    android:background="?attr/colorSecondary"
-    >
+    android:paddingBottom="12dp">
 
 
     <TextView
@@ -16,12 +15,11 @@
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_high"
-
-        />
+        android:textSize="@dimen/text_size_high" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/search"
+        style="@style/btn_main_screen"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="40dp"
@@ -30,13 +28,11 @@
         app:icon="@drawable/ic_vector"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/icon_padding_in_button"
-        app:iconTint="@color/black"
-        style="@style/btn_main_screen"
-
-        />
+        app:iconTint="@color/black" />
 
     <Button
         android:id="@+id/media"
+        style="@style/btn_main_screen"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -44,12 +40,11 @@
         app:icon="@drawable/ic_media"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/icon_padding_in_button"
-        app:iconTint="@color/black"
-        style="@style/btn_main_screen"
-        />
+        app:iconTint="@color/black" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/settings"
+        style="@style/btn_main_screen"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
@@ -58,7 +53,5 @@
         app:icon="@drawable/ic_options"
         app:iconGravity="textStart"
         app:iconPadding="@dimen/icon_padding_in_button"
-        app:iconTint="@color/black"
-        style="@style/btn_main_screen"
-        />
+        app:iconTint="@color/black" />
 </LinearLayout>

@@ -4,6 +4,7 @@
     <dimen name="button_corner_radius">16dp</dimen>
     <dimen name="text_size_high">22sp</dimen>
     <dimen name="medium_txt_height">16sp</dimen>
+    <dimen name="medium_txt_small">11sp</dimen>
     <dimen name="start_txt_pad">16dp</dimen>
     <dimen name="icon_padding_in_button">10dp</dimen>
 
@@ -13,5 +14,10 @@
     <dimen name="zero_width">0dp</dimen>
     <dimen name="settings_margin_end">18dp</dimen>
     <dimen name="search_back_margin">4dp</dimen>
+
+    <dimen name="recycle_top_margin">24dp</dimen>
+    <dimen name="recycle_art_work_margin">8dp</dimen>
+    <dimen name="recycle_art_work_size">45dp</dimen>
+    <dimen name="recycle_minor_text_margin">5dp</dimen>
 
 </resources>
