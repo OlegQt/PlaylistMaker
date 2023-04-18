@@ -9,9 +9,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ItunesMusic {
-    private val TAG: String = "DEBUG"
+    //private val TAG: String = "DEBUG"
     private val baseUrl = "https://itunes.apple.com"
-    var trackLst:ArrayList<ItunesTrack>? = ArrayList<ItunesTrack>()
+    var trackLst: ArrayList<ItunesTrack>? = null
 
     // retrofit initialisation will come with class member initialisation
     private val retrofit = Retrofit.Builder()
@@ -19,8 +19,10 @@ class ItunesMusic {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val mediaApi = retrofit.create(ItunesMediaSearchApi::class.java)
+    private val mediaApi: ItunesMediaSearchApi = retrofit.create(ItunesMediaSearchApi::class.java)
 
+    // Второй параметр - лямбда из SearchActivity
+    // Вызывается только после ответа (или не ответа) от сервера
     fun search(songName: String, doAfterSearch: (Msgcode) -> Unit) {
         val call = mediaApi.search(songName)
         call.enqueue(object : Callback<ItunesMediaSearchResult> {
@@ -28,19 +30,17 @@ class ItunesMusic {
                 call: Call<ItunesMediaSearchResult>,
                 response: Response<ItunesMediaSearchResult>
             ) {
-                // Есть ответ
-                Log.d(TAG, response.code().toString())
-
-                trackLst = response?.body()?.results
-                doAfterSearch.invoke(Msgcode.OK)
-
+                if (response.code() == 200) {
+                    // Если ответ от сервера OK
+                    trackLst = response.body()?.results // Считываем тело ответа в лист
+                    doAfterSearch.invoke(Msgcode.OK) // Вызываем функцию в SearchActivity  с OK - кодом
+                } else doAfterSearch.invoke(Msgcode.Failure) // Вызываем функцию в SearchActivity с FAIL - кодом
             }
 
             override fun onFailure(call: Call<ItunesMediaSearchResult>, t: Throwable) {
-                Log.d(TAG, t.message.toString())
-                doAfterSearch.invoke(Msgcode.Failure)
+                //Log.d(TAG, t.message.toString()) // Логируем сообщение об ошибке
+                doAfterSearch.invoke(Msgcode.Failure) // Вызываем функцию в SearchActivity с FAIL - кодом
             }
         })
-
     }
 }

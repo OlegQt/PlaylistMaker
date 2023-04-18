@@ -2,12 +2,16 @@ package com.playlistmaker
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.Layout
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ViewAnimator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +22,7 @@ import com.playlistmaker.itunes.ItunesMusic
 
 class ActivitySearch : AppCompatActivity() {
     private val TAG: String = "DEBUG"
+    private var stubLayout: LinearLayout? = null
     private var strSearch: String = String()
     private var txtSearch: EditText? = null
     private var recycleViewTracks: RecyclerView? = null
@@ -79,34 +84,34 @@ class ActivitySearch : AppCompatActivity() {
         return this.trackList
     }
 
-
     // Функция вызывается внутри call.enqueue
-    private var doAfterSearch:(Msgcode)->Unit = {
-        if(it==Msgcode.OK){
+    private var doAfterSearch: (Msgcode) -> Unit = {
+        if (it == Msgcode.OK) {
             // Если положительный вызов
             val sz = this.itunesMusic.trackLst?.size
-            Log.d(TAG,"size = $sz")
+            Log.d(TAG, "size = $sz")
             this.modifyTrackList()
 
-        }
-        else if(it==Msgcode.Failure){
-            Log.d(TAG,"Some error occurred")
+        } else if (it == Msgcode.Failure) {
+            Log.d(TAG, "Some error occurred")
+            this.recycleViewTracks?.visibility = View.GONE
+            this.stubLayout?.visibility = View.VISIBLE
         }
     }
 
-    private fun modifyTrackList(){
+    private fun modifyTrackList() {
         this.trackList.clear()
-        this.itunesMusic.trackLst?.forEach { trackJSON->
+        this.itunesMusic.trackLst?.forEach { trackJSON ->
             this.trackList.add(trackJSON.toTrack())
         }
         this.musTrackAdapter.notifyDataSetChanged()
     }
 
     private fun showSearchResults(songName: String) {
-        itunesMusic.search(songName,this.doAfterSearch)
-        //this.modifyTrackList()
-        //this.musTrackAdapter.notifyDataSetChanged()
-
+        // Сохраняю эту функцию на случай, если придется отказаться от лямбды
+        // Или добавить какой-то доп. функционал
+        Log.d(TAG, "Keyboard ok button")
+        itunesMusic.search(songName, this.doAfterSearch)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,9 +122,10 @@ class ActivitySearch : AppCompatActivity() {
         val btnBack: ImageView = findViewById(R.id.btnBack)
         val btnCls: ImageView = findViewById(R.id.cls_search)
         txtSearch = findViewById(R.id.txt_search)
+        stubLayout = findViewById(R.id.stub_layout)
+        recycleViewTracks = findViewById(R.id.search_recycle_view)
 
         // Создаем адаптер
-        recycleViewTracks = findViewById(R.id.search_recycle_view)
         val musLayOut = LinearLayoutManager(this)
         musLayOut.orientation = RecyclerView.VERTICAL
         recycleViewTracks?.layoutManager = musLayOut
