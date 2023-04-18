@@ -8,7 +8,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,12 +17,13 @@ import com.playlistmaker.Logic.Track
 import com.playlistmaker.itunes.ItunesMusic
 
 class ActivitySearch : AppCompatActivity() {
-    private val tag: String = "LOGTest"
+    private val TAG: String = "DEBUG"
     private var strSearch: String = String()
     private var txtSearch: EditText? = null
     private var recycleViewTracks: RecyclerView? = null
     private var trackList: ArrayList<Track> = ArrayList()
     private var itunesMusic = ItunesMusic()
+    private var musTrackAdapter = SearchTrackAdapter(this.fillTrackList())
 
 
     // Заполнение списка треков
@@ -75,12 +75,38 @@ class ActivitySearch : AppCompatActivity() {
                 "100bb.jpg"
             )
         )
+
         return this.trackList
     }
 
+
+    // Функция вызывается внутри call.enqueue
+    private var doAfterSearch:(Msgcode)->Unit = {
+        if(it==Msgcode.OK){
+            // Если положительный вызов
+            val sz = this.itunesMusic.trackLst?.size
+            Log.d(TAG,"size = $sz")
+            this.modifyTrackList()
+
+        }
+        else if(it==Msgcode.Failure){
+            Log.d(TAG,"Some error occurred")
+        }
+    }
+
+    private fun modifyTrackList(){
+        this.trackList.clear()
+        this.itunesMusic.trackLst?.forEach { trackJSON->
+            this.trackList.add(trackJSON.toTrack())
+        }
+        this.musTrackAdapter.notifyDataSetChanged()
+    }
+
     private fun showSearchResults(songName: String) {
-        Toast.makeText(this, "Find $songName", Toast.LENGTH_LONG).show()
-        itunesMusic.search(songName)
+        itunesMusic.search(songName,this.doAfterSearch)
+        //this.modifyTrackList()
+        //this.musTrackAdapter.notifyDataSetChanged()
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +123,7 @@ class ActivitySearch : AppCompatActivity() {
         val musLayOut = LinearLayoutManager(this)
         musLayOut.orientation = RecyclerView.VERTICAL
         recycleViewTracks?.layoutManager = musLayOut
-        recycleViewTracks?.adapter = SearchTrackAdapter(this.fillTrackList())
+        recycleViewTracks?.adapter = this.musTrackAdapter
 
 
         // Анонимный
@@ -130,8 +156,6 @@ class ActivitySearch : AppCompatActivity() {
             false
         }
 
-
-
         btnCls.setOnClickListener {
             txtSearch?.setText("") // Очиста текстового поля
             // Убираем клавиатуру
@@ -150,7 +174,6 @@ class ActivitySearch : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         this.strSearch = savedInstanceState.getString("searchTxt").toString()
-        Log.d(tag, "onRestoreInstanceState")
         this.txtSearch?.setText(this.strSearch)
     }
 }
