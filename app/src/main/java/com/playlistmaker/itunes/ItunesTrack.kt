@@ -1,6 +1,8 @@
 package com.playlistmaker.itunes
 
 import com.playlistmaker.Logic.Track
+import java.text.SimpleDateFormat
+import java.util.*
 
 data class ItunesTrack(
     val trackName: String,
@@ -12,8 +14,9 @@ data class ItunesTrack(
         return Track(
             this.trackName,
             this.artistName,
-            this.trackTimeMillis.toString(), // Need fun
+            this.timeToString(trackTimeMillis), // Need fun
             this.artworkUrl100
         )
     }
+    fun timeToString(time:Long)= SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
 }
