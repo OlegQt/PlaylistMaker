@@ -91,8 +91,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="110dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginTop="@dimen/search_stub_img_margin_top"
+            android:layout_marginEnd="@dimen/search_stub_img_margin_end"
             android:src="@drawable/nothing_found" />
 
         <TextView
@@ -104,19 +104,20 @@
             android:text="@string/nothing_found"
             android:textAlignment="center"
             android:textColor="?attr/colorOnPrimary"
-            android:textSize="19sp" />
+            android:textSize="@dimen/medium_txt_plus" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_reload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="10dp"
+            android:layout_marginTop="@dimen/recycle_top_margin"
+            android:paddingHorizontal="@dimen/search_stub_btn_hor_pad"
+            android:paddingVertical="@dimen/search_stub_btn_ver_pad"
             android:text="@string/reload"
+            android:textAllCaps="false"
             android:textColor="?attr/colorOnSecondary"
-            android:textSize="14sp"
+            android:textSize="@dimen/search_stub_btn_txt_size"
 
             app:backgroundTint="?attr/colorOnPrimary"
             app:cornerRadius="54dp" />
