@@ -5,6 +5,7 @@
     <dimen name="text_size_high">22sp</dimen>
     <dimen name="medium_txt_height">16sp</dimen>
     <dimen name="medium_txt_small">11sp</dimen>
+    <dimen name="medium_txt_plus">19sp</dimen>
     <dimen name="start_txt_pad">16dp</dimen>
     <dimen name="icon_padding_in_button">10dp</dimen>
 
@@ -19,5 +20,11 @@
     <dimen name="recycle_art_work_margin">8dp</dimen>
     <dimen name="recycle_art_work_size">45dp</dimen>
     <dimen name="recycle_minor_text_margin">5dp</dimen>
+
+    <dimen name="search_stub_img_margin_top">110dp</dimen>
+    <dimen name="search_stub_img_margin_end">20dp</dimen>
+    <dimen name="search_stub_btn_ver_pad">10dp</dimen>
+    <dimen name="search_stub_btn_hor_pad">14dp</dimen>
+    <dimen name="search_stub_btn_txt_size">14sp</dimen>
 
 </resources>

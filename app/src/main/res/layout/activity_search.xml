@@ -52,6 +52,7 @@
             android:drawablePadding="14dp"
             android:drawableTint="?attr/colorSecondaryVariant"
             android:hint="@string/search"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLines="1"
             android:textColor="@color/YP_black"
@@ -75,5 +76,52 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/recycle_top_margin"
+        android:visibility="visible"
         tools:listitem="@layout/track_item" />
+
+    <LinearLayout
+        android:id="@+id/stub_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/img_stub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/search_stub_img_margin_top"
+            android:layout_marginEnd="@dimen/search_stub_img_margin_end"
+            android:src="@drawable/nothing_found" />
+
+        <TextView
+            android:id="@+id/txt_stub_main_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/nothing_found"
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/medium_txt_plus" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_reload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/recycle_top_margin"
+            android:paddingHorizontal="@dimen/search_stub_btn_hor_pad"
+            android:paddingVertical="@dimen/search_stub_btn_ver_pad"
+            android:text="@string/reload"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="@dimen/search_stub_btn_txt_size"
+
+            app:backgroundTint="?attr/colorOnPrimary"
+            app:cornerRadius="54dp" />
+
+
+    </LinearLayout>
 </LinearLayout>

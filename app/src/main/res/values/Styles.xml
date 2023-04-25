@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="btn_main_screen"
-        parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="btn_main_screen" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="cornerRadius">@dimen/button_corner_radius</item>
         <item name="backgroundTint">@color/white</item>
         <!-- font settings below -->
