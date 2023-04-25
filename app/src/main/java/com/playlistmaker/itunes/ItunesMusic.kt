@@ -38,7 +38,6 @@ class ItunesMusic {
             }
 
             override fun onFailure(call: Call<ItunesMediaSearchResult>, t: Throwable) {
-                //Log.d(TAG, t.message.toString()) // Логируем сообщение об ошибке
                 doAfterSearch.invoke(Msgcode.Failure) // Вызываем функцию в SearchActivity с FAIL - кодом
             }
         })

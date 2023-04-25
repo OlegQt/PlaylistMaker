@@ -25,7 +25,7 @@ import com.playlistmaker.itunes.ItunesMusic
 class ActivitySearch : AppCompatActivity() {
     private val TAG: String = "DEBUG"
 
-    private var stubLayout: LinearLayout? = null
+    private var stubLayout: View? = null
     private var strSearch: String = String()
     private var txtSearch: EditText? = null
     private var recycleViewTracks: RecyclerView? = null
