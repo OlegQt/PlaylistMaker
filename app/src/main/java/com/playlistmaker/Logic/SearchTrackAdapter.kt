@@ -11,8 +11,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
 
-class SearchTrackAdapter(private val trackList: ArrayList<Track>) :
+class SearchTrackAdapter(private val trackList: ArrayList<Track>,private var onTrackClickListener:OnTrackClickListener) :
     Adapter<SearchTrackViewHolder>() {
+
+    interface OnTrackClickListener {
+        fun onTrackClick(position: Int)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchTrackViewHolder {
         val item: View =
             LayoutInflater.from(parent.context).inflate(
@@ -20,14 +25,16 @@ class SearchTrackAdapter(private val trackList: ArrayList<Track>) :
                 parent,
                 false
             )
-        return SearchTrackViewHolder(item)
+        return SearchTrackViewHolder(item,onTrackClickListener)
     }
 
     override fun onBindViewHolder(holder: SearchTrackViewHolder, position: Int) {
         holder.bind(trackList[position])
     }
 
-    override fun getItemCount(): Int {
-        return trackList.size
+    override fun getItemCount() =trackList.size
+
+    fun getItem(position:Int):Track{
+        return trackList[position]
     }
 }

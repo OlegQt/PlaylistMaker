@@ -2,22 +2,17 @@ package com.playlistmaker
 
 import android.os.Bundle
 import android.text.Editable
-import android.text.Layout
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.ViewAnimator
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.Logic.SearchTrackAdapter
 import com.playlistmaker.Logic.Track
 import com.playlistmaker.itunes.ItunesMusic
@@ -33,7 +28,16 @@ class ActivitySearch : AppCompatActivity() {
 
     private var trackList: ArrayList<Track> = ArrayList()
     private var itunesMusic = ItunesMusic()
-    private var musTrackAdapter = SearchTrackAdapter(this.trackList)
+
+    private val recyclerListener = object :SearchTrackAdapter.OnTrackClickListener{
+        override fun onTrackClick(position: Int) {
+            Snackbar.make(recycleViewTracks!!,"$position ${trackList[position].trackName}" +
+                    " ${trackList[position].trackId}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private var musTrackAdapter = SearchTrackAdapter(this.trackList,recyclerListener)
+
 
 
     // Заполнение списка треков
@@ -116,10 +120,6 @@ class ActivitySearch : AppCompatActivity() {
         recycleViewTracks?.layoutManager = musLayOut
         recycleViewTracks?.adapter = this.musTrackAdapter
 
-        //////////////////////////////////////////////
-        //showStubConnectionTroubles()
-
-
         // Анонимный
         val txtSearchWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -134,7 +134,6 @@ class ActivitySearch : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 //
             }
-
         }
 
         // Вешаем слушателей на элелементы
@@ -146,6 +145,11 @@ class ActivitySearch : AppCompatActivity() {
 
         txtSearch?.addTextChangedListener(txtSearchWatcher)
 
+        txtSearch?.setOnFocusChangeListener { view, hasFocus ->
+            Snackbar.make(recycleViewTracks!!,"$hasFocus", Toast.LENGTH_SHORT).show()
+        }
+
+        // Нажатие на конпку ОК на клавиатуре
         txtSearch?.setOnEditorActionListener { textView, i, keyEvent ->
             if (i == EditorInfo.IME_ACTION_DONE) {
                 showSearchResults(textView.text.toString())
@@ -179,4 +183,5 @@ class ActivitySearch : AppCompatActivity() {
         this.strSearch = savedInstanceState.getString("searchTxt").toString()
         this.txtSearch?.setText(this.strSearch)
     }
+
 }
