@@ -44,7 +44,6 @@ class History {
         btnClearHistory.setOnClickListener { clearHistory() }
 
         loadHistory() // Подгружаем историю поиска
-        //showAllSearchHistory() // Отобржаем историю поиска
     }
 
     fun addToSearchHistory(track: Track) {
@@ -67,6 +66,7 @@ class History {
     }
 
     fun setVisibility(visibility: Boolean) {
+        // Показываем список просмотров только если он не пуст
         if (visibility and trackHistoryList.isNotEmpty()) {
             loutHistory.visibility = View.VISIBLE
         } else loutHistory.visibility = View.GONE
@@ -75,6 +75,7 @@ class History {
 
     fun showAllSearchHistory() {
         setVisibility(true)
+        // Список просмотренных треков мог обновиться, уведомляем адаптер
         adapterHistory.notifyDataSetChanged()
     }
 
@@ -89,11 +90,9 @@ class History {
         val jSonHistory = App.instance.sharedPreferences.getString(App.SEARCH_HISTORY, "")
 
         val data = Gson().fromJson(jSonHistory, Array<Track>::class.java)
-        if (data.isNullOrEmpty()) Toast.makeText(
-            App.instance.baseContext,
-            "EmptyHistory",
-            Toast.LENGTH_SHORT
-        ).show()
+        if (data.isNullOrEmpty()) {
+            // Message about empty history
+        }
         else {
             trackHistoryList.clear()
             data.forEach {

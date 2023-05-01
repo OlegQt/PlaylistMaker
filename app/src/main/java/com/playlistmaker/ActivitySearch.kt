@@ -39,21 +39,14 @@ class ActivitySearch : AppCompatActivity() {
         override fun onTrackClick(position: Int) {
             Snackbar.make(
                 recycleViewTracks!!,
-                "$position ${trackList[position].trackName}",
+                "Добавлен ${trackList[position].trackName}",
                 Snackbar.LENGTH_SHORT
             ).show()
             searchHistory.addToSearchHistory(trackList[position])
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                txtSearch?.isSelected = false
-            }
         }
     }
 
     private var musTrackAdapter = SearchTrackAdapter(this.trackList, recyclerListener)
-
-
-    // Заполнение списка треков
-    //private fun fillTrackList(): ArrayList<Track>
 
     // Функция вызывается внутри call.enqueue
     private var doAfterSearch: (Msgcode) -> Unit = {
@@ -107,7 +100,7 @@ class ActivitySearch : AppCompatActivity() {
         this.stubLayout?.visibility = View.GONE // Hide Layout with our Stub
     }
 
-    private fun clearTrackList(){
+    private fun clearTrackList() {
         // Очищаем трэкЛист и RecyclerView
         this.trackList.clear()
         this.musTrackAdapter.notifyDataSetChanged()
@@ -152,7 +145,7 @@ class ActivitySearch : AppCompatActivity() {
                 btnCls.isVisible = !s.isNullOrEmpty()
                 searchHistory.setVisibility(s.isNullOrEmpty())
 
-                if(s.isNullOrEmpty()){
+                if (s.isNullOrEmpty()) {
                     clearTrackList()
                     searchHistory.showAllSearchHistory()
                 }
