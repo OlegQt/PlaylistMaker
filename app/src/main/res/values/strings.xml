@@ -15,7 +15,8 @@
     <string name="connection_troubles">Проблемы со связью</string>
     <string name="loading_fail">\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="reload">Обновить</string>
-
+    <string name="clear_history">Очистить историю</string>
+    <string name="you_have_search">Вы искали</string>
 
     <string name="android_developer_course" translatable="false">https://practicum.yandex.ru/android-developer/</string>
     <string name="android_yandex_offer" translatable="false"> https://yandex.ru/legal/practicum_offer/ </string>

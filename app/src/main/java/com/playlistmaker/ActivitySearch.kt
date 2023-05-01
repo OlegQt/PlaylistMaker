@@ -107,6 +107,12 @@ class ActivitySearch : AppCompatActivity() {
         this.stubLayout?.visibility = View.GONE // Hide Layout with our Stub
     }
 
+    private fun clearTrackList(){
+        // Очищаем трэкЛист и RecyclerView
+        this.trackList.clear()
+        this.musTrackAdapter.notifyDataSetChanged()
+    }
+
     private fun showSearchResults(songName: String) {
         // Сохраняю эту функцию на случай, если придется отказаться от лямбды
         // Или добавить какой-то доп. функционал
@@ -145,6 +151,11 @@ class ActivitySearch : AppCompatActivity() {
                 strSearch = s.toString() // Сохраняем значение введенного текста
                 btnCls.isVisible = !s.isNullOrEmpty()
                 searchHistory.setVisibility(s.isNullOrEmpty())
+
+                if(s.isNullOrEmpty()){
+                    clearTrackList()
+                    searchHistory.showAllSearchHistory()
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -162,8 +173,9 @@ class ActivitySearch : AppCompatActivity() {
         txtSearch?.addTextChangedListener(txtSearchWatcher)
 
         txtSearch?.setOnFocusChangeListener { view, hasFocus ->
-            //Snackbar.make(recycleViewTracks!!,"$hasFocus", Toast.LENGTH_SHORT).show()
             searchHistory.setVisibility(hasFocus)
+            searchHistory.showAllSearchHistory()
+
         }
 
         // Нажатие на конпку ОК на клавиатуре
@@ -182,9 +194,7 @@ class ActivitySearch : AppCompatActivity() {
                 getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(txtSearch?.windowToken, 0)
 
-            // Очищаем трэкЛист и RecyclerView
-            this.trackList.clear()
-            this.musTrackAdapter.notifyDataSetChanged()
+            clearTrackList()
         }
 
     }

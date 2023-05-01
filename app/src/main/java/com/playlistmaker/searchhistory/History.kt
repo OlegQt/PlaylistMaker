@@ -1,41 +1,56 @@
 package com.playlistmaker.searchhistory
 
-import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.playlistmaker.ActivitySearch
+import com.playlistmaker.Logic.SearchTrackAdapter
 import com.playlistmaker.Logic.Track
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
 
 class History {
-    private val trackHistoryList: MutableList<Track> = mutableListOf()
-    lateinit var txtHistory: TextView
+    private val trackHistoryList: ArrayList<Track> = arrayListOf()
+    private lateinit var btnClearHistory: Button
+    private lateinit var loutHistory: LinearLayout
+    private lateinit var recyclerHistory: RecyclerView
 
-    init {
-        loadHistory()
+
+    private val listener = object : SearchTrackAdapter.OnTrackClickListener {
+        override fun onTrackClick(position: Int) {
+            //
+        }
     }
+    private val adapterHistory = SearchTrackAdapter(trackHistoryList, listener)
+
 
     fun deployExtraUi(activity: ActivitySearch) {
         // Эта функция вызывается в OnCreate активити
-        txtHistory = activity.findViewById<TextView>(R.id.history)
+        btnClearHistory = activity.findViewById(R.id.btn_clear_history)
+        loutHistory = activity.findViewById(R.id.history_layout)
+        recyclerHistory = activity.findViewById(R.id.history_search_recycle_view)
+
+
+        val musLayOut = LinearLayoutManager(activity)
+        musLayOut.orientation = RecyclerView.VERTICAL
+        recyclerHistory.layoutManager = musLayOut
+        recyclerHistory.adapter = adapterHistory
+
+        btnClearHistory.setOnClickListener { clearHistory() }
+
         loadHistory() // Подгружаем историю поиска
-        showAllSearchHistory() // Отобржаем историю поиска
-
-        // Временная функция для очистки истории
-        txtHistory.setOnLongClickListener() {
-            clearHistory()
-            true
-        }
-
+        //showAllSearchHistory() // Отобржаем историю поиска
     }
 
     fun addToSearchHistory(track: Track) {
         // Search if track is already exists, returns track index in list
         // Return -1 if no such element was found.
-        var res = trackHistoryList.indexOf(track)
+        val res = trackHistoryList.indexOf(track)
         if (res != -1) {
             // Ниже реализовал смещение трека на первую позицию
             val temporaryTrack = trackHistoryList[res]
@@ -48,28 +63,23 @@ class History {
             if (trackHistoryList.size > 10) trackHistoryList.removeLast()
         }
 
-        showAllSearchHistory() // Show history in View
         saveHistory()  // Save history to sharedPreferences
     }
 
     fun setVisibility(visibility: Boolean) {
-        if (visibility) txtHistory.visibility = View.VISIBLE
-        else txtHistory.visibility = View.VISIBLE
+        if (visibility and trackHistoryList.isNotEmpty()) {
+            loutHistory.visibility = View.VISIBLE
+        } else loutHistory.visibility = View.GONE
+
     }
 
-    private fun showAllSearchHistory() {
-        val sb: StringBuilder = java.lang.StringBuilder()
-        var inter = 0;
-        this.trackHistoryList.forEach {
-            sb.append((++inter).toString())
-            sb.append(it.trackName)
-            sb.append("\n")
-        }
-        this.txtHistory.text = sb.toString()
+    fun showAllSearchHistory() {
+        setVisibility(true)
+        adapterHistory.notifyDataSetChanged()
     }
 
     private fun saveHistory() {
-        if (!trackHistoryList.isNullOrEmpty()) {
+        if (trackHistoryList.isNotEmpty()) {
             val jSonHistory = Gson().toJson(trackHistoryList)
             App.instance.sharedPreferences.edit().putString(App.SEARCH_HISTORY, jSonHistory).apply()
         }
