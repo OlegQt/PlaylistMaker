@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.Logic.SearchTrackAdapter
 import com.playlistmaker.Logic.Track
 import com.playlistmaker.itunes.ItunesMusic
+import com.playlistmaker.searchhistory.History
 
 class ActivitySearch : AppCompatActivity() {
     private val TAG: String = "DEBUG"
@@ -28,11 +29,16 @@ class ActivitySearch : AppCompatActivity() {
 
     private var trackList: ArrayList<Track> = ArrayList()
     private var itunesMusic = ItunesMusic()
+    private var searchHistory:History= History()
+
+    init {
+    }
 
     private val recyclerListener = object :SearchTrackAdapter.OnTrackClickListener{
         override fun onTrackClick(position: Int) {
             Snackbar.make(recycleViewTracks!!,"$position ${trackList[position].trackName}" +
                     " ${trackList[position].trackId}", Toast.LENGTH_SHORT).show()
+            searchHistory.addToSearchHistory(trackList[position])
         }
     }
 
@@ -113,6 +119,9 @@ class ActivitySearch : AppCompatActivity() {
         stubLayout = findViewById(R.id.stub_layout)
         recycleViewTracks = findViewById(R.id.search_recycle_view)
         btnReload = findViewById(R.id.btn_reload)
+
+        searchHistory.deployExtraUi(this)
+
 
         // Создаем адаптер
         val musLayOut = LinearLayoutManager(this)
