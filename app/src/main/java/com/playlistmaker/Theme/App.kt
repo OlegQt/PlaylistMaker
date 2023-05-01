@@ -15,6 +15,8 @@ class App : Application() {
         // Константы времени компиляции
         const val PREFERENCES = "APP_PREFERENCES"
         const val DARK_MODE_KEY = "key_for_dark_mode_switch"
+        const val SEARCH_HISTORY = "key_for_search_history"
+        const val TAG_LOG = "DEBUG"
 
         // Для удобного доступа к App
         lateinit var instance: App

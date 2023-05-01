@@ -1,5 +1,6 @@
 package com.playlistmaker
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -29,21 +30,26 @@ class ActivitySearch : AppCompatActivity() {
 
     private var trackList: ArrayList<Track> = ArrayList()
     private var itunesMusic = ItunesMusic()
-    private var searchHistory:History= History()
+    private var searchHistory: History = History()
 
     init {
     }
 
-    private val recyclerListener = object :SearchTrackAdapter.OnTrackClickListener{
+    private val recyclerListener = object : SearchTrackAdapter.OnTrackClickListener {
         override fun onTrackClick(position: Int) {
-            Snackbar.make(recycleViewTracks!!,"$position ${trackList[position].trackName}" +
-                    " ${trackList[position].trackId}", Toast.LENGTH_SHORT).show()
+            Snackbar.make(
+                recycleViewTracks!!,
+                "$position ${trackList[position].trackName}",
+                Snackbar.LENGTH_SHORT
+            ).show()
             searchHistory.addToSearchHistory(trackList[position])
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                txtSearch?.isSelected = false
+            }
         }
     }
 
-    private var musTrackAdapter = SearchTrackAdapter(this.trackList,recyclerListener)
-
+    private var musTrackAdapter = SearchTrackAdapter(this.trackList, recyclerListener)
 
 
     // Заполнение списка треков
@@ -138,6 +144,7 @@ class ActivitySearch : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 strSearch = s.toString() // Сохраняем значение введенного текста
                 btnCls.isVisible = !s.isNullOrEmpty()
+                searchHistory.setVisibility(s.isNullOrEmpty())
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -155,7 +162,8 @@ class ActivitySearch : AppCompatActivity() {
         txtSearch?.addTextChangedListener(txtSearchWatcher)
 
         txtSearch?.setOnFocusChangeListener { view, hasFocus ->
-            Snackbar.make(recycleViewTracks!!,"$hasFocus", Toast.LENGTH_SHORT).show()
+            //Snackbar.make(recycleViewTracks!!,"$hasFocus", Toast.LENGTH_SHORT).show()
+            searchHistory.setVisibility(hasFocus)
         }
 
         // Нажатие на конпку ОК на клавиатуре
