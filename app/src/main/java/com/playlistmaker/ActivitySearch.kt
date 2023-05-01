@@ -16,12 +16,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.Logic.SearchTrackAdapter
 import com.playlistmaker.Logic.Track
+import com.playlistmaker.Theme.App
 import com.playlistmaker.itunes.ItunesMusic
 import com.playlistmaker.searchhistory.History
 
 class ActivitySearch : AppCompatActivity() {
-    private val TAG: String = "DEBUG"
-
     private var stubLayout: View? = null
     private var strSearch: String = String()
     private var txtSearch: EditText? = null
@@ -31,9 +30,6 @@ class ActivitySearch : AppCompatActivity() {
     private var trackList: ArrayList<Track> = ArrayList()
     private var itunesMusic = ItunesMusic()
     private var searchHistory: History = History()
-
-    init {
-    }
 
     private val recyclerListener = object : SearchTrackAdapter.OnTrackClickListener {
         override fun onTrackClick(position: Int) {
@@ -59,7 +55,7 @@ class ActivitySearch : AppCompatActivity() {
                 this.modifyTrackList()
             }
         } else if (it == Msgcode.Failure) {
-            Log.d(TAG, "Some error occurred")
+            Log.d(App.TAG_LOG, "Some error occurred")
             this.showStubConnectionTroubles()
         }
     }
@@ -109,7 +105,7 @@ class ActivitySearch : AppCompatActivity() {
     private fun showSearchResults(songName: String) {
         // Сохраняю эту функцию на случай, если придется отказаться от лямбды
         // Или добавить какой-то доп. функционал
-        Log.d(TAG, "Keyboard ok button")
+        Log.d(App.TAG_LOG, "Keyboard ok button")
         itunesMusic.search(songName, this.doAfterSearch)
     }
 
@@ -175,7 +171,6 @@ class ActivitySearch : AppCompatActivity() {
         txtSearch?.setOnEditorActionListener { textView, i, keyEvent ->
             if (i == EditorInfo.IME_ACTION_DONE) {
                 showSearchResults(textView.text.toString())
-                true
             }
             false
         }
