@@ -19,12 +19,14 @@ class History {
     }
 
     fun deployExtraUi(activity: ActivitySearch) {
+        // Эта функция вызывается в OnCreate активити
         txtHistory = activity.findViewById<TextView>(R.id.history)
-        loadHistory()
-        showAllSearchHistory()
+        loadHistory() // Подгружаем историю поиска
+        showAllSearchHistory() // Отобржаем историю поиска
 
+        // Временная функция для очистки истории
         txtHistory.setOnLongClickListener() {
-            App.instance.sharedPreferences.edit().remove(App.SEARCH_HISTORY).apply()
+            clearHistory()
             true
         }
 
@@ -34,15 +36,11 @@ class History {
         // Search if track is already exists, returns track index in list
         // Return -1 if no such element was found.
         var res = trackHistoryList.indexOf(track)
-
-        // If track is new fo historyList (res == null)
         if (res != -1) {
-            // Toast.makeText(App.instance.baseContext, "Already in history ", Toast.LENGTH_SHORT).show()
             // Ниже реализовал смещение трека на первую позицию
             val temporaryTrack = trackHistoryList[res]
             trackHistoryList.removeAt(res)
             trackHistoryList.add(0, temporaryTrack)
-
         } else {
             // Добавляем трэки в начало
             // Если треков больше 10 удаляем заключительный
@@ -51,13 +49,12 @@ class History {
         }
 
         showAllSearchHistory() // Show history in View
-
         saveHistory()  // Save history to sharedPreferences
     }
 
-    fun setVisibility(visibility:Boolean){
+    fun setVisibility(visibility: Boolean) {
         if (visibility) txtHistory.visibility = View.VISIBLE
-        else txtHistory.visibility = View.GONE
+        else txtHistory.visibility = View.VISIBLE
     }
 
     private fun showAllSearchHistory() {
@@ -87,11 +84,17 @@ class History {
             "EmptyHistory",
             Toast.LENGTH_SHORT
         ).show()
-        else{
+        else {
             trackHistoryList.clear()
             data.forEach {
                 trackHistoryList.add(it)
             }
         }
+    }
+
+    private fun clearHistory() {
+        App.instance.sharedPreferences.edit().remove(App.SEARCH_HISTORY).apply()
+        trackHistoryList.clear()
+        showAllSearchHistory()
     }
 }
