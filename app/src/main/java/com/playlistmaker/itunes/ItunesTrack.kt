@@ -8,14 +8,16 @@ data class ItunesTrack(
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,
-    val artworkUrl100: String
+    val artworkUrl100: String,
+    val trackId:Long
 ) {
     fun toTrack(): Track {
         return Track(
             this.trackName,
             this.artistName,
             this.timeToString(trackTimeMillis), // Need fun
-            this.artworkUrl100
+            this.artworkUrl100,
+            this.trackId
         )
     }
     fun timeToString(time:Long)= SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)

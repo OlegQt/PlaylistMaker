@@ -3,10 +3,14 @@ package com.playlistmaker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
+import com.playlistmaker.Theme.App
 
 class ActivitySettings : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,10 +21,24 @@ class ActivitySettings : AppCompatActivity() {
         val imgShare: ImageView = findViewById(R.id.img_share)
         val imgSupport = findViewById<View>(R.id.ask_support)
         val imgAgreement: ImageView = findViewById(R.id.agreement)
+        val switchNightTheme:SwitchCompat = findViewById(R.id.night_theme_switch)
         /////////////////////////////////////////////////////////
         // Кнопка назад
         /////////////////////////////////////////////////////////
         imgBack.setOnClickListener { finish() }
+
+        /////////////////////////////////////////////////////////
+        // Переключатель темной темы
+        /////////////////////////////////////////////////////////
+
+        // Переключаем свитч в положение их сохраненного значения
+        switchNightTheme.isChecked = App.instance.darkTheme
+
+        // Вешаем слушатель переключателя темы
+        switchNightTheme.setOnCheckedChangeListener { compoundButton, b ->
+            Toast.makeText(this,b.toString(),Toast.LENGTH_SHORT).show()
+            App.instance.switchTheme(b)
+        }
 
         /////////////////////////////////////////////////////////
         // Кнопка поделиться приложением

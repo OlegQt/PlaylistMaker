@@ -27,4 +27,6 @@
     <dimen name="search_stub_btn_hor_pad">14dp</dimen>
     <dimen name="search_stub_btn_txt_size">14sp</dimen>
 
+    <dimen name="history_article_top_margin">50dp</dimen>
+
 </resources>
