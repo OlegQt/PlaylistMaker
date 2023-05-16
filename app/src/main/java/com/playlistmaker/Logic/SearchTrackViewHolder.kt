@@ -45,7 +45,7 @@ class SearchTrackViewHolder(
         Glide
             .with(item.context)
             .load(musTrack.artworkUrl100)
-            .placeholder(R.drawable.search_pic)
+            .placeholder(R.drawable.placeholder_no_track)
             .centerCrop()
             .transform(RoundedCorners(picCornerRad.toInt())) //Params: roundingRadius – the corner radius (in device-specific pixels).
             .into(imgArtCover)
