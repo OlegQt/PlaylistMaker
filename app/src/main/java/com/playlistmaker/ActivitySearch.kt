@@ -1,5 +1,6 @@
 package com.playlistmaker
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -17,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.Logic.SearchTrackAdapter
 import com.playlistmaker.Logic.Track
 import com.playlistmaker.Theme.App
+import com.playlistmaker.Theme.Screen
 import com.playlistmaker.itunes.ItunesMusic
 import com.playlistmaker.itunes.ItunesTrack
 import com.playlistmaker.searchhistory.History
@@ -28,30 +30,16 @@ class ActivitySearch : AppCompatActivity() {
     private var recycleViewTracks: RecyclerView? = null
     private var btnReload: Button? = null
 
+    // Основной трэк лист, данные загружаются из поиска
     private var trackList: ArrayList<ItunesTrack> = ArrayList()
     private var itunesMusic = ItunesMusic()
     private var searchHistory: History = History()
 
-    private val recyclerListener = object : SearchTrackAdapter.OnTrackClickListener {
-        override fun onTrackClick(position: Int) {
-            val string = with(StringBuilder()){
-                append("${trackList[position].trackName}\n")
-                append("${trackList[position].getStringTime()}\n")
-                append("${trackList[position].artistName}\n")
-                append("${trackList[position].collectionName}\n")
-                append("${trackList[position].country}\n")
-                append("${trackList[position].primaryGenreName}\n")
-            }
-            Snackbar.make(
-                recycleViewTracks!!,
-                "Add $string",
-                Snackbar.LENGTH_SHORT
-            ).setTextMaxLines(20).show()
-            searchHistory.addToSearchHistory(trackList[position])
-        }
+    private fun startPlayer(){
+        startActivity(Intent(App.instance,ActivityPlayer::class.java))
     }
 
-    private var musTrackAdapter = SearchTrackAdapter(this.trackList, recyclerListener)
+    private lateinit var musTrackAdapter:SearchTrackAdapter
 
     // Функция вызывается внутри call.enqueue
     private var doAfterSearch: (Msgcode) -> Unit = {
@@ -133,11 +121,19 @@ class ActivitySearch : AppCompatActivity() {
         searchHistory.deployExtraUi(this)
 
 
-        // Создаем адаптер
+        // Создаем recyclerView
+        val pL = object :SearchTrackAdapter.OnTrackClickListener{
+            override fun onTrackClick(position: Int) {
+                startPlayer()
+            }
+
+        }
+        this.musTrackAdapter = SearchTrackAdapter(this.trackList, pL)
+
         val musLayOut = LinearLayoutManager(this)
         musLayOut.orientation = RecyclerView.VERTICAL
         recycleViewTracks?.layoutManager = musLayOut
-        recycleViewTracks?.adapter = this.musTrackAdapter
+        recycleViewTracks?.adapter = musTrackAdapter
 
         // Анонимный
         val txtSearchWatcher = object : TextWatcher {
@@ -162,7 +158,10 @@ class ActivitySearch : AppCompatActivity() {
         }
 
         // Вешаем слушателей на элелементы
-        btnBack.setOnClickListener { finish() }
+        btnBack.setOnClickListener {
+            App.instance.saveCurrentScreen(Screen.MAIN) // Сохраняем экран
+            finish()
+        }
 
         btnReload?.setOnClickListener {
             if (!txtSearch?.text.isNullOrEmpty()) showSearchResults(txtSearch?.text.toString())
@@ -193,6 +192,9 @@ class ActivitySearch : AppCompatActivity() {
 
             clearTrackList()
         }
+
+        // Сохраняем текущий экран в sharedPrefs
+        App.instance.saveCurrentScreen(Screen.SEARCH)
 
     }
 

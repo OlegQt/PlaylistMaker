@@ -23,6 +23,8 @@ class History {
     private val listener = object : SearchTrackAdapter.OnTrackClickListener {
         override fun onTrackClick(position: Int) {
             //
+            val track = trackHistoryList[position]
+
         }
     }
     private val adapterHistory = SearchTrackAdapter(trackHistoryList, listener)
