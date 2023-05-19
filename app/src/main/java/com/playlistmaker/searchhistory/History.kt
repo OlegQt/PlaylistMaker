@@ -11,9 +11,10 @@ import com.playlistmaker.Logic.SearchTrackAdapter
 import com.playlistmaker.Logic.Track
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
+import com.playlistmaker.itunes.ItunesTrack
 
 class History {
-    private val trackHistoryList: ArrayList<Track> = arrayListOf()
+    private val trackHistoryList: ArrayList<ItunesTrack> = arrayListOf()
     private lateinit var btnClearHistory: Button
     private lateinit var loutHistory: LinearLayout
     private lateinit var recyclerHistory: RecyclerView
@@ -44,7 +45,7 @@ class History {
         loadHistory() // Подгружаем историю поиска
     }
 
-    fun addToSearchHistory(track: Track) {
+    fun addToSearchHistory(track: ItunesTrack) {
         // Search if track is already exists, returns track index in list
         // Return -1 if no such element was found.
         val res = trackHistoryList.indexOf(track)
@@ -87,7 +88,7 @@ class History {
     private fun loadHistory() {
         val jSonHistory = App.instance.sharedPreferences.getString(App.SEARCH_HISTORY, "")
 
-        val data = Gson().fromJson(jSonHistory, Array<Track>::class.java)
+        val data = Gson().fromJson(jSonHistory, Array<ItunesTrack>::class.java)
         if (data.isNullOrEmpty()) {
             // Message about empty history
         }

@@ -18,6 +18,7 @@ import com.playlistmaker.Logic.SearchTrackAdapter
 import com.playlistmaker.Logic.Track
 import com.playlistmaker.Theme.App
 import com.playlistmaker.itunes.ItunesMusic
+import com.playlistmaker.itunes.ItunesTrack
 import com.playlistmaker.searchhistory.History
 
 class ActivitySearch : AppCompatActivity() {
@@ -27,7 +28,7 @@ class ActivitySearch : AppCompatActivity() {
     private var recycleViewTracks: RecyclerView? = null
     private var btnReload: Button? = null
 
-    private var trackList: ArrayList<Track> = ArrayList()
+    private var trackList: ArrayList<ItunesTrack> = ArrayList()
     private var itunesMusic = ItunesMusic()
     private var searchHistory: History = History()
 
@@ -35,7 +36,7 @@ class ActivitySearch : AppCompatActivity() {
         override fun onTrackClick(position: Int) {
             val string = with(StringBuilder()){
                 append("${trackList[position].trackName}\n")
-                append("${trackList[position].trackTime}\n")
+                append("${trackList[position].getStringTime()}\n")
                 append("${trackList[position].artistName}\n")
                 append("${trackList[position].collectionName}\n")
                 append("${trackList[position].country}\n")
@@ -97,7 +98,7 @@ class ActivitySearch : AppCompatActivity() {
         this.trackList.clear() // Очищаем трэк лист от предыдущего запроса
         // Ниже переводим формат в читабельный для View Holder и Адаптера и заполняем трэк лист
         this.itunesMusic.trackLst?.forEach { trackJSON ->
-            this.trackList.add(trackJSON.toTrack())
+            this.trackList.add(trackJSON)
         }
         this.musTrackAdapter.notifyDataSetChanged() // Уведомляем адаптер о необходимости перерисовки
         this.recycleViewTracks?.visibility = View.VISIBLE // Show RecyclerView

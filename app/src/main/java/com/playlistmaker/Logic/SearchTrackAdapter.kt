@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
+import com.playlistmaker.itunes.ItunesTrack
 
-class SearchTrackAdapter(private val trackList: ArrayList<Track>,private var onTrackClickListener:OnTrackClickListener) :
+class SearchTrackAdapter(private val trackList: ArrayList<ItunesTrack>,private var onTrackClickListener:OnTrackClickListener) :
     Adapter<SearchTrackViewHolder>() {
 
     interface OnTrackClickListener {
@@ -34,7 +35,7 @@ class SearchTrackAdapter(private val trackList: ArrayList<Track>,private var onT
 
     override fun getItemCount() =trackList.size
 
-    fun getItem(position:Int):Track{
+    fun getItem(position:Int):ItunesTrack{
         return trackList[position]
     }
 }

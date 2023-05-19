@@ -28,5 +28,6 @@ data class ItunesTrack(
             this.country
         )
     }
-    fun timeToString(time:Long)= SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
+    fun timeToString(time:Long): String = SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
+    fun getStringTime():String = this.timeToString(this.trackTimeMillis)
 }
