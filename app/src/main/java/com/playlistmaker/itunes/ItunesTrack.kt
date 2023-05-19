@@ -21,7 +21,11 @@ data class ItunesTrack(
             this.artistName,
             this.timeToString(trackTimeMillis), // Need fun
             this.artworkUrl100,
-            this.trackId
+            this.trackId,
+            this.collectionName,
+            this.releaseDate,
+            this.primaryGenreName,
+            this.country
         )
     }
     fun timeToString(time:Long)= SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)

@@ -33,11 +33,19 @@ class ActivitySearch : AppCompatActivity() {
 
     private val recyclerListener = object : SearchTrackAdapter.OnTrackClickListener {
         override fun onTrackClick(position: Int) {
+            val string = with(StringBuilder()){
+                append("${trackList[position].trackName}\n")
+                append("${trackList[position].trackTime}\n")
+                append("${trackList[position].artistName}\n")
+                append("${trackList[position].collectionName}\n")
+                append("${trackList[position].country}\n")
+                append("${trackList[position].primaryGenreName}\n")
+            }
             Snackbar.make(
                 recycleViewTracks!!,
-                "Добавлен ${trackList[position].trackName}",
+                "Add $string",
                 Snackbar.LENGTH_SHORT
-            ).show()
+            ).setTextMaxLines(20).show()
             searchHistory.addToSearchHistory(trackList[position])
         }
     }
