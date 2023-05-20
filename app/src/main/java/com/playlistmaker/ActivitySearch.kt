@@ -103,7 +103,7 @@ class ActivitySearch : AppCompatActivity() {
     private fun clearTrackList() {
         // Очищаем трэкЛист и RecyclerView
         this.trackList.clear()
-        this.musTrackAdapter.notifyDataSetChanged()
+        this.musTrackAdapter.notifyItemRangeRemoved(0,trackList.size)
     }
 
     private fun showSearchResults(songName: String) {
@@ -142,7 +142,7 @@ class ActivitySearch : AppCompatActivity() {
         }
     }
 
-    private fun createSearchTrackAdapter(){
+    private fun createSearchTrackAdapter() {
         // Создаем recyclerView
         val pL = object : SearchTrackAdapter.OnTrackClickListener {
             override fun onTrackClick(position: Int) {

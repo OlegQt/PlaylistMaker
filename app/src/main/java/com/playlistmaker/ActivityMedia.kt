@@ -16,7 +16,7 @@ class ActivityMedia : AppCompatActivity() {
 
     override fun finish() {
         super.finish()
-        Toast.makeText(this,"finish",Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "finish", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {

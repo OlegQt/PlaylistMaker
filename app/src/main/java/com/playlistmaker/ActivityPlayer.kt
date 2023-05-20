@@ -21,19 +21,21 @@ class ActivityPlayer : AppCompatActivity() {
 
     private fun showTrackInfo() {
         val track = App.instance.currentMusicTrack
-        if (track!=null){
+        if (track != null) {
             binding.playerTrackName.text = track.trackName
             binding.playerArtistName.text = track.artistName
 
-            binding.PlayerLblAlbum.text = if(track.collectionName.isNullOrEmpty()) "" else track.collectionName
+            binding.PlayerLblAlbum.text =
+                if (track.collectionName.isNullOrEmpty()) "" else track.collectionName
             binding.PlayerLblGenre.text = track.primaryGenreName
             binding.PlayerLblCountry.text = track.country
-            binding.PlayerLblFullDuration.text=track.getStringTime()
-            binding.PlayerLblYear.text=track.releaseDate.substring(0,4)
+            binding.PlayerLblFullDuration.text = track.getStringTime()
+            binding.PlayerLblYear.text = track.releaseDate.substring(0, 4)
 
-            val art = track.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
-            val px = (this.baseContext.resources.displayMetrics.densityDpi/DisplayMetrics.DENSITY_DEFAULT)
-            val radius = 8*px
+            val art = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
+            val px =
+                (this.baseContext.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
+            val radius = 8 * px
             Glide
                 .with(binding.root.context)
                 .load(art)

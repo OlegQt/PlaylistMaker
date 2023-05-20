@@ -10,23 +10,8 @@ class App : Application() {
     var darkTheme = true;
     var currentMusicTrack: ItunesTrack? = null
     var currentScreen: String = String()
-
     lateinit var sharedPreferences: SharedPreferences
 
-    companion object {
-        // Константы времени компиляции
-        const val PREFERENCES = "APP_PREFERENCES"
-        const val DARK_MODE_KEY = "key_for_dark_mode_switch"
-        const val SEARCH_HISTORY = "key_for_search_history"
-        const val CURRENT_SCREEN = "key_for_saving_current_string"
-        const val CURRENT_PLAYING_TRACK = "key_for_saving_current_track"
-        const val TAG_LOG = "DEBUG"
-
-        // Для удобного доступа к App
-        lateinit var instance: App
-            private set // Менять значение можно только внутри этого класса
-
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -66,10 +51,25 @@ class App : Application() {
         sharedPreferences.edit().putString(CURRENT_PLAYING_TRACK, jsonTrack).apply()
     }
 
-    fun loadCurrentPlayingTrack(): ItunesTrack? {
+    private fun loadCurrentPlayingTrack(): ItunesTrack? {
         val jsonTrack = sharedPreferences.getString(CURRENT_PLAYING_TRACK, "")
         return if (!jsonTrack.isNullOrEmpty()) {
             Gson().fromJson(jsonTrack, ItunesTrack::class.java)
         } else null
+    }
+
+    companion object {
+        // Константы времени компиляции
+        const val PREFERENCES = "APP_PREFERENCES"
+        const val DARK_MODE_KEY = "key_for_dark_mode_switch"
+        const val SEARCH_HISTORY = "key_for_search_history"
+        const val CURRENT_SCREEN = "key_for_saving_current_string"
+        const val CURRENT_PLAYING_TRACK = "key_for_saving_current_track"
+        const val TAG_LOG = "DEBUG"
+
+        // Для удобного доступа к App
+        lateinit var instance: App
+            private set // Менять значение можно только внутри этого класса
+
     }
 }
