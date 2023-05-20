@@ -6,26 +6,23 @@ import android.widget.Button
 import android.widget.ImageView
 import com.playlistmaker.Theme.App
 import com.playlistmaker.Theme.Screen
+import com.playlistmaker.databinding.ActivityPlayerBinding
 
 class ActivityPlayer : AppCompatActivity() {
-    lateinit var btnBack: ImageView
+    lateinit var binding:ActivityPlayerBinding
 
-    fun deployUi() {
-        btnBack = findViewById(R.id.player_btn_back)
-    }
 
-    fun setBehaviour(){
-        btnBack.setOnClickListener { finish() }
+    private fun setBehaviour(){
+        binding.playerBtnBack.setOnClickListener { finish() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Сохраняем текущий экран как главный в sharedPrefs
         App.instance.saveCurrentScreen(Screen.PLAYER)
-
-        deployUi()
         setBehaviour()
     }
 

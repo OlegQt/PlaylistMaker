@@ -127,6 +127,7 @@ class ActivitySearch : AppCompatActivity() {
             object : SearchTrackAdapter.OnTrackClickListener {
                 override fun onTrackClick(position: Int) {
                     Toast.makeText(baseContext, "Click", Toast.LENGTH_LONG).show()
+                    startPlayerActivity()
                 }
             })
         val musLayOut = LinearLayoutManager(this)
