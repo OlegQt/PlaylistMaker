@@ -1,7 +1,6 @@
 package com.playlistmaker
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,9 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.Logic.SearchTrackAdapter
-import com.playlistmaker.Logic.Track
 import com.playlistmaker.Theme.App
 import com.playlistmaker.Theme.Screen
 import com.playlistmaker.itunes.ItunesMusic
@@ -30,6 +27,12 @@ class ActivitySearch : AppCompatActivity() {
     private var recycleViewTracks: RecyclerView? = null
     private var btnReload: Button? = null
 
+    // Элементы Ui для истории просмотра треков
+    private lateinit var btnClearHistory: Button
+    private lateinit var loutHistory: LinearLayout
+    private lateinit var recyclerHistory: RecyclerView
+
+
     // Переменная trackList хранит список треков, найденных по запросу в iTunesMedia
     private var trackList: ArrayList<ItunesTrack> = ArrayList()
     private var itunesMusic = ItunesMusic()
@@ -38,7 +41,8 @@ class ActivitySearch : AppCompatActivity() {
     // а так же к их удалению, добавлению
     private var searchHistory: History = History()
 
-    private lateinit var musTrackAdapter:SearchTrackAdapter
+    private lateinit var musTrackAdapter: SearchTrackAdapter
+    private lateinit var searchHistoryTrackAdapter: SearchTrackAdapter
 
     // Функция вызывается внутри call.enqueue
     private var doAfterSearch: (Msgcode) -> Unit = {
@@ -56,8 +60,8 @@ class ActivitySearch : AppCompatActivity() {
         }
     }
 
-    private fun startPlayer(){
-        startActivity(Intent(App.instance,ActivityPlayer::class.java))
+    private fun startPlayerActivity() {
+        startActivity(Intent(App.instance, ActivityPlayer::class.java))
     }
 
     private fun showStubNothingFound() {
@@ -109,6 +113,42 @@ class ActivitySearch : AppCompatActivity() {
         itunesMusic.search(songName, this.doAfterSearch)
     }
 
+    private fun deploySearchHistoryUi() {
+        btnClearHistory = findViewById(R.id.btn_clear_history)
+        loutHistory = findViewById(R.id.history_layout)
+        recyclerHistory = findViewById(R.id.history_search_recycle_view)
+
+        // Подгружаем историю поиска
+        searchHistory.loadHistory()
+
+        // Создаем адаптер для показа истории поиска музыкальных треков
+        // Добавляем туда отдельный листенер на случай описания отдельного поведения для данного recycler
+        searchHistoryTrackAdapter = SearchTrackAdapter(searchHistory.trackHistoryList,
+            object : SearchTrackAdapter.OnTrackClickListener {
+                override fun onTrackClick(position: Int) {
+                    Toast.makeText(baseContext, "Click", Toast.LENGTH_LONG).show()
+                }
+            })
+        val musLayOut = LinearLayoutManager(this)
+        musLayOut.orientation = RecyclerView.VERTICAL
+        recyclerHistory?.layoutManager = musLayOut
+        recyclerHistory?.adapter = searchHistoryTrackAdapter
+
+        btnClearHistory.setOnClickListener {
+            searchHistory.clearHistory()
+            showSearchHistory(true) // Дополнительная перерисовка
+        }
+    }
+
+    fun showSearchHistory(visibility: Boolean) {
+        // Показываем список просмотров только если он не пуст
+        if (visibility and searchHistory.trackHistoryList.isNotEmpty()) {
+            // Load tracks to historyRecycler
+            searchHistoryTrackAdapter.notifyDataSetChanged()
+            loutHistory.visibility = View.VISIBLE
+        } else loutHistory.visibility = View.GONE
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -121,16 +161,14 @@ class ActivitySearch : AppCompatActivity() {
         recycleViewTracks = findViewById(R.id.search_recycle_view)
         btnReload = findViewById(R.id.btn_reload)
 
-        searchHistory.deployExtraUi(this)
-
 
         // Создаем recyclerView
-        val pL = object :SearchTrackAdapter.OnTrackClickListener{
+        val pL = object : SearchTrackAdapter.OnTrackClickListener {
             override fun onTrackClick(position: Int) {
                 // Добавляем трек в историю просмотров
                 searchHistory.addToSearchHistory(trackList[position])
                 // Запускаем плеер
-                startPlayer()
+                startPlayerActivity()
             }
         }
         this.musTrackAdapter = SearchTrackAdapter(this.trackList, pL)
@@ -149,11 +187,11 @@ class ActivitySearch : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 strSearch = s.toString() // Сохраняем значение введенного текста
                 btnCls.isVisible = !s.isNullOrEmpty()
-                searchHistory.setVisibility(s.isNullOrEmpty())
+                showSearchHistory(s.isNullOrEmpty())
 
                 if (s.isNullOrEmpty()) {
                     clearTrackList()
-                    searchHistory.showAllSearchHistory()
+                    showSearchHistory(true)
                 }
             }
 
@@ -174,10 +212,12 @@ class ActivitySearch : AppCompatActivity() {
 
         txtSearch?.addTextChangedListener(txtSearchWatcher)
 
+        // Обработка фокуса у строки поиска треков
+        // Если появился фокус в пустом окне - показать историю поиска
         txtSearch?.setOnFocusChangeListener { view, hasFocus ->
-            searchHistory.setVisibility(hasFocus)
-            searchHistory.showAllSearchHistory()
-
+            showSearchHistory(hasFocus)
+            //searchHistory.setVisibility(hasFocus)
+            //searchHistory.showAllSearchHistory()
         }
 
         // Нажатие на конпку ОК на клавиатуре
@@ -197,6 +237,8 @@ class ActivitySearch : AppCompatActivity() {
 
             clearTrackList()
         }
+
+        deploySearchHistoryUi()
 
         // Сохраняем текущий экран в sharedPrefs
         App.instance.saveCurrentScreen(Screen.SEARCH)
