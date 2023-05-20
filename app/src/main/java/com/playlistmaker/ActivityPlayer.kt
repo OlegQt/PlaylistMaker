@@ -10,6 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.Theme.App
 import com.playlistmaker.Theme.Screen
 import com.playlistmaker.databinding.ActivityPlayerBinding
+import java.text.SimpleDateFormat
 
 class ActivityPlayer : AppCompatActivity() {
     lateinit var binding: ActivityPlayerBinding
@@ -30,11 +31,17 @@ class ActivityPlayer : AppCompatActivity() {
             binding.PlayerLblGenre.text = track.primaryGenreName
             binding.PlayerLblCountry.text = track.country
             binding.PlayerLblFullDuration.text = track.getStringTime()
-            binding.PlayerLblYear.text = track.releaseDate.substring(0, 4)
+
+
+            val format = SimpleDateFormat("yyyy")
+            val time = format.parse(track.releaseDate)
+            val year = format.format(time)
+
+            binding.PlayerLblYear.text = year
 
             val art = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-            val px =
-                (this.baseContext.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
+            val px = (this.baseContext.resources.displayMetrics.densityDpi
+                    / DisplayMetrics.DENSITY_DEFAULT)
             val radius = 8 * px
             Glide
                 .with(binding.root.context)
