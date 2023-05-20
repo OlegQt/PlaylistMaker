@@ -36,7 +36,7 @@ class ActivitySettings : AppCompatActivity() {
 
         // Вешаем слушатель переключателя темы
         switchNightTheme.setOnCheckedChangeListener { compoundButton, b ->
-            Toast.makeText(this,b.toString(),Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this,b.toString(),Toast.LENGTH_SHORT).show()
             App.instance.switchTheme(b)
         }
 

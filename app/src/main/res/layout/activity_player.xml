@@ -49,7 +49,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/no_track_found"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintBottom_toBottomOf="@id/player_track_name"
+        app:layout_constraintBottom_toTopOf="@id/player_track_name"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
         app:layout_constraintTop_toTopOf="parent" />
@@ -128,7 +128,7 @@
         android:id="@+id/Player_txt_full_duration"
         style="@style/player_text_lbl"
         android:layout_marginBottom="16dp"
-        android:text="genre"
+        android:text="@string/duration"
         app:layout_constraintBottom_toTopOf="@id/Player_txt_album"
         app:layout_constraintStart_toStartOf="@id/left_guideline" />
 
@@ -136,7 +136,7 @@
         android:id="@+id/Player_lbl_full_duration"
         style="@style/player_text_lbl"
         android:layout_marginBottom="16dp"
-        android:text="genre"
+        android:text="@string/duration"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintBottom_toTopOf="@id/Player_lbl_album"
         app:layout_constraintEnd_toStartOf="@id/right_guideline" />
@@ -147,7 +147,7 @@
         android:id="@+id/Player_txt_album"
         style="@style/player_text_lbl"
         android:layout_marginBottom="16dp"
-        android:text="genre"
+        android:text="@string/album"
         app:layout_constraintBottom_toTopOf="@id/Player_txt_year"
         app:layout_constraintStart_toStartOf="@id/left_guideline" />
 
@@ -155,7 +155,7 @@
         android:id="@+id/Player_lbl_album"
         style="@style/player_text_lbl"
         android:layout_marginBottom="16dp"
-        android:text="genre"
+        android:text="@string/album"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintBottom_toTopOf="@id/Player_lbl_year"
         app:layout_constraintEnd_toStartOf="@id/right_guideline" />
@@ -166,7 +166,7 @@
         android:id="@+id/Player_txt_year"
         style="@style/player_text_lbl"
         android:layout_marginBottom="16dp"
-        android:text="genre"
+        android:text="@string/song_year"
         app:layout_constraintBottom_toTopOf="@id/Player_txt_genre"
         app:layout_constraintStart_toStartOf="@id/left_guideline" />
 
@@ -174,7 +174,7 @@
         android:id="@+id/Player_lbl_year"
         style="@style/player_text_lbl"
         android:layout_marginBottom="16dp"
-        android:text="genre"
+        android:text="@string/song_year"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintBottom_toTopOf="@id/Player_lbl_genre"
         app:layout_constraintEnd_toStartOf="@id/right_guideline" />
@@ -185,7 +185,7 @@
         android:id="@+id/Player_txt_genre"
         style="@style/player_text_lbl"
         android:layout_marginBottom="16dp"
-        android:text="genre"
+        android:text="@string/song_genre"
         app:layout_constraintBottom_toTopOf="@id/Player_txt_country"
         app:layout_constraintStart_toStartOf="@id/left_guideline" />
 
@@ -193,7 +193,7 @@
         android:id="@+id/Player_lbl_genre"
         style="@style/player_text_lbl"
         android:layout_marginBottom="16dp"
-        android:text="genre"
+        android:text="@string/song_genre"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintBottom_toTopOf="@id/Player_lbl_country"
         app:layout_constraintEnd_toStartOf="@id/right_guideline" />
@@ -203,7 +203,7 @@
         android:id="@+id/Player_txt_country"
         style="@style/player_text_lbl"
         android:layout_marginBottom="28dp"
-        android:text="country"
+        android:text="@string/song_country"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/left_guideline" />
 
@@ -211,7 +211,7 @@
         android:id="@+id/Player_lbl_country"
         style="@style/player_text_lbl"
         android:layout_marginBottom="28dp"
-        android:text="country"
+        android:text="@string/song_country"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/right_guideline" />

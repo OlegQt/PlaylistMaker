@@ -22,6 +22,11 @@
     <string name="android_yandex_offer" translatable="false"> https://yandex.ru/legal/practicum_offer/ </string>
     <string name="share_type" translatable="false"> text/plain </string>
     <string name="student_email_address" translatable="false">xqjh@mail.ru</string>
+    <string name="duration">Длительность</string>
+    <string name="album">Альбом</string>
+    <string name="song_year">Год</string>
+    <string name="song_genre">Жанр</string>
+    <string name="song_country">Страна</string>
 
 
 </resources>

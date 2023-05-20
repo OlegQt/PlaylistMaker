@@ -2,17 +2,14 @@ package com.playlistmaker.Theme
 
 import android.app.Application
 import android.content.SharedPreferences
-import android.util.Log
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.gson.Gson
 import com.playlistmaker.itunes.ItunesTrack
-import java.util.prefs.Preferences
 
 class App : Application() {
     var darkTheme = true;
-    var currentMusicTrack:ItunesTrack? = null
-    var currentScreen:String = String()
+    var currentMusicTrack: ItunesTrack? = null
+    var currentScreen: String = String()
 
     lateinit var sharedPreferences: SharedPreferences
 
@@ -22,7 +19,7 @@ class App : Application() {
         const val DARK_MODE_KEY = "key_for_dark_mode_switch"
         const val SEARCH_HISTORY = "key_for_search_history"
         const val CURRENT_SCREEN = "key_for_saving_current_string"
-        const val CURRENT_MUSIC = "key_for_saving_current_track"
+        const val CURRENT_PLAYING_TRACK = "key_for_saving_current_track"
         const val TAG_LOG = "DEBUG"
 
         // Для удобного доступа к App
@@ -43,7 +40,11 @@ class App : Application() {
         this.switchTheme(darkTheme)
 
         // Грузим текущий экран
-        currentScreen = sharedPreferences.getString(CURRENT_SCREEN,Screen.MAIN.screenName).toString()
+        currentScreen =
+            sharedPreferences.getString(CURRENT_SCREEN, Screen.MAIN.screenName).toString()
+
+        // Грузим играющий трек
+        currentMusicTrack = loadCurrentPlayingTrack()
     }
 
     fun switchTheme(darkThemeMode: Boolean) {
@@ -55,7 +56,20 @@ class App : Application() {
         sharedPreferences.edit().putBoolean(DARK_MODE_KEY, darkThemeMode).apply()
     }
 
-    fun saveCurrentScreen(screen:Screen){
-        sharedPreferences.edit().putString(CURRENT_SCREEN,screen.screenName).apply()
+    fun saveCurrentScreen(screen: Screen) {
+        sharedPreferences.edit().putString(CURRENT_SCREEN, screen.screenName).apply()
+    }
+
+    fun saveCurrentPlayingTrack(trackToSafe: ItunesTrack) {
+        currentMusicTrack = trackToSafe
+        val jsonTrack = Gson().toJson(trackToSafe, ItunesTrack::class.java)
+        sharedPreferences.edit().putString(CURRENT_PLAYING_TRACK, jsonTrack).apply()
+    }
+
+    fun loadCurrentPlayingTrack(): ItunesTrack? {
+        val jsonTrack = sharedPreferences.getString(CURRENT_PLAYING_TRACK, "")
+        return if (!jsonTrack.isNullOrEmpty()) {
+            Gson().fromJson(jsonTrack, ItunesTrack::class.java)
+        } else null
     }
 }

@@ -109,7 +109,7 @@ class ActivitySearch : AppCompatActivity() {
     private fun showSearchResults(songName: String) {
         // Сохраняю эту функцию на случай, если придется отказаться от лямбды
         // Или добавить какой-то доп. функционал
-        Log.d(App.TAG_LOG, "Keyboard ok button")
+        // Log.d(App.TAG_LOG, "Keyboard ok button")
         itunesMusic.search(songName, this.doAfterSearch)
     }
 
@@ -126,7 +126,8 @@ class ActivitySearch : AppCompatActivity() {
         searchHistoryTrackAdapter = SearchTrackAdapter(searchHistory.trackHistoryList,
             object : SearchTrackAdapter.OnTrackClickListener {
                 override fun onTrackClick(position: Int) {
-                    Toast.makeText(baseContext, "Click", Toast.LENGTH_LONG).show()
+                    // Сохраняем трэк и переходим на экран плеера
+                    App.instance.saveCurrentPlayingTrack(searchHistory.trackHistoryList[position])
                     startPlayerActivity()
                 }
             })
@@ -139,6 +140,26 @@ class ActivitySearch : AppCompatActivity() {
             searchHistory.clearHistory()
             showSearchHistory(true) // Дополнительная перерисовка
         }
+    }
+
+    private fun createSearchTrackAdapter(){
+        // Создаем recyclerView
+        val pL = object : SearchTrackAdapter.OnTrackClickListener {
+            override fun onTrackClick(position: Int) {
+                // Добавляем трек в историю просмотров
+                // Трэк добавляется из списка поисковых треков не путать со списком истории поиска
+                searchHistory.addToSearchHistory(trackList[position])
+                App.instance.saveCurrentPlayingTrack(trackList[position])
+                // Запускаем плеер
+                startPlayerActivity()
+            }
+        }
+        this.musTrackAdapter = SearchTrackAdapter(this.trackList, pL)
+
+        val musLayOut = LinearLayoutManager(this)
+        musLayOut.orientation = RecyclerView.VERTICAL
+        recycleViewTracks?.layoutManager = musLayOut
+        recycleViewTracks?.adapter = musTrackAdapter
     }
 
     fun showSearchHistory(visibility: Boolean) {
@@ -163,21 +184,7 @@ class ActivitySearch : AppCompatActivity() {
         btnReload = findViewById(R.id.btn_reload)
 
 
-        // Создаем recyclerView
-        val pL = object : SearchTrackAdapter.OnTrackClickListener {
-            override fun onTrackClick(position: Int) {
-                // Добавляем трек в историю просмотров
-                searchHistory.addToSearchHistory(trackList[position])
-                // Запускаем плеер
-                startPlayerActivity()
-            }
-        }
-        this.musTrackAdapter = SearchTrackAdapter(this.trackList, pL)
-
-        val musLayOut = LinearLayoutManager(this)
-        musLayOut.orientation = RecyclerView.VERTICAL
-        recycleViewTracks?.layoutManager = musLayOut
-        recycleViewTracks?.adapter = musTrackAdapter
+        createSearchTrackAdapter()
 
         // Анонимный
         val txtSearchWatcher = object : TextWatcher {
@@ -217,8 +224,6 @@ class ActivitySearch : AppCompatActivity() {
         // Если появился фокус в пустом окне - показать историю поиска
         txtSearch?.setOnFocusChangeListener { view, hasFocus ->
             showSearchHistory(hasFocus)
-            //searchHistory.setVisibility(hasFocus)
-            //searchHistory.showAllSearchHistory()
         }
 
         // Нажатие на конпку ОК на клавиатуре
@@ -242,7 +247,7 @@ class ActivitySearch : AppCompatActivity() {
         deploySearchHistoryUi()
 
         // Сохраняем текущий экран в sharedPrefs
-        App.instance.saveCurrentScreen(Screen.SEARCH)
+        //App.instance.saveCurrentScreen(Screen.SEARCH)
 
     }
 

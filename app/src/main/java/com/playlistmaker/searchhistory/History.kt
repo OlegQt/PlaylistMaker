@@ -48,8 +48,7 @@ class History {
         val data = Gson().fromJson(jSonHistory, Array<ItunesTrack>::class.java)
         if (data.isNullOrEmpty()) {
             // Message about empty history
-        }
-        else {
+        } else {
             trackHistoryList.clear()
             data.forEach {
                 trackHistoryList.add(it)
