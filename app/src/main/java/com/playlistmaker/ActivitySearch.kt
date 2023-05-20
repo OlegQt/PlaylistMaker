@@ -30,14 +30,13 @@ class ActivitySearch : AppCompatActivity() {
     private var recycleViewTracks: RecyclerView? = null
     private var btnReload: Button? = null
 
-    // Основной трэк лист, данные загружаются из поиска
+    // Переменная trackList хранит список треков, найденных по запросу в iTunesMedia
     private var trackList: ArrayList<ItunesTrack> = ArrayList()
     private var itunesMusic = ItunesMusic()
-    private var searchHistory: History = History()
 
-    private fun startPlayer(){
-        startActivity(Intent(App.instance,ActivityPlayer::class.java))
-    }
+    // В переменной searchHistory осуществляется доступ к истории 10 просмотренных трекам
+    // а так же к их удалению, добавлению
+    private var searchHistory: History = History()
 
     private lateinit var musTrackAdapter:SearchTrackAdapter
 
@@ -55,6 +54,10 @@ class ActivitySearch : AppCompatActivity() {
             Log.d(App.TAG_LOG, "Some error occurred")
             this.showStubConnectionTroubles()
         }
+    }
+
+    private fun startPlayer(){
+        startActivity(Intent(App.instance,ActivityPlayer::class.java))
     }
 
     private fun showStubNothingFound() {
@@ -124,9 +127,11 @@ class ActivitySearch : AppCompatActivity() {
         // Создаем recyclerView
         val pL = object :SearchTrackAdapter.OnTrackClickListener{
             override fun onTrackClick(position: Int) {
+                // Добавляем трек в историю просмотров
+                searchHistory.addToSearchHistory(trackList[position])
+                // Запускаем плеер
                 startPlayer()
             }
-
         }
         this.musTrackAdapter = SearchTrackAdapter(this.trackList, pL)
 
@@ -210,4 +215,9 @@ class ActivitySearch : AppCompatActivity() {
         this.txtSearch?.setText(this.strSearch)
     }
 
+    override fun finish() {
+        super.finish()
+        // Сохраняем данные о переходе на главный экран приложения
+        App.instance.saveCurrentScreen(Screen.MAIN)
+    }
 }

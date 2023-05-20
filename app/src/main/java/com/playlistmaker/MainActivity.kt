@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         btnMedia.setOnClickListener { startActivity(mediaScreen) }
         btnSettings?.setOnClickListener { startActivity(settingsScreen) }
 
+        // Ниже проверяем на каком экране было закрыто приложение в прошлом запуске
+        // Восстанавливаем нужный экран
         when (App.instance.currentScreen) {
             Screen.SEARCH.screenName -> startActivity(searchScreen)
             Screen.PLAYER.screenName -> startActivity(playerScreen)
