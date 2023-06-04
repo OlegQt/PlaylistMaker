@@ -50,6 +50,10 @@ class ActivitySearch : AppCompatActivity() {
     // Переменная для определения доступности списка для нажатий
     private var isClickable = true
 
+    private val runnable:Runnable = Runnable {
+        this.showSearchResults(this.txtSearch?.text.toString())
+    }
+
     // Получаем доступ к главному потоку
     private val handler = Handler(Looper.getMainLooper())
 
@@ -137,7 +141,6 @@ class ActivitySearch : AppCompatActivity() {
         // Или добавить какой-то доп. функционал
         // Log.d(App.TAG_LOG, "Keyboard ok button")
         itunesMusic.search(songName, this.doAfterSearch)
-
         showLoadingStub()
     }
 
@@ -179,6 +182,11 @@ class ActivitySearch : AppCompatActivity() {
             handler.postDelayed({ isClickable = true }, 300)
             true
         } else false
+    }
+
+    private fun searchTrackDebounce(){
+        handler.removeCallbacks(runnable)
+        handler.postDelayed(runnable,3000)
     }
 
     private fun createSearchTrackAdapter() {
@@ -232,25 +240,24 @@ class ActivitySearch : AppCompatActivity() {
 
         // Анонимный
         val txtSearchWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 strSearch = s.toString() // Сохраняем значение введенного текста
-                btnCls.isVisible = !s.isNullOrEmpty()
-                showSearchHistory(s.isNullOrEmpty())
+                btnCls.isVisible = !s.isNullOrEmpty() // Меняем видимость кнопки стирания текста
 
+                // Если строка поиска пуста, показывам историю поиска
                 if (s.isNullOrEmpty()) {
                     clearTrackList()
                     hideAllStubs()
-                    showSearchHistory(true)
+                    showSearchHistory(visibility = true)
+                }
+                else{
+                    showSearchHistory(visibility = false)
+                    searchTrackDebounce()
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {
-                //
-            }
+            override fun afterTextChanged(s: Editable?) {}
         }
 
         // Вешаем слушателей на элелементы
