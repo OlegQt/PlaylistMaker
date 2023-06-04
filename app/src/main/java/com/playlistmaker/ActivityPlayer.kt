@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.Logic.Player
 import com.playlistmaker.Theme.App
 import com.playlistmaker.Theme.Screen
@@ -24,13 +25,18 @@ class ActivityPlayer : AppCompatActivity() {
 
         mediaPlayer.setOnPlayerStateListener { playerState ->
             when (playerState) {
-                Player.STATE_PLAYING -> Toast.makeText(baseContext, "STATE_PLAYING", Toast.LENGTH_SHORT).show()
-                Player.STATE_PREPARED -> Toast.makeText(baseContext, "STATE_PREPARED", Toast.LENGTH_SHORT).show()
+                Player.STATE_PLAYING -> {
+                    Toast.makeText(baseContext, "STATE_PLAYING", Toast.LENGTH_SHORT).show()
+                }
+                Player.STATE_PREPARED -> {
+                    //Toast.makeText(baseContext, "STATE_PREPARED", Toast.LENGTH_SHORT).show()
+                    mediaPlayer.startPlayer()
+                }
                 else -> Toast.makeText(baseContext, "", Toast.LENGTH_SHORT).show()
             }
         }
 
-        mediaPlayer.preparePlayer("в")
+        //mediaPlayer.preparePlayer("в")
 
     }
 
@@ -39,13 +45,17 @@ class ActivityPlayer : AppCompatActivity() {
         if (track != null) {
             binding.playerTrackName.text = track.trackName
             binding.playerArtistName.text = track.artistName
-
-            binding.PlayerLblAlbum.text =
-                if (track.collectionName.isNullOrEmpty()) "" else track.collectionName
+            binding.PlayerLblAlbum.text = track.collectionName.toString()
             binding.PlayerLblGenre.text = track.primaryGenreName
             binding.PlayerLblCountry.text = track.country
             binding.PlayerLblFullDuration.text = track.getStringTime()
 
+
+            Snackbar.make(binding.root,"${track.previewUrl}",Snackbar.LENGTH_INDEFINITE).setTextMaxLines(20)
+                .setAction("Ok") { }
+                .show()
+
+            mediaPlayer.preparePlayer(track.previewUrl)
 
             val format = SimpleDateFormat("yyyy")
             val time = format.parse(track.releaseDate)
@@ -85,5 +95,7 @@ class ActivityPlayer : AppCompatActivity() {
         super.finish()
         // Сохраняем данные о переходе на главный экран приложения
         App.instance.saveCurrentScreen(Screen.MAIN)
+        // Завершаем плеер
+        mediaPlayer.turnOffPlayer()
     }
 }

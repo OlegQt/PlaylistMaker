@@ -7,7 +7,7 @@ import java.io.IOException
 
 class Player() {
     private val mediaPlayer: MediaPlayer = MediaPlayer()
-    private var playerStateListener: onPlayerStateListener? = null
+    private var playerStateListener: OnPlayerStateListener? = null
     private var currentState = STATE_DEFAULT
 
     init {
@@ -23,16 +23,14 @@ class Player() {
         }
     }
 
-    fun setOnPlayerStateListener(listener: onPlayerStateListener) {
+    fun setOnPlayerStateListener(listener: OnPlayerStateListener) {
         this.playerStateListener = listener
     }
 
 
     fun preparePlayer(songUrl: String) {
-        var url =
-            "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/ac/c7/d1/acc7d13f-6634-495f-caf6-491eccb505e8/mzaf_4002676889906514534.plus.aac.p.m4a"
         try {
-            mediaPlayer.setDataSource(url)
+            mediaPlayer.setDataSource(songUrl)
         } catch (e: IOException) {
             Toast.makeText(App.instance, "${e.message}", Toast.LENGTH_SHORT).show()
         }
@@ -76,7 +74,7 @@ class Player() {
         currentState = STATE_DEFAULT
     }
 
-    fun interface onPlayerStateListener {
+    fun interface OnPlayerStateListener {
         fun playerStateChanged(state: Int)
     }
 
