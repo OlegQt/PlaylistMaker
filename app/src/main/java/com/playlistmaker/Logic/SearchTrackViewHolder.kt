@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
+import com.playlistmaker.itunes.ItunesTrack
 
 class SearchTrackViewHolder(
     private val item: View,
@@ -33,10 +34,10 @@ class SearchTrackViewHolder(
     }
 
 
-    fun bind(musTrack: Track) {
+    fun bind(musTrack: ItunesTrack) {
         txtTrackName.text = musTrack.trackName
         txtArtistName.text = musTrack.artistName
-        txtTrackTime.text = musTrack.trackTime
+        txtTrackTime.text = musTrack.getStringTime()
 
 
         val dens = Resources.getSystem().displayMetrics.density
@@ -45,7 +46,7 @@ class SearchTrackViewHolder(
         Glide
             .with(item.context)
             .load(musTrack.artworkUrl100)
-            .placeholder(R.drawable.search_pic)
+            .placeholder(R.drawable.placeholder_no_track)
             .centerCrop()
             .transform(RoundedCorners(picCornerRad.toInt())) //Params: roundingRadius – the corner radius (in device-specific pixels).
             .into(imgArtCover)

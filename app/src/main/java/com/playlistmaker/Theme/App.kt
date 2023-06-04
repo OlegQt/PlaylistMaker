@@ -2,27 +2,16 @@ package com.playlistmaker.Theme
 
 import android.app.Application
 import android.content.SharedPreferences
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import java.util.prefs.Preferences
+import com.google.gson.Gson
+import com.playlistmaker.itunes.ItunesTrack
 
 class App : Application() {
     var darkTheme = true;
+    var currentMusicTrack: ItunesTrack? = null
+    var currentScreen: String = String()
     lateinit var sharedPreferences: SharedPreferences
 
-    companion object {
-        // Константы времени компиляции
-        const val PREFERENCES = "APP_PREFERENCES"
-        const val DARK_MODE_KEY = "key_for_dark_mode_switch"
-        const val SEARCH_HISTORY = "key_for_search_history"
-        const val TAG_LOG = "DEBUG"
-
-        // Для удобного доступа к App
-        lateinit var instance: App
-            private set // Менять значение можно только внутри этого класса
-
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -34,6 +23,13 @@ class App : Application() {
         this.darkTheme = sharedPreferences.getBoolean(DARK_MODE_KEY, false)
         // Принудительно меняем тему всего приложения
         this.switchTheme(darkTheme)
+
+        // Грузим текущий экран
+        currentScreen =
+            sharedPreferences.getString(CURRENT_SCREEN, Screen.MAIN.screenName).toString()
+
+        // Грузим играющий трек
+        currentMusicTrack = loadCurrentPlayingTrack()
     }
 
     fun switchTheme(darkThemeMode: Boolean) {
@@ -43,5 +39,37 @@ class App : Application() {
             false -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
         sharedPreferences.edit().putBoolean(DARK_MODE_KEY, darkThemeMode).apply()
+    }
+
+    fun saveCurrentScreen(screen: Screen) {
+        sharedPreferences.edit().putString(CURRENT_SCREEN, screen.screenName).apply()
+    }
+
+    fun saveCurrentPlayingTrack(trackToSafe: ItunesTrack) {
+        currentMusicTrack = trackToSafe
+        val jsonTrack = Gson().toJson(trackToSafe, ItunesTrack::class.java)
+        sharedPreferences.edit().putString(CURRENT_PLAYING_TRACK, jsonTrack).apply()
+    }
+
+    private fun loadCurrentPlayingTrack(): ItunesTrack? {
+        val jsonTrack = sharedPreferences.getString(CURRENT_PLAYING_TRACK, "")
+        return if (!jsonTrack.isNullOrEmpty()) {
+            Gson().fromJson(jsonTrack, ItunesTrack::class.java)
+        } else null
+    }
+
+    companion object {
+        // Константы времени компиляции
+        const val PREFERENCES = "APP_PREFERENCES"
+        const val DARK_MODE_KEY = "key_for_dark_mode_switch"
+        const val SEARCH_HISTORY = "key_for_search_history"
+        const val CURRENT_SCREEN = "key_for_saving_current_string"
+        const val CURRENT_PLAYING_TRACK = "key_for_saving_current_track"
+        const val TAG_LOG = "DEBUG"
+
+        // Для удобного доступа к App
+        lateinit var instance: App
+            private set // Менять значение можно только внутри этого класса
+
     }
 }

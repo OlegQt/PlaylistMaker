@@ -9,16 +9,22 @@ data class ItunesTrack(
     val artistName: String,
     val trackTimeMillis: Long,
     val artworkUrl100: String,
-    val trackId:Long
+    val trackId:Long,
+    val collectionName:String,
+    val releaseDate:String,
+    val primaryGenreName:String,
+    val country:String
 ) {
-    fun toTrack(): Track {
-        return Track(
-            this.trackName,
-            this.artistName,
-            this.timeToString(trackTimeMillis), // Need fun
-            this.artworkUrl100,
-            this.trackId
-        )
+
+    private fun timeToString(time:Long): String = SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
+    fun getStringTime():String = this.timeToString(this.trackTimeMillis)
+    override fun toString(): String {
+        return with(StringBuilder()){
+            append("$artistName  \n")
+            append("$trackName  \n")
+            append("$collectionName  \n")
+            append("$country  \n")
+
+        }.toString()
     }
-    fun timeToString(time:Long)= SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
 }
