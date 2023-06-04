@@ -26,6 +26,7 @@ class ActivitySearch : AppCompatActivity() {
     private var txtSearch: EditText? = null
     private var recycleViewTracks: RecyclerView? = null
     private var btnReload: Button? = null
+    private var barLoading:ProgressBar? = null
 
     // Элементы Ui для истории просмотра треков
     private lateinit var btnClearHistory: Button
@@ -64,8 +65,16 @@ class ActivitySearch : AppCompatActivity() {
         startActivity(Intent(App.instance, ActivityPlayer::class.java))
     }
 
+    private fun showLoadingStub(){
+        this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
+        this.stubLayout?.visibility = View.GONE // Show Layout with our Stub
+        // Показываем прогресс круг
+        this.barLoading?.visibility = View.VISIBLE
+    }
+
     private fun showStubNothingFound() {
         this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
+        this.barLoading?.visibility = View.GONE
         this.stubLayout?.visibility = View.VISIBLE // Show Layout with our Stub
 
 
@@ -78,6 +87,7 @@ class ActivitySearch : AppCompatActivity() {
 
     private fun showStubConnectionTroubles() {
         this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
+        this.barLoading?.visibility = View.GONE
         this.stubLayout?.visibility = View.VISIBLE // Show Layout with our Stub
 
         val txtMainError: TextView = findViewById(R.id.txt_stub_main_error)
@@ -89,6 +99,12 @@ class ActivitySearch : AppCompatActivity() {
         btnReload?.visibility = View.VISIBLE
     }
 
+    private fun hideAllStubs(){
+        this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
+        this.barLoading?.visibility = View.GONE
+        this.stubLayout?.visibility = View.GONE // Show Layout with our Stub
+    }
+
     private fun modifyTrackList() {
         this.trackList.clear() // Очищаем трэк лист от предыдущего запроса
         // Ниже переводим формат в читабельный для View Holder и Адаптера и заполняем трэк лист
@@ -98,6 +114,7 @@ class ActivitySearch : AppCompatActivity() {
         this.musTrackAdapter.notifyDataSetChanged() // Уведомляем адаптер о необходимости перерисовки
         this.recycleViewTracks?.visibility = View.VISIBLE // Show RecyclerView
         this.stubLayout?.visibility = View.GONE // Hide Layout with our Stub
+        this.barLoading?.visibility = View.GONE
     }
 
     private fun clearTrackList() {
@@ -111,6 +128,8 @@ class ActivitySearch : AppCompatActivity() {
         // Или добавить какой-то доп. функционал
         // Log.d(App.TAG_LOG, "Keyboard ok button")
         itunesMusic.search(songName, this.doAfterSearch)
+
+        showLoadingStub()
     }
 
     private fun deploySearchHistoryUi() {
@@ -182,6 +201,7 @@ class ActivitySearch : AppCompatActivity() {
         stubLayout = findViewById(R.id.stub_layout)
         recycleViewTracks = findViewById(R.id.search_recycle_view)
         btnReload = findViewById(R.id.btn_reload)
+        barLoading = findViewById(R.id.progress_loading)
 
 
         createSearchTrackAdapter()
@@ -199,6 +219,7 @@ class ActivitySearch : AppCompatActivity() {
 
                 if (s.isNullOrEmpty()) {
                     clearTrackList()
+                    hideAllStubs()
                     showSearchHistory(true)
                 }
             }
