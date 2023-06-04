@@ -2,6 +2,8 @@ package com.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -26,13 +28,12 @@ class ActivitySearch : AppCompatActivity() {
     private var txtSearch: EditText? = null
     private var recycleViewTracks: RecyclerView? = null
     private var btnReload: Button? = null
-    private var barLoading:ProgressBar? = null
+    private var barLoading: ProgressBar? = null
 
     // Элементы Ui для истории просмотра треков
     private lateinit var btnClearHistory: Button
     private lateinit var loutHistory: LinearLayout
     private lateinit var recyclerHistory: RecyclerView
-
 
     // Переменная trackList хранит список треков, найденных по запросу в iTunesMedia
     private var trackList: ArrayList<ItunesTrack> = ArrayList()
@@ -42,8 +43,16 @@ class ActivitySearch : AppCompatActivity() {
     // а так же к их удалению, добавлению
     private var searchHistory: History = History()
 
+    // Адаптеры для отображения найденных треков и истории просмотра треков
     private lateinit var musTrackAdapter: SearchTrackAdapter
     private lateinit var searchHistoryTrackAdapter: SearchTrackAdapter
+
+    // Переменная для определения доступности списка для нажатий
+    private var isClickable = true
+
+    // Получаем доступ к главному потоку
+    private val handler = Handler(Looper.getMainLooper())
+
 
     // Функция вызывается внутри call.enqueue
     private var doAfterSearch: (Msgcode) -> Unit = {
@@ -65,7 +74,7 @@ class ActivitySearch : AppCompatActivity() {
         startActivity(Intent(App.instance, ActivityPlayer::class.java))
     }
 
-    private fun showLoadingStub(){
+    private fun showLoadingStub() {
         this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
         this.stubLayout?.visibility = View.GONE // Show Layout with our Stub
         // Показываем прогресс круг
@@ -99,7 +108,7 @@ class ActivitySearch : AppCompatActivity() {
         btnReload?.visibility = View.VISIBLE
     }
 
-    private fun hideAllStubs(){
+    private fun hideAllStubs() {
         this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
         this.barLoading?.visibility = View.GONE
         this.stubLayout?.visibility = View.GONE // Show Layout with our Stub
@@ -120,7 +129,7 @@ class ActivitySearch : AppCompatActivity() {
     private fun clearTrackList() {
         // Очищаем трэкЛист и RecyclerView
         this.trackList.clear()
-        this.musTrackAdapter.notifyItemRangeRemoved(0,trackList.size)
+        this.musTrackAdapter.notifyItemRangeRemoved(0, trackList.size)
     }
 
     private fun showSearchResults(songName: String) {
@@ -142,14 +151,15 @@ class ActivitySearch : AppCompatActivity() {
 
         // Создаем адаптер для показа истории поиска музыкальных треков
         // Добавляем туда отдельный листенер на случай описания отдельного поведения для данного recycler
-        searchHistoryTrackAdapter = SearchTrackAdapter(searchHistory.trackHistoryList,
-            object : SearchTrackAdapter.OnTrackClickListener {
-                override fun onTrackClick(position: Int) {
-                    // Сохраняем трэк и переходим на экран плеера
-                    App.instance.saveCurrentPlayingTrack(searchHistory.trackHistoryList[position])
-                    startPlayerActivity()
-                }
-            })
+        searchHistoryTrackAdapter = SearchTrackAdapter(
+            searchHistory.trackHistoryList
+        ) { position ->
+            // Сохраняем трэк и переходим на экран плеера
+            if (recyclerClickDebounce()) {
+                App.instance.saveCurrentPlayingTrack(searchHistory.trackHistoryList[position])
+                startPlayerActivity()
+            } else Toast.makeText(this.baseContext, "not allowed", Toast.LENGTH_SHORT).show()
+        }
         val musLayOut = LinearLayoutManager(this)
         musLayOut.orientation = RecyclerView.VERTICAL
         recyclerHistory?.layoutManager = musLayOut
@@ -161,16 +171,30 @@ class ActivitySearch : AppCompatActivity() {
         }
     }
 
+    private fun recyclerClickDebounce(): Boolean {
+        // Проверяем флаг позволяет нажимать на элемент списка, возвращаем разрешение, но меняем
+        // Значение флага на запрет на 300 мс
+        return if (isClickable) {
+            isClickable = false
+            handler.postDelayed({ isClickable = true }, 300)
+            true
+        } else false
+    }
+
     private fun createSearchTrackAdapter() {
         // Создаем recyclerView
-        val pL = object : SearchTrackAdapter.OnTrackClickListener {
-            override fun onTrackClick(position: Int) {
+        val pL = SearchTrackAdapter.OnTrackClickListener { position ->
+
+            //Проверка на нажатие
+            if (recyclerClickDebounce()) {
                 // Добавляем трек в историю просмотров
                 // Трэк добавляется из списка поисковых треков не путать со списком истории поиска
                 searchHistory.addToSearchHistory(trackList[position])
                 App.instance.saveCurrentPlayingTrack(trackList[position])
                 // Запускаем плеер
                 startPlayerActivity()
+            } else {
+                Toast.makeText(this.baseContext, "not allowed", Toast.LENGTH_SHORT).show()
             }
         }
         this.musTrackAdapter = SearchTrackAdapter(this.trackList, pL)
@@ -266,10 +290,6 @@ class ActivitySearch : AppCompatActivity() {
         }
 
         deploySearchHistoryUi()
-
-        // Сохраняем текущий экран в sharedPrefs
-        //App.instance.saveCurrentScreen(Screen.SEARCH)
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
