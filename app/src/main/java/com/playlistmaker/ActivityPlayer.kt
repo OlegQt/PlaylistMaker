@@ -5,19 +5,33 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.playlistmaker.Logic.Player
 import com.playlistmaker.Theme.App
 import com.playlistmaker.Theme.Screen
 import com.playlistmaker.databinding.ActivityPlayerBinding
 import java.text.SimpleDateFormat
 
 class ActivityPlayer : AppCompatActivity() {
-    lateinit var binding: ActivityPlayerBinding
+    private lateinit var binding: ActivityPlayerBinding
+    private val mediaPlayer:Player = Player()
 
 
     private fun setBehaviour() {
         binding.playerBtnBack.setOnClickListener { finish() }
+
+        mediaPlayer.setOnPlayerStateListener { playerState ->
+            when (playerState) {
+                Player.STATE_PLAYING -> Toast.makeText(baseContext, "STATE_PLAYING", Toast.LENGTH_SHORT).show()
+                Player.STATE_PREPARED -> Toast.makeText(baseContext, "STATE_PREPARED", Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(baseContext, "", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        mediaPlayer.preparePlayer("в")
+
     }
 
     private fun showTrackInfo() {
