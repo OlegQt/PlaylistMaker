@@ -18,15 +18,20 @@ class Player() {
 
         mediaPlayer.setOnCompletionListener {
             // Register a callback to be invoked when the end of a media source has been reached during playback.
-            currentState = STATE_PREPARED
+            it.seekTo(0)
+            currentState = STATE_COMPLETE
             playerStateListener?.playerStateChanged(currentState)
+        }
+
+        mediaPlayer.setOnBufferingUpdateListener { mp, percent ->
+            //currentState = STATE_PLAYING
+            //playerStateListener?.playerStateChanged(currentState)
         }
     }
 
     fun setOnPlayerStateListener(listener: OnPlayerStateListener) {
         this.playerStateListener = listener
     }
-
 
     fun preparePlayer(songUrl: String) {
         try {
@@ -58,21 +63,12 @@ class Player() {
         currentState = STATE_PAUSED
     }
 
-    private fun playbackControl() {
-        when (currentState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
-        }
-    }
-
     fun turnOffPlayer() {
         mediaPlayer.release()
         currentState = STATE_DEFAULT
     }
+
+    fun isPlaying(): Boolean = mediaPlayer.isPlaying
 
     fun interface OnPlayerStateListener {
         fun playerStateChanged(state: Int)
@@ -83,5 +79,6 @@ class Player() {
         const val STATE_PREPARED = 1
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
+        const val STATE_COMPLETE = 4
     }
 }
