@@ -50,7 +50,7 @@ class ActivitySearch : AppCompatActivity() {
     // Переменная для определения доступности списка для нажатий
     private var isClickable = true
 
-    private val runnable:Runnable = Runnable {
+    private val runnable: Runnable = Runnable {
         this.showSearchResults(this.txtSearch?.text.toString())
     }
 
@@ -184,9 +184,9 @@ class ActivitySearch : AppCompatActivity() {
         } else false
     }
 
-    private fun searchTrackDebounce(){
+    private fun searchTrackDebounce() {
         handler.removeCallbacks(runnable)
-        handler.postDelayed(runnable,3000)
+        handler.postDelayed(runnable, 3000)
     }
 
     private fun createSearchTrackAdapter() {
@@ -250,8 +250,7 @@ class ActivitySearch : AppCompatActivity() {
                     clearTrackList()
                     hideAllStubs()
                     showSearchHistory(visibility = true)
-                }
-                else{
+                } else {
                     showSearchHistory(visibility = false)
                     searchTrackDebounce()
                 }

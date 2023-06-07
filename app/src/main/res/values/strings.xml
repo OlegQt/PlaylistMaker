@@ -27,6 +27,7 @@
     <string name="song_year">Год</string>
     <string name="song_genre">Жанр</string>
     <string name="song_country">Страна</string>
+    <string name="playing_time">00:00</string>
 
 
 </resources>

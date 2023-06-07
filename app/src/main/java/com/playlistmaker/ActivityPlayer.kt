@@ -28,7 +28,7 @@ class ActivityPlayer : AppCompatActivity() {
         this.durationRunnable = Runnable {
             changeDuration()
             // В случае, если проигрывание остановиться, функция не будет добавлена в очередь
-            if(mediaPlayer.isPlaying()) handler.postDelayed(durationRunnable, 100)
+            if (mediaPlayer.isPlaying()) handler.postDelayed(durationRunnable, 100)
         }
 
         // Слушатель кнопки назад
@@ -115,8 +115,7 @@ class ActivityPlayer : AppCompatActivity() {
     private fun trackPlayingTimeUpdate(start: Boolean) {
         if (start) {
             handler.post(durationRunnable)
-        }
-        else{
+        } else {
             handler.removeCallbacks(durationRunnable)
         }
     }
