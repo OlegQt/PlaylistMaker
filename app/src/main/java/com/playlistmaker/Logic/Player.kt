@@ -58,12 +58,15 @@ class Player() {
         currentState = STATE_PLAYING
     }
 
+    fun getDuration() = mediaPlayer.currentPosition
+
     fun pausePlayer() {
         mediaPlayer.pause()
         currentState = STATE_PAUSED
     }
 
     fun turnOffPlayer() {
+        mediaPlayer.stop()
         mediaPlayer.release()
         currentState = STATE_DEFAULT
     }

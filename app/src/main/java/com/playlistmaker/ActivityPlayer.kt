@@ -8,34 +8,42 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.Logic.Player
 import com.playlistmaker.Theme.App
 import com.playlistmaker.Theme.Screen
 import com.playlistmaker.databinding.ActivityPlayerBinding
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.concurrent.thread
 
 class ActivityPlayer : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
     private val mediaPlayer: Player = Player()
     private val handler = Handler(Looper.getMainLooper())
-    private var time = 0
-    lateinit var timerRunnable: Runnable
+    private lateinit var durationRunnable: Runnable
 
     private fun setBehaviour() {
+
+        // Функция считывает теущую позицию прослушивания трека
+        // Закидывает себя в очередь на испольнение снова через 100мс
+        this.durationRunnable = Runnable {
+            changeDuration()
+            // В случае, если проигрывание остановиться, функция не будет добавлена в очередь
+            if(mediaPlayer.isPlaying()) handler.postDelayed(durationRunnable, 100)
+        }
+
         // Слушатель кнопки назад
         binding.playerBtnBack.setOnClickListener { finish() }
 
         // Слушатель кнопки Игарть/Пауза
         binding.playerBtnPlay.setOnClickListener {
             if (mediaPlayer.isPlaying()) {
-                mediaPlayer.pausePlayer()
+                mediaPlayer.pausePlayer() // Остановили воспроизведение
                 changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+                //trackPlayingTimeUpdate(false) // Остановили считывание веремени проигрывания
             } else {
                 mediaPlayer.startPlayer()
                 changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
+                trackPlayingTimeUpdate(true) // Запустили считывание веремени проигрывания
             }
         }
 
@@ -43,8 +51,10 @@ class ActivityPlayer : AppCompatActivity() {
         mediaPlayer.setOnPlayerStateListener { playerState ->
             when (playerState) {
                 Player.STATE_PREPARED -> {
-                    mediaPlayer.startPlayer() // Стартуем проигрывание трека по готовности
+                    // Если надо стартануть плеер по готовности, сразу при переходе на активность
+                    /*mediaPlayer.startPlayer() // Стартуем проигрывание трека по готовности
                     changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
+                    trackPlayingTimeUpdate(true)*/
                 }
                 Player.STATE_COMPLETE -> changeBtnPlayPause(ButtonState.BUTTON_PLAY)
                 else -> Toast.makeText(baseContext, "${Player.PlayerState}", Toast.LENGTH_SHORT)
@@ -98,25 +108,22 @@ class ActivityPlayer : AppCompatActivity() {
     }
 
     private fun changeBtnPlayPause(state: ButtonState) {
-        if (state==ButtonState.BUTTON_PLAY) binding.playerBtnPlay.setImageResource(R.drawable.play_track)
+        if (state == ButtonState.BUTTON_PLAY) binding.playerBtnPlay.setImageResource(R.drawable.play_track)
         else binding.playerBtnPlay.setImageResource(R.drawable.playerpause)
     }
 
-    private fun startTimer(){
-        val run = object :Runnable {
-            override fun run() {
-                //changeDuration()
-                handler.postDelayed(this,100)
-            }
+    private fun trackPlayingTimeUpdate(start: Boolean) {
+        if (start) {
+            handler.post(durationRunnable)
         }
-        handler.post(run)
-
+        else{
+            handler.removeCallbacks(durationRunnable)
+        }
     }
 
-    private fun changeDuration(){
-
-        Toast.makeText(binding.root.context,"1",Toast.LENGTH_SHORT).show()
-        Snackbar.make(binding.root,(++time).toString(),Snackbar.LENGTH_INDEFINITE).show()
+    private fun changeDuration() {
+        binding.playerPlayTime.text =
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.getDuration())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,15 +135,25 @@ class ActivityPlayer : AppCompatActivity() {
         App.instance.saveCurrentScreen(Screen.PLAYER)
         setBehaviour() // Вешаем слушателей на элементы UI
         showTrackInfo() // Аналог функции bind для заполнения полей для текущего музыкального трека
+    }
 
-        startTimer()
-
+    override fun onPause() {
+        super.onPause()
+        mediaPlayer.pausePlayer()
+        changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+        trackPlayingTimeUpdate(false)
     }
 
     override fun finish() {
         super.finish()
         App.instance.saveCurrentScreen(Screen.MAIN) // Сохраняем данные о переходе на главный экран приложения
-        mediaPlayer.turnOffPlayer() // Завершаем плеер
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Удаляем наш runnable из очереди и выключаем плеер
+        handler.removeCallbacks(durationRunnable)
+        mediaPlayer.turnOffPlayer()
     }
 
     enum class ButtonState {
