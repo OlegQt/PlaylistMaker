@@ -5,12 +5,11 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
-import com.playlistmaker.itunes.ItunesTrack
+import com.playlistmaker.data.dto.MusicTrackDto
 
 class SearchTrackViewHolder(
     private val item: View,
@@ -34,7 +33,7 @@ class SearchTrackViewHolder(
     }
 
 
-    fun bind(musTrack: ItunesTrack) {
+    fun bind(musTrack: MusicTrackDto) {
         txtTrackName.text = musTrack.trackName
         txtArtistName.text = musTrack.artistName
         txtTrackTime.text = musTrack.getStringTime()
