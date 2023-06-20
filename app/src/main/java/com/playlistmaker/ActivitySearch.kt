@@ -2,6 +2,8 @@ package com.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -26,12 +28,12 @@ class ActivitySearch : AppCompatActivity() {
     private var txtSearch: EditText? = null
     private var recycleViewTracks: RecyclerView? = null
     private var btnReload: Button? = null
+    private var barLoading: ProgressBar? = null
 
     // Элементы Ui для истории просмотра треков
     private lateinit var btnClearHistory: Button
     private lateinit var loutHistory: LinearLayout
     private lateinit var recyclerHistory: RecyclerView
-
 
     // Переменная trackList хранит список треков, найденных по запросу в iTunesMedia
     private var trackList: ArrayList<ItunesTrack> = ArrayList()
@@ -41,8 +43,20 @@ class ActivitySearch : AppCompatActivity() {
     // а так же к их удалению, добавлению
     private var searchHistory: History = History()
 
+    // Адаптеры для отображения найденных треков и истории просмотра треков
     private lateinit var musTrackAdapter: SearchTrackAdapter
     private lateinit var searchHistoryTrackAdapter: SearchTrackAdapter
+
+    // Переменная для определения доступности списка для нажатий
+    private var isClickable = true
+
+    private val runnable: Runnable = Runnable {
+        this.showSearchResults(this.txtSearch?.text.toString())
+    }
+
+    // Получаем доступ к главному потоку
+    private val handler = Handler(Looper.getMainLooper())
+
 
     // Функция вызывается внутри call.enqueue
     private var doAfterSearch: (Msgcode) -> Unit = {
@@ -64,8 +78,16 @@ class ActivitySearch : AppCompatActivity() {
         startActivity(Intent(App.instance, ActivityPlayer::class.java))
     }
 
+    private fun showLoadingStub() {
+        this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
+        this.stubLayout?.visibility = View.GONE // Show Layout with our Stub
+        // Показываем прогресс круг
+        this.barLoading?.visibility = View.VISIBLE
+    }
+
     private fun showStubNothingFound() {
         this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
+        this.barLoading?.visibility = View.GONE
         this.stubLayout?.visibility = View.VISIBLE // Show Layout with our Stub
 
 
@@ -78,6 +100,7 @@ class ActivitySearch : AppCompatActivity() {
 
     private fun showStubConnectionTroubles() {
         this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
+        this.barLoading?.visibility = View.GONE
         this.stubLayout?.visibility = View.VISIBLE // Show Layout with our Stub
 
         val txtMainError: TextView = findViewById(R.id.txt_stub_main_error)
@@ -89,6 +112,12 @@ class ActivitySearch : AppCompatActivity() {
         btnReload?.visibility = View.VISIBLE
     }
 
+    private fun hideAllStubs() {
+        this.recycleViewTracks?.visibility = View.GONE // Hide RecyclerView
+        this.barLoading?.visibility = View.GONE
+        this.stubLayout?.visibility = View.GONE // Show Layout with our Stub
+    }
+
     private fun modifyTrackList() {
         this.trackList.clear() // Очищаем трэк лист от предыдущего запроса
         // Ниже переводим формат в читабельный для View Holder и Адаптера и заполняем трэк лист
@@ -98,12 +127,13 @@ class ActivitySearch : AppCompatActivity() {
         this.musTrackAdapter.notifyDataSetChanged() // Уведомляем адаптер о необходимости перерисовки
         this.recycleViewTracks?.visibility = View.VISIBLE // Show RecyclerView
         this.stubLayout?.visibility = View.GONE // Hide Layout with our Stub
+        this.barLoading?.visibility = View.GONE
     }
 
     private fun clearTrackList() {
         // Очищаем трэкЛист и RecyclerView
         this.trackList.clear()
-        this.musTrackAdapter.notifyItemRangeRemoved(0,trackList.size)
+        this.musTrackAdapter.notifyItemRangeRemoved(0, trackList.size)
     }
 
     private fun showSearchResults(songName: String) {
@@ -111,6 +141,7 @@ class ActivitySearch : AppCompatActivity() {
         // Или добавить какой-то доп. функционал
         // Log.d(App.TAG_LOG, "Keyboard ok button")
         itunesMusic.search(songName, this.doAfterSearch)
+        showLoadingStub()
     }
 
     private fun deploySearchHistoryUi() {
@@ -123,14 +154,15 @@ class ActivitySearch : AppCompatActivity() {
 
         // Создаем адаптер для показа истории поиска музыкальных треков
         // Добавляем туда отдельный листенер на случай описания отдельного поведения для данного recycler
-        searchHistoryTrackAdapter = SearchTrackAdapter(searchHistory.trackHistoryList,
-            object : SearchTrackAdapter.OnTrackClickListener {
-                override fun onTrackClick(position: Int) {
-                    // Сохраняем трэк и переходим на экран плеера
-                    App.instance.saveCurrentPlayingTrack(searchHistory.trackHistoryList[position])
-                    startPlayerActivity()
-                }
-            })
+        searchHistoryTrackAdapter = SearchTrackAdapter(
+            searchHistory.trackHistoryList
+        ) { position ->
+            // Сохраняем трэк и переходим на экран плеера
+            if (recyclerClickDebounce()) {
+                App.instance.saveCurrentPlayingTrack(searchHistory.trackHistoryList[position])
+                startPlayerActivity()
+            } else Toast.makeText(this.baseContext, "not allowed", Toast.LENGTH_SHORT).show()
+        }
         val musLayOut = LinearLayoutManager(this)
         musLayOut.orientation = RecyclerView.VERTICAL
         recyclerHistory?.layoutManager = musLayOut
@@ -142,16 +174,35 @@ class ActivitySearch : AppCompatActivity() {
         }
     }
 
+    private fun recyclerClickDebounce(): Boolean {
+        // Проверяем флаг позволяет нажимать на элемент списка, возвращаем разрешение, но меняем
+        // Значение флага на запрет на 300 мс
+        return if (isClickable) {
+            isClickable = false
+            handler.postDelayed({ isClickable = true }, 300)
+            true
+        } else false
+    }
+
+    private fun searchTrackDebounce() {
+        handler.removeCallbacks(runnable)
+        handler.postDelayed(runnable, 3000)
+    }
+
     private fun createSearchTrackAdapter() {
         // Создаем recyclerView
-        val pL = object : SearchTrackAdapter.OnTrackClickListener {
-            override fun onTrackClick(position: Int) {
+        val pL = SearchTrackAdapter.OnTrackClickListener { position ->
+
+            //Проверка на нажатие
+            if (recyclerClickDebounce()) {
                 // Добавляем трек в историю просмотров
                 // Трэк добавляется из списка поисковых треков не путать со списком истории поиска
                 searchHistory.addToSearchHistory(trackList[position])
                 App.instance.saveCurrentPlayingTrack(trackList[position])
                 // Запускаем плеер
                 startPlayerActivity()
+            } else {
+                Toast.makeText(this.baseContext, "not allowed", Toast.LENGTH_SHORT).show()
             }
         }
         this.musTrackAdapter = SearchTrackAdapter(this.trackList, pL)
@@ -182,30 +233,30 @@ class ActivitySearch : AppCompatActivity() {
         stubLayout = findViewById(R.id.stub_layout)
         recycleViewTracks = findViewById(R.id.search_recycle_view)
         btnReload = findViewById(R.id.btn_reload)
+        barLoading = findViewById(R.id.progress_loading)
 
 
         createSearchTrackAdapter()
 
         // Анонимный
         val txtSearchWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 strSearch = s.toString() // Сохраняем значение введенного текста
-                btnCls.isVisible = !s.isNullOrEmpty()
-                showSearchHistory(s.isNullOrEmpty())
+                btnCls.isVisible = !s.isNullOrEmpty() // Меняем видимость кнопки стирания текста
 
+                // Если строка поиска пуста, показывам историю поиска
                 if (s.isNullOrEmpty()) {
                     clearTrackList()
-                    showSearchHistory(true)
+                    hideAllStubs()
+                    showSearchHistory(visibility = true)
+                } else {
+                    showSearchHistory(visibility = false)
+                    searchTrackDebounce()
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {
-                //
-            }
+            override fun afterTextChanged(s: Editable?) {}
         }
 
         // Вешаем слушателей на элелементы
@@ -245,10 +296,6 @@ class ActivitySearch : AppCompatActivity() {
         }
 
         deploySearchHistoryUi()
-
-        // Сохраняем текущий экран в sharedPrefs
-        //App.instance.saveCurrentScreen(Screen.SEARCH)
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

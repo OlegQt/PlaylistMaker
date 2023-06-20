@@ -15,7 +15,7 @@ import com.playlistmaker.itunes.ItunesTrack
 class SearchTrackAdapter(private val trackList: ArrayList<ItunesTrack>,private var onTrackClickListener:OnTrackClickListener) :
     Adapter<SearchTrackViewHolder>() {
 
-    interface OnTrackClickListener {
+    fun interface OnTrackClickListener {
         fun onTrackClick(position: Int)
     }
 

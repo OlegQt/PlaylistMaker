@@ -13,7 +13,9 @@ data class ItunesTrack(
     val collectionName:String,
     val releaseDate:String,
     val primaryGenreName:String,
-    val country:String
+    val country:String,
+    val previewUrl:String
+
 ) {
 
     private fun timeToString(time:Long): String = SimpleDateFormat("mm:ss", Locale.getDefault()).format(time)
