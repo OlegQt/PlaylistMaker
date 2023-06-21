@@ -5,28 +5,25 @@ import android.widget.Toast
 import com.playlistmaker.Theme.App
 import java.io.IOException
 
-class Player() {
+class Player( private var playerStateListener: OnPlayerStateListener?) {
+    constructor():this(null)
+
+
     private val mediaPlayer: MediaPlayer = MediaPlayer()
-    private var playerStateListener: OnPlayerStateListener? = null
-    private var currentState = STATE_DEFAULT
+    var currentState : Int = PlayerState.STATE_DEFAULT
+
 
     init {
         mediaPlayer.setOnPreparedListener {
-            currentState = STATE_PREPARED
-            playerStateListener?.playerStateChanged(currentState)
+            playerStateListener?.playerStateChanged(STATE_PREPARED)
         }
 
         mediaPlayer.setOnCompletionListener {
             // Register a callback to be invoked when the end of a media source has been reached during playback.
             it.seekTo(0)
-            currentState = STATE_COMPLETE
-            playerStateListener?.playerStateChanged(currentState)
+            playerStateListener?.playerStateChanged(STATE_COMPLETE)
         }
 
-        mediaPlayer.setOnBufferingUpdateListener { mp, percent ->
-            //currentState = STATE_PLAYING
-            //playerStateListener?.playerStateChanged(currentState)
-        }
     }
 
     fun setOnPlayerStateListener(listener: OnPlayerStateListener) {
@@ -53,16 +50,16 @@ class Player() {
 
     }
 
-    fun startPlayer() {
+    fun playMusic() {
         mediaPlayer.start()
-        currentState = STATE_PLAYING
+        playerStateListener?.playerStateChanged(STATE_PLAYING)
     }
 
     fun getDuration() = mediaPlayer.currentPosition
 
     fun pausePlayer() {
         mediaPlayer.pause()
-        currentState = STATE_PAUSED
+        playerStateListener?.playerStateChanged(STATE_PAUSED)
     }
 
     fun turnOffPlayer() {

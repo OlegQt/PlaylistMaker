@@ -8,67 +8,51 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.Logic.Player
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
+import com.playlistmaker.data.dto.MusicTrackDto
 import com.playlistmaker.ui.models.Screen
 import com.playlistmaker.databinding.ActivityPlayerBinding
+import com.playlistmaker.domain.impl.MusicPlayerInteractorImpl
+import com.playlistmaker.domain.impl.MusicTrackRepositoryImpl
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ActivityPlayer : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
-    private val mediaPlayer: Player = Player()
+    //private val mediaPlayer: Player = Player()
+    lateinit var musPlayer: MusicPlayerInteractorImpl
+
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var durationRunnable: Runnable
 
-    private fun setBehaviour() {
+    private fun setUiBehaviour() {
 
-        // Функция считывает теущую позицию прослушивания трека
-        // Закидывает себя в очередь на испольнение снова через 100мс
+        // Функция считывает текущую позицию прослушивания трека.
+        // Закидывает себя в очередь на исполнение снова через 100мс
         this.durationRunnable = Runnable {
             changeDuration()
             // В случае, если проигрывание остановиться, функция не будет добавлена в очередь
-            if (mediaPlayer.isPlaying()) handler.postDelayed(durationRunnable, 100)
+            handler.postDelayed(durationRunnable, 100)
         }
 
         // Слушатель кнопки назад
         binding.playerBtnBack.setOnClickListener { finish() }
 
-        // Слушатель кнопки Игарть/Пауза
+        // Слушатель кнопки Играть/Пауза
         binding.playerBtnPlay.setOnClickListener {
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.pausePlayer() // Остановили воспроизведение
-                changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-                //trackPlayingTimeUpdate(false) // Остановили считывание веремени проигрывания
-            } else {
-                mediaPlayer.startPlayer()
-                changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
-                trackPlayingTimeUpdate(true) // Запустили считывание веремени проигрывания
-            }
+            if (musPlayer.getPlayerState()) musPlayer.pauseMusicTrack()
+            else musPlayer.playMusicTrack()
         }
 
-        // Слушатель для изменения состояния медиаплеера
-        mediaPlayer.setOnPlayerStateListener { playerState ->
-            when (playerState) {
-                Player.STATE_PREPARED -> {
-                    // Если надо стартануть плеер по готовности, сразу при переходе на активность
-                    /*mediaPlayer.startPlayer() // Стартуем проигрывание трека по готовности
-                    changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
-                    trackPlayingTimeUpdate(true)*/
-                }
-                Player.STATE_COMPLETE -> changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-                else -> Toast.makeText(baseContext, "${Player.PlayerState}", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
+
 
 
     }
 
-    private fun showTrackInfo(): Boolean {
-        val track = App.instance.currentMusicTrack ?: return false
-
+    private fun showTrackInfo(track: MusicTrackDto): Boolean {
         val releaseDate = SimpleDateFormat("yyyy", Locale.getDefault()).parse(track.releaseDate)
         val releaseYear = SimpleDateFormat().format(releaseDate)
 
@@ -83,8 +67,6 @@ class ActivityPlayer : AppCompatActivity() {
             PlayerLblYear.text = releaseYear
         }
 
-        // Запускаем медиаПлеер
-        mediaPlayer.preparePlayer(track.previewUrl)
 
         // Изменили url картинки
         val artWorkHQ = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
@@ -123,7 +105,7 @@ class ActivityPlayer : AppCompatActivity() {
 
     private fun changeDuration() {
         binding.playerPlayTime.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.getDuration())
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(musPlayer.getCurrentPlayingPosition())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,13 +115,36 @@ class ActivityPlayer : AppCompatActivity() {
 
         // Сохраняем текущий экран как главный в sharedPrefs
         App.instance.saveCurrentScreen(Screen.PLAYER)
-        setBehaviour() // Вешаем слушателей на элементы UI
-        showTrackInfo() // Аналог функции bind для заполнения полей для текущего музыкального трека
+
+
+        val playerStateListener = Player.OnPlayerStateListener { playerState ->
+            when (playerState) {
+                Player.STATE_PREPARED -> changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+                Player.STATE_PLAYING -> {
+                    changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
+                    trackPlayingTimeUpdate(true) // Запустили считывание перемени проигрывания
+                }
+
+                Player.STATE_COMPLETE -> changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+                Player.STATE_PAUSED -> {
+                    changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+                    trackPlayingTimeUpdate(false) // Запустили считывание перемени проигрывания
+                }
+            }
+        }
+        val musTrackRepo = MusicTrackRepositoryImpl()
+        musPlayer = MusicPlayerInteractorImpl(musTrackRepo, Player(playerStateListener))
+        musPlayer.preparePlayer()
+
+        setUiBehaviour() // Вешаем слушателей на элементы UI
+        val currentTrack = musTrackRepo.getCurrentMusicTrack()
+        if (currentTrack != null) this.showTrackInfo(currentTrack)
+
     }
 
     override fun onPause() {
         super.onPause()
-        mediaPlayer.pausePlayer()
+        musPlayer.pauseMusicTrack()
         changeBtnPlayPause(ButtonState.BUTTON_PLAY)
         trackPlayingTimeUpdate(false)
     }
@@ -153,7 +158,7 @@ class ActivityPlayer : AppCompatActivity() {
         super.onDestroy()
         // Удаляем наш runnable из очереди и выключаем плеер
         handler.removeCallbacks(durationRunnable)
-        mediaPlayer.turnOffPlayer()
+        musPlayer.stopMusicTrack()
     }
 
     enum class ButtonState {

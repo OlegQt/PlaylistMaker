@@ -1,6 +1,6 @@
 package com.playlistmaker.data.network
 
-import com.playlistmaker.Msgcode
+import com.playlistmaker.ui.models.Msgcode
 import com.playlistmaker.data.NetworkClient
 import com.playlistmaker.data.dto.MusicResponse
 import com.playlistmaker.data.dto.MusicSearchRequest

@@ -7,7 +7,7 @@ class MusicInteractorImpl(private val musicRepository: MusicRepository):MusicInt
 
     private val executor = java.util.concurrent.Executors.newCachedThreadPool()
 
-    override fun searchMovies(songName: String, consumer: MusicInteractor.MusicConsumer) {
+    override fun searchMusic(songName: String, consumer: MusicInteractor.MusicConsumer) {
         executor.execute {
             consumer.consume(musicRepository.searchMusic(songName))
         }

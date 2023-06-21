@@ -15,14 +15,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.playlistmaker.Creator
 import com.playlistmaker.Logic.SearchTrackAdapter
-import com.playlistmaker.Msgcode
+import com.playlistmaker.ui.models.Msgcode
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
 import com.playlistmaker.ui.models.Screen
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.dto.MusicTrackDto
+import com.playlistmaker.domain.api.MusicInteractor
 import com.playlistmaker.searchhistory.History
+import java.util.function.Consumer
 
 class ActivitySearch : AppCompatActivity() {
     private var stubLayout: View? = null
