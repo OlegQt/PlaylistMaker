@@ -52,7 +52,7 @@ class App : Application() {
         sharedPreferences.edit().putString(CURRENT_PLAYING_TRACK, jsonTrack).apply()
     }
 
-    fun loadCurrentPlayingTrack(): MusicTrackDto? {
+    private fun loadCurrentPlayingTrack(): MusicTrackDto? {
         val jsonTrack = sharedPreferences.getString(CURRENT_PLAYING_TRACK, "")
         return if (!jsonTrack.isNullOrEmpty()) {
             Gson().fromJson(jsonTrack, MusicTrackDto::class.java)

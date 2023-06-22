@@ -4,7 +4,7 @@ import com.playlistmaker.data.dto.MusicTrackDto
 
 interface MusicPlayerInteractor {
     fun preparePlayer()
-    fun playMusicTrack()
-    fun pauseMusicTrack()
-    fun stopMusicTrack()
+    fun playMusic()
+    fun pauseMusic()
+    fun turnOffPlayer()
 }
