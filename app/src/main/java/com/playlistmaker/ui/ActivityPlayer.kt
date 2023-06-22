@@ -14,6 +14,7 @@ import com.playlistmaker.databinding.ActivityPlayerBinding
 import com.playlistmaker.domain.impl.MusicPlayerInteractorImpl
 import com.playlistmaker.data.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.models.MusicTrack
+import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,13 +45,18 @@ class ActivityPlayer : AppCompatActivity() {
         }
 
 
+    }
 
-
+    private fun getFullDurationFromLong(duration: Long): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(duration)
     }
 
     private fun showTrackInfo(track: MusicTrack): Boolean {
-        val releaseDate = SimpleDateFormat("yyyy", Locale.getDefault()).parse(track.releaseDate)
-        val releaseYear = SimpleDateFormat().format(releaseDate)
+        val dateFormat = SimpleDateFormat("yyyy", Locale.getDefault())
+        val date = dateFormat.parse(track.releaseDate)
+        val milliseconds = date.time
+        val releaseYear = SimpleDateFormat("yyyy", Locale.getDefault()).format(milliseconds)
+
 
         // Подгружаем текстовые данные по треку
         with(binding) {
@@ -59,7 +65,7 @@ class ActivityPlayer : AppCompatActivity() {
             PlayerLblAlbum.text = track.collectionName.toString()
             PlayerLblGenre.text = track.primaryGenreName
             PlayerLblCountry.text = track.country
-            //PlayerLblFullDuration.text = track.getStringTime()
+            PlayerLblFullDuration.text = getFullDurationFromLong(track.trackTimeMillis)
             PlayerLblYear.text = releaseYear
         }
 
