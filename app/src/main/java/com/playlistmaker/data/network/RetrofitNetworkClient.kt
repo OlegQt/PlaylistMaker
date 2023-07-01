@@ -6,6 +6,8 @@ import com.playlistmaker.data.dto.MusicResponse
 import com.playlistmaker.data.dto.MusicSearchRequest
 import com.playlistmaker.data.dto.MusicSearchResponse
 import com.playlistmaker.data.dto.MusicTrackDto
+import com.playlistmaker.data.mapper.MusicTrackMapper
+import com.playlistmaker.domain.models.MusicTrack
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -17,7 +19,7 @@ class RetrofitNetworkClient :NetworkClient{
     private val baseUrl = "https://itunes.apple.com"
 
     // Удалить потом
-    var trackLst: ArrayList<MusicTrackDto>? = null
+    var trackLst: ArrayList<MusicTrack> = ArrayList()
 
     // retrofit initialisation will come with class member initialisation
     private val retrofit = Retrofit.Builder()
@@ -38,7 +40,11 @@ class RetrofitNetworkClient :NetworkClient{
             ) {
                 if (response.code() == 200) {
                     // Если ответ от сервера OK
-                    trackLst = response.body()?.results // Считываем тело ответа в лист
+                    trackLst.clear()
+                    // Считываем тело ответа в лист
+                    response.body()?.results?.forEach {
+                        trackLst.add(MusicTrackMapper().mapFromDto(it))
+                    }
                     doAfterSearch.invoke(Msgcode.OK) // Вызываем функцию в SearchActivity  с OK - кодом
                 } else doAfterSearch.invoke(Msgcode.Failure) // Вызываем функцию в SearchActivity с FAIL - кодом
             }

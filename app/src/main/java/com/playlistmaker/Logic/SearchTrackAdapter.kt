@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.playlistmaker.R
 import com.playlistmaker.data.dto.MusicTrackDto
+import com.playlistmaker.domain.models.MusicTrack
 
-class SearchTrackAdapter(private val trackList: ArrayList<MusicTrackDto>, private var onTrackClickListener:OnTrackClickListener) :
+class SearchTrackAdapter(private val trackList: ArrayList<MusicTrack>, private var onTrackClickListener:OnTrackClickListener) :
     Adapter<SearchTrackViewHolder>() {
 
     fun interface OnTrackClickListener {
@@ -30,7 +31,7 @@ class SearchTrackAdapter(private val trackList: ArrayList<MusicTrackDto>, privat
 
     override fun getItemCount() =trackList.size
 
-    fun getItem(position:Int): MusicTrackDto {
+    fun getItem(position:Int): MusicTrack {
         return trackList[position]
     }
 }

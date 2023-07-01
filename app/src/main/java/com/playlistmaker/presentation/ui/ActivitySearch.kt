@@ -23,6 +23,8 @@ import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.dto.MusicTrackDto
+import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.presentation.presenters.SearchActivityPresenter
 import com.playlistmaker.presentation.models.SearchActivityView
 import com.playlistmaker.searchhistory.History
@@ -41,7 +43,7 @@ class ActivitySearch : AppCompatActivity() ,SearchActivityView{
     private lateinit var recyclerHistory: RecyclerView
 
     // Переменная trackList хранит список треков, найденных по запросу в iTunesMedia
-    private var trackList: ArrayList<MusicTrackDto> = ArrayList()
+    private var trackList: ArrayList<MusicTrack> = ArrayList()
     private var retrofitNetworkClient = RetrofitNetworkClient()
 
     // В переменной searchHistory осуществляется доступ к истории 10 просмотренных трекам,
@@ -160,10 +162,9 @@ class ActivitySearch : AppCompatActivity() ,SearchActivityView{
         searchHistory.loadHistory()
 
         // Создаем адаптер для показа истории поиска музыкальных треков
-        // Добавляем туда отдельный листенер на случай описания отдельного поведения для данного recycler
-        searchHistoryTrackAdapter = SearchTrackAdapter(
-            searchHistory.trackHistoryList
-        ) { position ->
+        // и добавляем туда отдельный слушатель на случай описания отдельного поведения для данного recycler
+        searchHistoryTrackAdapter = SearchTrackAdapter(searchHistory.trackHistoryList) {
+                position ->
             // Сохраняем трэк и переходим на экран плеера
             if (recyclerClickDebounce()) {
                 App.instance.saveCurrentPlayingTrack(searchHistory.trackHistoryList[position])
@@ -203,7 +204,7 @@ class ActivitySearch : AppCompatActivity() ,SearchActivityView{
             //Проверка на нажатие
             if (recyclerClickDebounce()) {
                 // Добавляем трек в историю просмотров
-                // Трэк добавляется из списка поисковых треков не путать со списком истории поиска
+                // Трек добавляется из списка поисковых треков не путать со списком истории поиска
                 searchHistory.addToSearchHistory(trackList[position])
                 App.instance.saveCurrentPlayingTrack(trackList[position])
                 // Запускаем плеер
@@ -306,13 +307,11 @@ class ActivitySearch : AppCompatActivity() ,SearchActivityView{
 
         deploySearchHistoryUi()
 
-        presenter.searchMusic("adele")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("searchTxt", this.strSearch)
-
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -333,5 +332,13 @@ class ActivitySearch : AppCompatActivity() ,SearchActivityView{
             .setMessage(msg)
             .setPositiveButton("Done",null)
             .show()
+    }
+
+    override fun render(state: ActivitySearchState) {
+        when(state){
+            is ActivitySearchState.NothingFound -> showStubNothingFound()
+            is ActivitySearchState.Content -> state.music
+            else ->{}
+        }
     }
 }

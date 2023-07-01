@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
 import com.playlistmaker.data.dto.MusicTrackDto
+import com.playlistmaker.domain.models.MusicTrack
 
 class SearchTrackViewHolder(
     private val item: View,
@@ -33,10 +34,10 @@ class SearchTrackViewHolder(
     }
 
 
-    fun bind(musTrack: MusicTrackDto) {
+    fun bind(musTrack: MusicTrack) {
         txtTrackName.text = musTrack.trackName
         txtArtistName.text = musTrack.artistName
-        txtTrackTime.text = musTrack.getStringTime()
+        //txtTrackTime.text = musTrack.getStringTime()
 
 
         val dens = Resources.getSystem().displayMetrics.density

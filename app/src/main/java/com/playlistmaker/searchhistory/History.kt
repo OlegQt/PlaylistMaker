@@ -2,12 +2,12 @@ package com.playlistmaker.searchhistory
 
 import com.google.gson.Gson
 import com.playlistmaker.Theme.App
-import com.playlistmaker.data.dto.MusicTrackDto
+import com.playlistmaker.domain.models.MusicTrack
 
 class History {
-    val trackHistoryList: ArrayList<MusicTrackDto> = arrayListOf()
+    val trackHistoryList: ArrayList<MusicTrack> = arrayListOf()
 
-    fun addToSearchHistory(track: MusicTrackDto) {
+    fun addToSearchHistory(track: MusicTrack) {
         // Search if track is already exists, returns track index in list
         // Return -1 if no such element was found.
         val res = trackHistoryList.indexOf(track)
@@ -36,7 +36,7 @@ class History {
     fun loadHistory() {
         val jSonHistory = App.instance.sharedPreferences.getString(App.SEARCH_HISTORY, "")
 
-        val data = Gson().fromJson(jSonHistory, Array<MusicTrackDto>::class.java)
+        val data = Gson().fromJson(jSonHistory, Array<MusicTrack>::class.java)
         if (data.isNullOrEmpty()) {
             // Message about empty history
         } else {

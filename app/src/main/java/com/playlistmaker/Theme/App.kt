@@ -4,12 +4,12 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.gson.Gson
-import com.playlistmaker.data.dto.MusicTrackDto
+import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.Screen
 
 class App : Application() {
     var darkTheme = true;
-    var currentMusicTrack: MusicTrackDto? = null
+    var currentMusicTrack: MusicTrack? = null
     var currentScreen: String = String()
     lateinit var sharedPreferences: SharedPreferences
 
@@ -46,16 +46,16 @@ class App : Application() {
         sharedPreferences.edit().putString(CURRENT_SCREEN, screen.screenName).apply()
     }
 
-    fun saveCurrentPlayingTrack(trackToSafe: MusicTrackDto) {
+    fun saveCurrentPlayingTrack(trackToSafe: MusicTrack) {
         currentMusicTrack = trackToSafe
-        val jsonTrack = Gson().toJson(trackToSafe, MusicTrackDto::class.java)
+        val jsonTrack = Gson().toJson(trackToSafe, MusicTrack::class.java)
         sharedPreferences.edit().putString(CURRENT_PLAYING_TRACK, jsonTrack).apply()
     }
 
-    private fun loadCurrentPlayingTrack(): MusicTrackDto? {
+    private fun loadCurrentPlayingTrack(): MusicTrack? {
         val jsonTrack = sharedPreferences.getString(CURRENT_PLAYING_TRACK, "")
         return if (!jsonTrack.isNullOrEmpty()) {
-            Gson().fromJson(jsonTrack, MusicTrackDto::class.java)
+            Gson().fromJson(jsonTrack, MusicTrack::class.java)
         } else null
     }
 

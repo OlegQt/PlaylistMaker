@@ -3,7 +3,9 @@ package com.playlistmaker.presentation.presenters
 import com.playlistmaker.data.dto.MusicSearchRequest
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.repository.MusicRepositoryImpl
+import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
+import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.presentation.models.SearchActivityView
 
 class SearchActivityPresenter(private val state:SearchActivityView) {
@@ -14,6 +16,9 @@ class SearchActivityPresenter(private val state:SearchActivityView) {
 
         val searchResArray = searchUseCase.executeSearch(musRequest)
 
-        state.showAlertDialog(searchResArray.toString())
+        // Добавить проверку ошибок и вызвать необходимое обновление view в Activity
+        //state.showAlertDialog(searchResArray.toString())
+        //state.render(ActivitySearchState.Content(searchResArray))
+        //state.render(ActivitySearchState.NothingFound("error"))
     }
 }

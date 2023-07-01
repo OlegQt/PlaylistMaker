@@ -4,7 +4,7 @@ import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.domain.models.MusicTrack
 
 class SearchMusicUseCase(private val musicRepo: MusicRepository) {
-    fun executeSearch(searchParams: Any): List<MusicTrack> {
+    fun executeSearch(searchParams: Any): ArrayList<MusicTrack> {
         var songList:ArrayList<MusicTrack> = ArrayList()
         val searchThread = Thread {
             songList = musicRepo.searchMusic(searchParams)
