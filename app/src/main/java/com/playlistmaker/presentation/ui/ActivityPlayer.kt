@@ -1,4 +1,4 @@
-package com.playlistmaker.ui
+package com.playlistmaker.presentation.ui
 
 import android.os.Bundle
 import android.os.Handler
@@ -9,12 +9,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
-import com.playlistmaker.ui.models.Screen
+import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.databinding.ActivityPlayerBinding
-import com.playlistmaker.domain.impl.MusicPlayerInteractorImpl
-import com.playlistmaker.data.MusicTrackRepositoryImpl
+import com.playlistmaker.domain.usecase.MusicPlayerInteractorImpl
+import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.models.MusicTrack
-import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -1,6 +1,5 @@
-package com.playlistmaker.domain.api
+package com.playlistmaker.domain.repository
 
-import com.playlistmaker.data.dto.MusicTrackDto
 import com.playlistmaker.domain.models.MusicTrack
 
 interface MusicTrackRepository {

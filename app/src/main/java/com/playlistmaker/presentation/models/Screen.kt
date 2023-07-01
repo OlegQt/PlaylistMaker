@@ -1,4 +1,4 @@
-package com.playlistmaker.ui.models
+package com.playlistmaker.presentation.models
 
 enum class Screen(val screenName: String) {
     SEARCH("search_screen"),

@@ -1,11 +1,11 @@
-package com.playlistmaker.data
+package com.playlistmaker.data.repository
 
 import android.content.Context
 import com.google.gson.Gson
 import com.playlistmaker.Theme.App
 import com.playlistmaker.data.dto.MusicTrackDto
 import com.playlistmaker.data.mapper.MusicTrackMapper
-import com.playlistmaker.domain.api.MusicTrackRepository
+import com.playlistmaker.domain.repository.MusicTrackRepository
 import com.playlistmaker.domain.models.MusicTrack
 
 class MusicTrackRepositoryImpl(context: Context): MusicTrackRepository{

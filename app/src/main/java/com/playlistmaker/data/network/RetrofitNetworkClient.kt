@@ -1,6 +1,6 @@
 package com.playlistmaker.data.network
 
-import com.playlistmaker.ui.models.Msgcode
+import com.playlistmaker.presentation.models.Msgcode
 import com.playlistmaker.data.NetworkClient
 import com.playlistmaker.data.dto.MusicResponse
 import com.playlistmaker.data.dto.MusicSearchRequest
@@ -49,17 +49,14 @@ class RetrofitNetworkClient :NetworkClient{
         })
     }
 
-    override fun doRequest(dto: Any): com.playlistmaker.data.dto.MusicResponse {
-        if(dto is MusicSearchRequest){
+    override fun doRequest(dto: Any): MusicResponse {
+        return if(dto is MusicSearchRequest){
             val response = mediaApi.searchMusic(dto.songName).execute()
             val body = response.body() ?: MusicResponse()
-
             body.resultCode = response.code()
-            return body
+            body
+        } else{
+            MusicResponse()
         }
-        else{
-            return MusicResponse().apply { resultCode = 400 }
-        }
-
     }
 }

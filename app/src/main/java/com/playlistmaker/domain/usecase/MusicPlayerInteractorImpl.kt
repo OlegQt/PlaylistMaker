@@ -1,14 +1,14 @@
-package com.playlistmaker.domain.impl
+package com.playlistmaker.domain.usecase
 
 import android.media.MediaPlayer
-import com.playlistmaker.domain.api.MusicPlayerInteractor
-import com.playlistmaker.domain.api.MusicTrackRepository
+import com.playlistmaker.domain.repository.MusicTrackRepository
 import java.io.IOException
 
-class MusicPlayerInteractorImpl(private val musTrackRepo:MusicTrackRepository,private val listener: MusicPlayerInteractorImpl.OnPlayerStateListener) :MusicPlayerInteractor{
+class MusicPlayerInteractorImpl(private val musTrackRepo:MusicTrackRepository,private val listener: OnPlayerStateListener) :
+    MusicPlayerInteractor {
 
     private val mediaPlayer: MediaPlayer = MediaPlayer()
-    private var currentState : Int = PlayerState.STATE_DEFAULT
+    private var currentState : Int = STATE_DEFAULT
     private var musicTrackUrl = musTrackRepo.getCurrentMusicTrack()?.previewUrl
 
 

@@ -1,4 +1,4 @@
-package com.playlistmaker.ui
+package com.playlistmaker.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,7 +6,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
-import com.playlistmaker.ui.models.Screen
+import com.playlistmaker.presentation.models.Screen
 
 class MainActivity : AppCompatActivity() {
     var btnSettings: Button? = null

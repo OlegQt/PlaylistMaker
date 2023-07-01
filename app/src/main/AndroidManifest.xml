@@ -16,21 +16,21 @@
         android:theme="@style/Theme.YandexPracticumPlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".ui.ActivityPlayer"
+            android:name=".presentation.ui.ActivityPlayer"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.ActivityMedia"
+            android:name=".presentation.ui.ActivityMedia"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.ActivitySearch"
+            android:name=".presentation.ui.ActivitySearch"
             android:exported="false"
             android:theme="@style/Theme.YandexPracticumPlaylistMaker">
             <meta-data
@@ -38,14 +38,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.ActivitySettings"
+            android:name=".presentation.ui.ActivitySettings"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".presentation.ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

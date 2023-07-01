@@ -1,4 +1,4 @@
-package com.playlistmaker.ui
+package com.playlistmaker.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,19 +15,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.playlistmaker.Creator
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.Logic.SearchTrackAdapter
-import com.playlistmaker.ui.models.Msgcode
+import com.playlistmaker.presentation.models.Msgcode
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
-import com.playlistmaker.ui.models.Screen
+import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.dto.MusicTrackDto
-import com.playlistmaker.domain.api.MusicInteractor
+import com.playlistmaker.presentation.presenters.SearchActivityPresenter
+import com.playlistmaker.presentation.models.SearchActivityView
 import com.playlistmaker.searchhistory.History
-import java.util.function.Consumer
 
-class ActivitySearch : AppCompatActivity() {
+class ActivitySearch : AppCompatActivity() ,SearchActivityView{
     private var stubLayout: View? = null
     private var strSearch: String = String()
     private var txtSearch: EditText? = null
@@ -62,6 +62,8 @@ class ActivitySearch : AppCompatActivity() {
     // Получаем доступ к главному потоку
     private val handler = Handler(Looper.getMainLooper())
 
+    // Переменная Presenter
+    lateinit var presenter: SearchActivityPresenter
 
     // Функция вызывается внутри call.enqueue
     private var doAfterSearch: (Msgcode) -> Unit = {
@@ -231,6 +233,8 @@ class ActivitySearch : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        presenter = SearchActivityPresenter(this)
+
         // Переменные для элементов интерфейса
         val btnBack: ImageView = findViewById(R.id.btnBack)
         val btnCls: ImageView = findViewById(R.id.cls_search)
@@ -301,6 +305,8 @@ class ActivitySearch : AppCompatActivity() {
         }
 
         deploySearchHistoryUi()
+
+        presenter.searchMusic("adele")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -319,5 +325,13 @@ class ActivitySearch : AppCompatActivity() {
         super.finish()
         // Сохраняем данные о переходе на главный экран приложения
         App.instance.saveCurrentScreen(Screen.MAIN)
+    }
+
+    override fun showAlertDialog(msg: String) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("")
+            .setMessage(msg)
+            .setPositiveButton("Done",null)
+            .show()
     }
 }

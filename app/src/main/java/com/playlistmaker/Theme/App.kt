@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.gson.Gson
 import com.playlistmaker.data.dto.MusicTrackDto
-import com.playlistmaker.ui.models.Screen
+import com.playlistmaker.presentation.models.Screen
 
 class App : Application() {
     var darkTheme = true;

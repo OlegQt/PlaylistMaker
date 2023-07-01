@@ -1,4 +1,4 @@
-package com.playlistmaker.domain.api
+package com.playlistmaker.domain.usecase
 
 import com.playlistmaker.data.dto.MusicTrackDto
 
