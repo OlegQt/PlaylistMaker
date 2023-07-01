@@ -48,6 +48,9 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
         binding.stubLayout.visibility = View.VISIBLE
         binding.historyLayout.visibility = View.GONE
         binding.progressLoading.visibility = View.GONE
+
+        binding.imgStub.setImageResource(R.drawable.nothing_found) // Set Proper image from drawable
+        binding.txtStubMainError.text = getString(R.string.nothing_found)
     }
     private fun stateInitial(){
         binding.stubLayout.visibility = View.GONE
@@ -60,8 +63,7 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
         binding.progressLoading.visibility = View.GONE
         binding.btnReload.visibility = View.VISIBLE
 
-        val img: ImageView = findViewById(R.id.img_stub) // Find img resource
-        img.setImageResource(R.drawable.connection_troubles) // Set Proper image from drawable
+        binding.imgStub.setImageResource(R.drawable.connection_troubles) // Set Proper image from drawable
         binding.txtStubMainError.text = getString(R.string.connection_troubles)
             .plus("\n")
             .plus(getString(R.string.loading_fail))

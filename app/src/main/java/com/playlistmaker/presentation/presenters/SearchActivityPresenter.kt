@@ -12,11 +12,11 @@ import com.playlistmaker.presentation.models.SearchActivityView
 
 class SearchActivityPresenter(private val state: SearchActivityView,private val context: Context) {
     init {
-        //state.render(ActivitySearchState.InitialState(null))
+        state.render(ActivitySearchState.InitialState(null))
 
+
+        //state.render(ActivitySearchState.InternetTroubles(null))
         //state.render(ActivitySearchState.NothingFound(""))
-        state.render(ActivitySearchState.InternetTroubles(null))
-
     }
 
     fun searchMusic(songName: String) {
