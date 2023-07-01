@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_margin="@dimen/start_txt_pad"
     android:orientation="vertical"
-    tools:context=".ActivitySearch">
+    tools:context=".ui.ActivitySearch">
 
     <!-- Back to Main Menu Layout -->
     <LinearLayout

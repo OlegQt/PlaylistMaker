@@ -1,4 +1,4 @@
-package com.playlistmaker
+package com.playlistmaker.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,12 +15,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.playlistmaker.Creator
 import com.playlistmaker.Logic.SearchTrackAdapter
+import com.playlistmaker.ui.models.Msgcode
+import com.playlistmaker.R
 import com.playlistmaker.Theme.App
-import com.playlistmaker.Theme.Screen
-import com.playlistmaker.itunes.ItunesMusic
-import com.playlistmaker.itunes.ItunesTrack
+import com.playlistmaker.ui.models.Screen
+import com.playlistmaker.data.network.RetrofitNetworkClient
+import com.playlistmaker.data.dto.MusicTrackDto
+import com.playlistmaker.domain.api.MusicInteractor
 import com.playlistmaker.searchhistory.History
+import java.util.function.Consumer
 
 class ActivitySearch : AppCompatActivity() {
     private var stubLayout: View? = null
@@ -36,10 +41,10 @@ class ActivitySearch : AppCompatActivity() {
     private lateinit var recyclerHistory: RecyclerView
 
     // Переменная trackList хранит список треков, найденных по запросу в iTunesMedia
-    private var trackList: ArrayList<ItunesTrack> = ArrayList()
-    private var itunesMusic = ItunesMusic()
+    private var trackList: ArrayList<MusicTrackDto> = ArrayList()
+    private var retrofitNetworkClient = RetrofitNetworkClient()
 
-    // В переменной searchHistory осуществляется доступ к истории 10 просмотренных трекам
+    // В переменной searchHistory осуществляется доступ к истории 10 просмотренных трекам,
     // а так же к их удалению, добавлению
     private var searchHistory: History = History()
 
@@ -63,7 +68,7 @@ class ActivitySearch : AppCompatActivity() {
         if (it == Msgcode.OK) {
             // Если ответ получен, но трэклист пуст. На всякий случай добавил проверку на null,
             // хотя там его и не может быть
-            if (itunesMusic.trackLst.isNullOrEmpty()) this.showStubNothingFound()
+            if (retrofitNetworkClient.trackLst.isNullOrEmpty()) this.showStubNothingFound()
             else {
                 // Если и ответ от сервера есть и список треков не пустой
                 this.modifyTrackList()
@@ -121,7 +126,7 @@ class ActivitySearch : AppCompatActivity() {
     private fun modifyTrackList() {
         this.trackList.clear() // Очищаем трэк лист от предыдущего запроса
         // Ниже переводим формат в читабельный для View Holder и Адаптера и заполняем трэк лист
-        this.itunesMusic.trackLst?.forEach { trackJSON ->
+        this.retrofitNetworkClient.trackLst?.forEach { trackJSON ->
             this.trackList.add(trackJSON)
         }
         this.musTrackAdapter.notifyDataSetChanged() // Уведомляем адаптер о необходимости перерисовки
@@ -140,7 +145,7 @@ class ActivitySearch : AppCompatActivity() {
         // Сохраняю эту функцию на случай, если придется отказаться от лямбды
         // Или добавить какой-то доп. функционал
         // Log.d(App.TAG_LOG, "Keyboard ok button")
-        itunesMusic.search(songName, this.doAfterSearch)
+        retrofitNetworkClient.search(songName, this.doAfterSearch)
         showLoadingStub()
     }
 

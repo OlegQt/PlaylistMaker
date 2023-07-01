@@ -1,12 +1,11 @@
-package com.playlistmaker
+package com.playlistmaker.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
+import com.playlistmaker.R
 import com.playlistmaker.Theme.App
-import com.playlistmaker.Theme.Screen
+import com.playlistmaker.ui.models.Screen
 
 class ActivityMedia : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package com.playlistmaker
+package com.playlistmaker.ui.models
 
 enum class Msgcode {
     NoResponse,

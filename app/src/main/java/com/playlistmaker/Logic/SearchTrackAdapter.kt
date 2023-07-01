@@ -3,16 +3,11 @@ package com.playlistmaker.Logic
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
-import com.playlistmaker.itunes.ItunesTrack
+import com.playlistmaker.data.dto.MusicTrackDto
 
-class SearchTrackAdapter(private val trackList: ArrayList<ItunesTrack>,private var onTrackClickListener:OnTrackClickListener) :
+class SearchTrackAdapter(private val trackList: ArrayList<MusicTrackDto>, private var onTrackClickListener:OnTrackClickListener) :
     Adapter<SearchTrackViewHolder>() {
 
     fun interface OnTrackClickListener {
@@ -35,7 +30,7 @@ class SearchTrackAdapter(private val trackList: ArrayList<ItunesTrack>,private v
 
     override fun getItemCount() =trackList.size
 
-    fun getItem(position:Int):ItunesTrack{
+    fun getItem(position:Int): MusicTrackDto {
         return trackList[position]
     }
 }
