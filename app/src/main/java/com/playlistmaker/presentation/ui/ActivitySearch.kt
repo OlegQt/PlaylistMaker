@@ -2,16 +2,11 @@ package com.playlistmaker.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.LayoutInflater
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.Logic.SearchTrackAdapter
 import com.playlistmaker.R
@@ -32,16 +27,14 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
     private lateinit var musicSearchHistoryAdapter: SearchTrackAdapter
 
     // List of tracks
-    private val musicList:ArrayList<MusicTrack> = ArrayList()
-    private val handler = Handler(Looper.getMainLooper())
-    private val runnable: Runnable = Runnable {
-        presenter.searchMusic(binding.txtSearch.text.toString())
-    }
-
+    private val musicList: ArrayList<MusicTrack> = ArrayList()
+    private val musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
 
 
     // Функция для перехода на экран плеера
-    private fun startPlayerActivity() {startActivity(Intent(App.instance, ActivityPlayer::class.java))}
+    private fun startPlayerActivity() {
+        startActivity(Intent(App.instance, ActivityPlayer::class.java))
+    }
 
     // Функции для изменения состояний экрана
     private fun stateNothingFound() {
@@ -52,12 +45,14 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
         binding.imgStub.setImageResource(R.drawable.nothing_found) // Set Proper image from drawable
         binding.txtStubMainError.text = getString(R.string.nothing_found)
     }
-    private fun stateInitial(){
+
+    private fun stateInitial() {
         binding.stubLayout.visibility = View.GONE
         binding.historyLayout.visibility = View.GONE
         binding.progressLoading.visibility = View.GONE
     }
-    private fun stateInternetTroubles(){
+
+    private fun stateInternetTroubles() {
         binding.stubLayout.visibility = View.VISIBLE
         binding.historyLayout.visibility = View.GONE
         binding.progressLoading.visibility = View.GONE
@@ -70,14 +65,37 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
 
     }
 
+    private fun stateLoading() {
+        binding.stubLayout.visibility = View.GONE
+        binding.historyLayout.visibility = View.GONE
+        binding.progressLoading.visibility = View.GONE
+        binding.progressLoading.visibility = View.VISIBLE
+        binding.searchRecycleView.visibility = View.GONE
+    }
+
+    private fun stateShowMusicSearchHistory(musicHistory: ArrayList<MusicTrack>){
+        binding.stubLayout.visibility = View.GONE
+        binding.historyLayout.visibility = View.VISIBLE
+        binding.progressLoading.visibility = View.GONE
+
+        this.musicSearchHistoryList.clear()
+        this.musicSearchHistoryList.addAll(musicHistory)
+        this.musicSearchHistoryAdapter.notifyDataSetChanged()
+
+    }
+
     // Замена треков на вновь найденные
-    private fun updateMusicList(music: ArrayList<MusicTrack>){
+    private fun updateMusicList(music: ArrayList<MusicTrack>) {
         this.musicList.clear()
         this.musicList.addAll(music)
         this.musicAdapter.notifyDataSetChanged()
+        this.stateInitial()
+        binding.searchRecycleView.visibility = View.VISIBLE
     }
 
-
+    ////////////////////////////////////////////////////////
+    // Блок переопределённых функций
+    ////////////////////////////////////////////////////////
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,16 +105,34 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
 
 
         // Инициализация адаптера с описанием слушателя
-        musicAdapter = SearchTrackAdapter(this.musicList
+        musicAdapter = SearchTrackAdapter(
+            this.musicList
         ) {
+            presenter.musicTrackOnClick(musicList[it])
             presenter.saveCurrentPlayingTrack(musicList[it])
-            this.startPlayerActivity() }
+            this.startPlayerActivity()
+        }
         binding.searchRecycleView.adapter = musicAdapter
-        binding.searchRecycleView.layoutManager = LinearLayoutManager(binding.searchRecycleView.context)
+        binding.searchRecycleView.layoutManager =
+            LinearLayoutManager(binding.searchRecycleView.context)
 
-        // CHECK
-        //presenter.searchMusic("sting")
+        musicSearchHistoryAdapter= SearchTrackAdapter(this.musicSearchHistoryList){}
+        binding.historySearchRecycleView.adapter=musicSearchHistoryAdapter
+        binding.historySearchRecycleView.layoutManager =
+            LinearLayoutManager(binding.searchRecycleView.context)
 
+
+        binding.txtSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(str: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                presenter.enterSearch(str.toString())
+            }
+
+            override fun afterTextChanged(p0: Editable?) {}
+        })
+
+        binding.btnClearHistory.setOnClickListener { presenter.deleteMusicHistory() }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -127,9 +163,11 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
     override fun render(state: ActivitySearchState) {
         when (state) {
             is ActivitySearchState.NothingFound -> stateNothingFound()
-            is ActivitySearchState.Content -> updateMusicList(state.music)
+            is ActivitySearchState.MusicSearchContent -> updateMusicList(state.music)
             is ActivitySearchState.InitialState -> stateInitial()
             is ActivitySearchState.InternetTroubles -> stateInternetTroubles()
+            is ActivitySearchState.Loading -> stateLoading()
+            is ActivitySearchState.HistoryMusicContent -> stateShowMusicSearchHistory(state.music)
             else -> {}
         }
     }
