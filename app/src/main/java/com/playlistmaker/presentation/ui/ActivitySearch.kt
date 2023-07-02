@@ -84,6 +84,7 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
         binding.searchRecycleView.visibility = View.GONE
     }
 
+    // Отображение истории поиска музыкальных композиций
     private fun stateShowMusicSearchHistory(musicHistory: ArrayList<MusicTrack>) {
         binding.stubLayout.visibility = View.GONE
         binding.historyLayout.visibility = View.VISIBLE
@@ -96,7 +97,7 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
 
     }
 
-    // Замена треков на вновь найденные
+    // Отображение найденного списка музыкальных композиций
     private fun updateMusicList(music: ArrayList<MusicTrack>) {
         this.musicList.clear()
         this.musicList.addAll(music)
@@ -126,7 +127,8 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
 
         musicSearchHistoryAdapter = SearchTrackAdapter(this.musicSearchHistoryList) {
             presenter.saveCurrentPlayingTrack(musicSearchHistoryList[it])
-            this.startPlayerActivity()}
+            this.startPlayerActivity()
+        }
         binding.historySearchRecycleView.adapter = musicSearchHistoryAdapter
         binding.historySearchRecycleView.layoutManager =
             LinearLayoutManager(binding.searchRecycleView.context)

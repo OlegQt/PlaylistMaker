@@ -27,6 +27,8 @@ class SearchActivityPresenter(private val state: SearchActivityView, private val
         val history = musRepo.loadMusicSearchHistory()
 
         // Если история поиска не пуста запускаем изменение состояния activity
+        // отображаем recycler с историей поиска треков
+        // Если в истории поиска нет треков, отображаем начальное состояние экрана
         if (!history.data.isNullOrEmpty()){
             musicSearchHistoryList = history.data
             state.render(ActivitySearchState.HistoryMusicContent(musicSearchHistoryList))
