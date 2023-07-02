@@ -79,7 +79,7 @@ class SearchActivityPresenter(private val state: SearchActivityView, private val
 
             // Перезагружаем поиск с задержкой в 2сек
             mainHandler.removeCallbacksAndMessages(null)
-            mainHandler.postDelayed({ searchMusic(strSearch) }, 2000)
+            mainHandler.postDelayed({ searchMusic(strSearch) }, SEARCH_DELAY)
         } else {
             mainHandler.removeCallbacksAndMessages(null)
             loadMusicHistorySearch()
@@ -118,7 +118,7 @@ class SearchActivityPresenter(private val state: SearchActivityView, private val
             state.startPlayerActivity()
 
             // Блокируем доступ к нажатиям на треки на время
-            mainHandler.postDelayed({ musicTrackIsClickable = true }, 300)
+            mainHandler.postDelayed({ musicTrackIsClickable = true }, CLICK_DELAY)
             musicTrackIsClickable = false
         } else {
             state.showAlertDialog("${trackClicked.trackName} Double click detected")
@@ -130,5 +130,8 @@ class SearchActivityPresenter(private val state: SearchActivityView, private val
         musTrackRepo.setCurrentMusicTrack(track)
     }
 
-    companion object
+    companion object{
+        const val SEARCH_DELAY = 2000L
+        const val CLICK_DELAY = 300L
+    }
 }
