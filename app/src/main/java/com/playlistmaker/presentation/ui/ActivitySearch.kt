@@ -155,7 +155,6 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
             finish()
         }
 
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
