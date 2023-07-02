@@ -31,6 +31,7 @@ class SearchActivityPresenter(private val state: SearchActivityView, private val
             musicSearchHistoryList = history.data
             state.render(ActivitySearchState.HistoryMusicContent(musicSearchHistoryList))
         }
+        else state.render(ActivitySearchState.InitialState(null))
 
     }
 
@@ -64,7 +65,7 @@ class SearchActivityPresenter(private val state: SearchActivityView, private val
         state.render(ActivitySearchState.InitialState(null))
     }
 
-    fun enterSearch(strSearch: String) {
+    fun searchLineTyping(strSearch: String) {
         if(strSearch.isNotEmpty()) {
             // Переводим режим экрана в состояние загрузки
             // Реализация экрана загрузки на стороне UI в Activity
@@ -99,7 +100,21 @@ class SearchActivityPresenter(private val state: SearchActivityView, private val
     }
 
     fun musicTrackOnClick(trackClicked:MusicTrack){
-        addMusicTrackToHistorySearch(musicTrackToSafe = trackClicked)
+        if (musicTrackIsClickable) {
+            // Добавляем нажатый трек в историю просмотра треков и
+            // сохраняем нажатый трек, как играющий
+            // и запускаем плеер
+            addMusicTrackToHistorySearch(musicTrackToSafe = trackClicked)
+            saveCurrentPlayingTrack(track = trackClicked)
+            state.startPlayerActivity()
+
+            // Блокируем доступ к нажатиям на треки на время
+            mainHandler.postDelayed({musicTrackIsClickable=true},300)
+            musicTrackIsClickable = false
+        }
+        else{
+            state.showAlertDialog("${trackClicked.trackName} Double click detected")
+        }
     }
 
     fun saveCurrentPlayingTrack(track: MusicTrack) {
