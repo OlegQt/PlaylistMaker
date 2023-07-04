@@ -17,10 +17,6 @@ class SearchActivityPresenter(private val state: SearchActivityView, private val
     private var musicTrackIsClickable = true
     private var musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
 
-    private val lambdaSearch: (Int) -> Unit = {
-
-    }
-
     init {
         state.render(ActivitySearchState.InitialState(null))
     }

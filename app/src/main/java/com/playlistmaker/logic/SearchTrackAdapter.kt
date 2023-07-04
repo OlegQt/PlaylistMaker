@@ -1,11 +1,10 @@
-package com.playlistmaker.Logic
+package com.playlistmaker.logic
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.playlistmaker.R
-import com.playlistmaker.data.dto.MusicTrackDto
 import com.playlistmaker.domain.models.MusicTrack
 
 class SearchTrackAdapter(private val trackList: ArrayList<MusicTrack>, private var onTrackClickListener:OnTrackClickListener) :

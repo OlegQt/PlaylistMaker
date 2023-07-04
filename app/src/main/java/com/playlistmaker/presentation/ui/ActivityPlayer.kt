@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
@@ -14,6 +15,7 @@ import com.playlistmaker.databinding.ActivityPlayerBinding
 import com.playlistmaker.domain.usecase.MusicPlayerInteractorImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,6 +25,8 @@ class ActivityPlayer : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var durationRunnable: Runnable
+
+    private val viewModel = ViewModelProvider(this)[PlayerVm::class.java]
 
     private fun setUiBehaviour() {
 

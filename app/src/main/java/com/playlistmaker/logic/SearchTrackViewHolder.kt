@@ -1,4 +1,4 @@
-package com.playlistmaker.Logic
+package com.playlistmaker.logic
 
 import android.content.res.Resources
 import android.util.Log
@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
-import com.playlistmaker.data.dto.MusicTrackDto
 import com.playlistmaker.domain.models.MusicTrack
 
 class SearchTrackViewHolder(

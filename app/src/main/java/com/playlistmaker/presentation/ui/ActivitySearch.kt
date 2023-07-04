@@ -8,7 +8,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.playlistmaker.Logic.SearchTrackAdapter
+import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.models.Screen
