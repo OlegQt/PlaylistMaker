@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.models.Screen
@@ -26,7 +27,7 @@ class ActivityPlayer : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var durationRunnable: Runnable
 
-    private val viewModel = ViewModelProvider(this)[PlayerVm::class.java]
+    private lateinit var vm: PlayerVm
 
     private fun setUiBehaviour() {
 
@@ -113,36 +114,51 @@ class ActivityPlayer : AppCompatActivity() {
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(musPlayer.getCurrentPos())
     }
 
+    private fun showAlertDialog(msg: String) {
+        MaterialAlertDialogBuilder(this)
+            .setMessage(msg)
+            .setTitle("Dialog")
+            .setNeutralButton("OK", null)
+            .show()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        val factory = PlayerVm.getFactory(this.application)
+        vm = ViewModelProvider(this, factory = factory)[PlayerVm::class.java]
+        vm.getCurrentMusTrack.observe(this) { this.showAlertDialog(it.trackName) }
+        vm.loadCurrentMusicTrack()
+
+
         // Сохраняем текущий экран как главный в sharedPrefs
         App.instance.saveCurrentScreen(Screen.PLAYER)
 
-        val musTrackRepo = MusicTrackRepositoryImpl(binding.root.context)
-        val currentTrack = musTrackRepo.getCurrentMusicTrack()
-        if (currentTrack != null) this.showTrackInfo(currentTrack)
+                val musTrackRepo = MusicTrackRepositoryImpl(binding.root.context)
+                val currentTrack = musTrackRepo.getCurrentMusicTrack()
+                if (currentTrack != null) this.showTrackInfo(currentTrack)
 
-        val playerStateListener = MusicPlayerInteractorImpl.OnPlayerStateListener { playerState ->
-            when (playerState) {
-                MusicPlayerInteractorImpl.STATE_PREPARED -> changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-                MusicPlayerInteractorImpl.STATE_PLAYING -> {
-                    changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
-                    trackPlayingTimeUpdate(true) // Запустили считывание перемени проигрывания
+                val playerStateListener = MusicPlayerInteractorImpl.OnPlayerStateListener { playerState ->
+                    when (playerState) {
+                        MusicPlayerInteractorImpl.STATE_PREPARED -> changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+                        MusicPlayerInteractorImpl.STATE_PLAYING -> {
+                            changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
+                            trackPlayingTimeUpdate(true) // Запустили считывание перемени проигрывания
+                        }
+
+                        MusicPlayerInteractorImpl.STATE_COMPLETE -> changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+                        MusicPlayerInteractorImpl.STATE_PAUSED -> {
+                            changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+                            trackPlayingTimeUpdate(false) // Запустили считывание перемени проигрывания
+                        }
+                    }
                 }
 
-                MusicPlayerInteractorImpl.STATE_COMPLETE -> changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-                MusicPlayerInteractorImpl.STATE_PAUSED -> {
-                    changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-                    trackPlayingTimeUpdate(false) // Запустили считывание перемени проигрывания
-                }
-            }
-        }
-
-        musPlayer = MusicPlayerInteractorImpl(musTrackRepo, playerStateListener)
-        musPlayer.preparePlayer()
+                musPlayer = MusicPlayerInteractorImpl(musTrackRepo, playerStateListener)
+                musPlayer.preparePlayer()
 
         setUiBehaviour() // Вешаем слушателей на элементы UI
 
