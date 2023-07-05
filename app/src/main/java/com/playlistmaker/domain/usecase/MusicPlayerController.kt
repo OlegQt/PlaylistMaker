@@ -1,7 +1,7 @@
 package com.playlistmaker.domain.usecase
 
-interface MusicPlayerInteractor {
-    fun preparePlayer()
+interface MusicPlayerController {
+    fun preparePlayer(musTrackUrl:String)
     fun playMusic()
     fun pauseMusic()
     fun turnOffPlayer()

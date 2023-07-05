@@ -115,6 +115,9 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        App.instance.saveCurrentScreen(Screen.SEARCH) // Сохраняем данные о переходе на главный экран приложения
+
         presenter = SearchActivityPresenter(state = this, context = binding.root.context)
 
 

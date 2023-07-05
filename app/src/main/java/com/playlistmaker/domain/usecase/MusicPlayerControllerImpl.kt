@@ -4,31 +4,31 @@ import android.media.MediaPlayer
 import com.playlistmaker.domain.repository.MusicTrackRepository
 import java.io.IOException
 
-class MusicPlayerInteractorImpl(private val musTrackRepo:MusicTrackRepository,private val listener: OnPlayerStateListener) :
-    MusicPlayerInteractor {
+class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
+    MusicPlayerController {
 
     private val mediaPlayer: MediaPlayer = MediaPlayer()
-    private var currentState : Int = STATE_DEFAULT
-    private var musicTrackUrl = musTrackRepo.getCurrentMusicTrack()?.previewUrl
+    private var currentState = PlayerState.STATE_DEFAULT
+
 
 
     init {
         mediaPlayer.setOnPreparedListener {
-            listener.playerStateChanged(STATE_PREPARED)
+            listener.playerStateChanged(PlayerState.STATE_PREPARED)
         }
 
         mediaPlayer.setOnCompletionListener {
             // Register a callback to be invoked when the end of a media source
             // has been reached during playback.
             it.seekTo(0)
-            listener.playerStateChanged(STATE_COMPLETE)
+            listener.playerStateChanged(PlayerState.STATE_COMPLETE)
         }
     }
 
 
-    override fun preparePlayer() {
+    override fun preparePlayer(musTrackUrl:String) {
         try {
-            mediaPlayer.setDataSource(musicTrackUrl)
+            mediaPlayer.setDataSource(musTrackUrl)
         } catch (e: IOException) {
             //
         }
@@ -46,18 +46,18 @@ class MusicPlayerInteractorImpl(private val musTrackRepo:MusicTrackRepository,pr
 
     override fun playMusic() {
         mediaPlayer.start()
-        listener.playerStateChanged(STATE_PLAYING)
+        listener.playerStateChanged(PlayerState.STATE_PLAYING)
     }
 
     override fun pauseMusic() {
         mediaPlayer.pause()
-        listener.playerStateChanged(STATE_PAUSED)
+        listener.playerStateChanged(PlayerState.STATE_PAUSED)
     }
 
     override fun turnOffPlayer() {
         mediaPlayer.stop()
         mediaPlayer.release()
-        currentState = STATE_DEFAULT
+        currentState = PlayerState.STATE_DEFAULT
     }
 
     fun getCurrentPos() = mediaPlayer.currentPosition
@@ -65,14 +65,14 @@ class MusicPlayerInteractorImpl(private val musTrackRepo:MusicTrackRepository,pr
     fun isPlaying(): Boolean = mediaPlayer.isPlaying
 
     fun interface OnPlayerStateListener {
-        fun playerStateChanged(state: Int)
+        fun playerStateChanged(state: PlayerState)
     }
 
-    companion object PlayerState {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-        const val STATE_COMPLETE = 4
+    enum class PlayerState {
+        STATE_DEFAULT,
+        STATE_PREPARED,
+        STATE_PLAYING,
+        STATE_PAUSED,
+        STATE_COMPLETE
     }
 }
