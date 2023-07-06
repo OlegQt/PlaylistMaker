@@ -15,6 +15,7 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
 
     private val musTrackRepo = MusicTrackRepositoryImpl(application.baseContext)
 
+    private var playingTime = MutableLiveData<Long>()
     private var playerState =
         MutableLiveData<MusicPlayerControllerImpl.PlayerState>() // Состояние плеера
     private val currentPlayingMusTrack = MutableLiveData<MusicTrack>() // Текущий загруженный трек
@@ -22,6 +23,7 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
     // Геттеры для lifeData
     val getPlayerState = playerState as LiveData<MusicPlayerControllerImpl.PlayerState>
     val getCurrentMusTrack = this.currentPlayingMusTrack as LiveData<MusicTrack>
+    val getPlayingTime = this.playingTime as LiveData<Long>
 
     // Переменная для хранения нашего плеера
     // В параметры передается объект реализующий функциональный интерфейс по обновлению состояния плеера
@@ -32,6 +34,7 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
     fun loadCurrentMusicTrack() {
         val musTrack = musTrackRepo.getCurrentMusicTrack()
         if (musTrack != null) this.currentPlayingMusTrack.postValue(musTrack)
+        this.playingTime.postValue(6000L)
     }
 
     // Запускается в observer на getCurrentMusTrack

@@ -93,9 +93,9 @@ class ActivityPlayer : AppCompatActivity() {
         }
     }
 
-    private fun changeDuration() {
-        binding.playerPlayTime.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(musPlayer.getCurrentPos())
+    // Функция расширения Long класса
+    private fun Long.toTimeMmSs(): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(this)
     }
 
     private fun changeBtnPlayPause(state: ButtonState) {
@@ -148,6 +148,8 @@ class ActivityPlayer : AppCompatActivity() {
             }
 
         }
+
+        vm.getPlayingTime.observe(this) { binding.playerPlayTime.text = it.toTimeMmSs() }
 
         vm.loadCurrentMusicTrack()
 

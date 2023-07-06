@@ -1,7 +1,6 @@
 package com.playlistmaker.domain.usecase
 
 import android.media.MediaPlayer
-import com.playlistmaker.domain.repository.MusicTrackRepository
 import java.io.IOException
 
 class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
