@@ -51,7 +51,7 @@ class SearchActivityPresenter(private val state: SearchActivityView, private val
             val temporaryTrack = musicSearchHistoryList[res]
             musicSearchHistoryList.removeAt(res)
             musicSearchHistoryList.add(0, temporaryTrack)
-        } else {
+        } else  {
             // Добавляем track в начало
             // Если треков больше 10 удаляем заключительный
             musicSearchHistoryList.add(0, musicTrackToSafe)

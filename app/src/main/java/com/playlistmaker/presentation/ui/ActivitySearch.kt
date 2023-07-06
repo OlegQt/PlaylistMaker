@@ -1,11 +1,13 @@
 package com.playlistmaker.presentation.ui
 
+import android.app.appsearch.AppSearchSchema
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.logic.SearchTrackAdapter
@@ -15,12 +17,13 @@ import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.ActivitySearchState
-import com.playlistmaker.presentation.presenters.SearchActivityPresenter
 import com.playlistmaker.presentation.models.SearchActivityView
+import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
 
-class ActivitySearch : AppCompatActivity(), SearchActivityView {
+class ActivitySearch : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    lateinit var presenter: SearchActivityPresenter
+    private lateinit var vm:ActivitySearchVm
+
 
     // Адаптеры для отображения найденных треков и истории просмотра треков
     private lateinit var musicAdapter: SearchTrackAdapter
@@ -32,8 +35,11 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
 
 
     // Функция для перехода на экран плеера
-    override fun startPlayerActivity() {
-        startActivity(Intent(App.instance, ActivityPlayer::class.java))
+    private fun startPlayerActivity(flag:Boolean) {
+        if(flag) {
+            finish()
+            startActivity(Intent(App.instance, ActivityPlayer::class.java))
+        }
     }
 
     private fun clsButtonVisibility() {
@@ -61,6 +67,7 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
         binding.historyLayout.visibility = View.GONE
         binding.progressLoading.visibility = View.GONE
         binding.searchRecycleView.visibility = View.GONE
+        //showAlertDialog("InitialState")
     }
 
     private fun stateInternetTroubles() {
@@ -118,41 +125,45 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
 
         App.instance.saveCurrentScreen(Screen.SEARCH) // Сохраняем данные о переходе на главный экран приложения
 
-        presenter = SearchActivityPresenter(state = this, context = binding.root.context)
+        val factory = ActivitySearchVm.getFactory(this.application)
+        vm = ViewModelProvider(this, factory = factory)[ActivitySearchVm::class.java]
+
+        vm.getSearchScreenState.observe(this){this.render(it)}
+
+        vm.getStartPlayerCommand.observe(this){
+            startPlayerActivity(it)
+        }
 
 
         // Инициализация адаптера с описанием слушателя
         musicAdapter =
-            SearchTrackAdapter(this.musicList) { presenter.musicTrackOnClick(musicList[it]) }
+            SearchTrackAdapter(musicList) {
+                vm.musicTrackOnClick(musicList[it])
+            }
         binding.searchRecycleView.adapter = musicAdapter
-        binding.searchRecycleView.layoutManager =
-            LinearLayoutManager(binding.searchRecycleView.context)
+        binding.searchRecycleView.layoutManager =LinearLayoutManager(binding.searchRecycleView.context)
 
-        musicSearchHistoryAdapter = SearchTrackAdapter(this.musicSearchHistoryList) {
-            presenter.saveCurrentPlayingTrack(musicSearchHistoryList[it])
-            this.startPlayerActivity()
+        musicSearchHistoryAdapter = SearchTrackAdapter(musicSearchHistoryList) {
+            vm.saveCurrentPlayingTrack(musicSearchHistoryList[it])
+            //this.startPlayerActivity()
         }
         binding.historySearchRecycleView.adapter = musicSearchHistoryAdapter
         binding.historySearchRecycleView.layoutManager =
             LinearLayoutManager(binding.searchRecycleView.context)
 
-
         binding.txtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(str: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                presenter.searchLineTyping(str.toString())
+                vm.searchLineTyping(str.toString())
             }
 
             override fun afterTextChanged(p0: Editable?) {}
         })
 
-        binding.btnClearHistory.setOnClickListener { presenter.deleteMusicHistory() }
-
-        binding.btnReload.setOnClickListener { presenter.searchLineTyping(binding.txtSearch.toString()) }
-
+        binding.btnClearHistory.setOnClickListener { vm.deleteMusicHistory() }
+        binding.btnReload.setOnClickListener { vm.searchLineTyping(binding.txtSearch.toString()) }
         binding.clsSearch.setOnClickListener { binding.txtSearch.text.clear() }
-
         binding.btnBack.setOnClickListener {
             App.instance.saveCurrentScreen(Screen.MAIN) // Сохраняем экран
             finish()
@@ -178,7 +189,7 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
         App.instance.saveCurrentScreen(Screen.MAIN)
     }
 
-    override fun showAlertDialog(msg: String) {
+    fun showAlertDialog(msg: String) {
         MaterialAlertDialogBuilder(this)
             .setMessage(msg)
             .setTitle("Dialog")
@@ -186,7 +197,7 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
             .show()
     }
 
-    override fun render(state: ActivitySearchState) {
+    fun render(state: ActivitySearchState) {
         when (state) {
             is ActivitySearchState.NothingFound -> stateNothingFound()
             is ActivitySearchState.MusicSearchContent -> updateMusicList(state.music)
