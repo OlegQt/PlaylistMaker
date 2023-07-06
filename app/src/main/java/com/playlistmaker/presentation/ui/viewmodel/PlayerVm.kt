@@ -1,6 +1,7 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
 import android.app.Application
+import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,10 +11,15 @@ import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.usecase.MusicPlayerController
 import com.playlistmaker.domain.usecase.MusicPlayerControllerImpl
+import java.util.logging.Handler
 
 class PlayerVm(private val application: Application) : AndroidViewModel(application) {
 
     private val musTrackRepo = MusicTrackRepositoryImpl(application.baseContext)
+    private val handler = android.os.Handler(Looper.getMainLooper())
+    lateinit var playingTimeUpdate:Runnable
+
+    private var temporalTime = 1000L
 
     private var playingTime = MutableLiveData<Long>()
     private var playerState =
@@ -34,7 +40,17 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
     fun loadCurrentMusicTrack() {
         val musTrack = musTrackRepo.getCurrentMusicTrack()
         if (musTrack != null) this.currentPlayingMusTrack.postValue(musTrack)
-        this.playingTime.postValue(6000L)
+
+        this.playingTimeUpdate = Runnable {
+            //val currentTrackPlayingTime = musicalPlayer.getCurrentPos()
+            //playingTime.postValue(currentTrackPlayingTime.toLong())
+            handler.postDelayed({playingTimeUpdate},100)
+
+            temporalTime+=100L
+            playingTime.postValue(temporalTime)
+        }
+
+        handler.post(playingTimeUpdate)
     }
 
     // Запускается в observer на getCurrentMusTrack

@@ -149,7 +149,10 @@ class ActivityPlayer : AppCompatActivity() {
 
         }
 
-        vm.getPlayingTime.observe(this) { binding.playerPlayTime.text = it.toTimeMmSs() }
+        vm.getPlayingTime.observe(this) {
+            binding.playerPlayTime.text = it.toTimeMmSs()
+            showAlertDialog(it.toTimeMmSs())
+        }
 
         vm.loadCurrentMusicTrack()
 
