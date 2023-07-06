@@ -158,6 +158,8 @@ class ActivitySearch : AppCompatActivity(), SearchActivityView {
             finish()
         }
 
+        binding.txtSearch.setText("")
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

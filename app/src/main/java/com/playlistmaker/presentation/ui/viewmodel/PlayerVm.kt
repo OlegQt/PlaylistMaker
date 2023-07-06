@@ -9,17 +9,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.domain.usecase.MusicPlayerController
 import com.playlistmaker.domain.usecase.MusicPlayerControllerImpl
-import java.util.logging.Handler
 
 class PlayerVm(private val application: Application) : AndroidViewModel(application) {
 
     private val musTrackRepo = MusicTrackRepositoryImpl(application.baseContext)
     private val handler = android.os.Handler(Looper.getMainLooper())
-    lateinit var playingTimeUpdate:Runnable
+    lateinit var playingTimeUpdate: Runnable
 
-    private var temporalTime = 1000L
+    private var temporalTime = 1000
 
     private var playingTime = MutableLiveData<Long>()
     private var playerState =
@@ -41,16 +39,17 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
         val musTrack = musTrackRepo.getCurrentMusicTrack()
         if (musTrack != null) this.currentPlayingMusTrack.postValue(musTrack)
 
-        this.playingTimeUpdate = Runnable {
-            //val currentTrackPlayingTime = musicalPlayer.getCurrentPos()
-            //playingTime.postValue(currentTrackPlayingTime.toLong())
-            handler.postDelayed({playingTimeUpdate},100)
 
-            temporalTime+=100L
-            playingTime.postValue(temporalTime)
-        }
+    }
 
-        handler.post(playingTimeUpdate)
+    fun updatePlayingTime() {
+        playingTime.postValue(musicalPlayer.getCurrentPos().toLong())
+        handler.postDelayed({ updatePlayingTime() }, 100)
+
+    }
+
+    fun startTimer() {
+        handler.post { updatePlayingTime() }
     }
 
     // Запускается в observer на getCurrentMusTrack
@@ -59,20 +58,33 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
         musicalPlayer.preparePlayer(musTrackUrl)
     }
 
-    fun playOrPauseMusic() {
+    fun pushPlayPauseButton() {
         when (playerState.value) {
-            MusicPlayerControllerImpl.PlayerState.STATE_PLAYING -> musicalPlayer.pauseMusic()
-            MusicPlayerControllerImpl.PlayerState.STATE_PAUSED -> musicalPlayer.playMusic()
-            MusicPlayerControllerImpl.PlayerState.STATE_PREPARED -> musicalPlayer.playMusic()
-            MusicPlayerControllerImpl.PlayerState.STATE_COMPLETE -> musicalPlayer.playMusic()
-            else -> {}
+            MusicPlayerControllerImpl.PlayerState.STATE_PLAYING -> playPauseMusic(false)
+            else -> playPauseMusic(true)
+        }
+    }
+
+    fun playPauseMusic(play:Boolean){
+        when(play){
+            true -> {
+                // Запускаем воспроизведение музыки
+                // и запускаем таймер времени проигрывания музыки
+                musicalPlayer.playMusic()
+                startTimer()
+            }
+            false -> {
+                // Останавливаем воспроизведение музыки
+                // и удаляем таймер времени проигрывания музыки
+                musicalPlayer.pauseMusic()
+                handler.removeCallbacksAndMessages(null)
+            }
         }
     }
 
     fun turnOffPlayer() {
         musicalPlayer.turnOffPlayer()
     }
-
 
     // Фабрика для создания ViewModel с пробросом Activity в конструктор
     companion object {

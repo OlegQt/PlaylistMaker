@@ -1,6 +1,5 @@
 package com.playlistmaker.presentation.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,7 +14,6 @@ import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.databinding.ActivityPlayerBinding
 import com.playlistmaker.domain.usecase.MusicPlayerControllerImpl
-import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
 import java.text.SimpleDateFormat
@@ -23,25 +21,17 @@ import java.util.*
 
 class ActivityPlayer : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
-    lateinit var musPlayer: MusicPlayerControllerImpl
-
-    private val handler = Handler(Looper.getMainLooper())
-    private lateinit var durationRunnable: Runnable
-
     private lateinit var vm: PlayerVm
 
     private fun setUiBehaviour() {
         binding.playerBtnBack.setOnClickListener {
+            App.instance.saveCurrentScreen(Screen.SEARCH)
             finish()
         }
 
         binding.playerBtnPlay.setOnClickListener {
-            vm.playOrPauseMusic()
+            vm.pushPlayPauseButton()
         }
-    }
-
-    private fun getFullDurationFromLong(duration: Long): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(duration)
     }
 
     private fun showTrackInfo(track: MusicTrack): Boolean {
@@ -58,10 +48,9 @@ class ActivityPlayer : AppCompatActivity() {
             PlayerLblAlbum.text = track.collectionName.toString()
             PlayerLblGenre.text = track.primaryGenreName
             PlayerLblCountry.text = track.country
-            PlayerLblFullDuration.text = getFullDurationFromLong(track.trackTimeMillis)
+            PlayerLblFullDuration.text = track.trackTimeMillis.toTimeMmSs()
             PlayerLblYear.text = releaseYear
         }
-
 
         // Изменили url картинки
         val artWorkHQ = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
@@ -83,14 +72,6 @@ class ActivityPlayer : AppCompatActivity() {
             .into(binding.playerArtWork)
 
         return true
-    }
-
-    private fun trackPlayingTimeUpdate(start: Boolean) {
-        if (start) {
-            handler.post(durationRunnable)
-        } else {
-            handler.removeCallbacks(durationRunnable)
-        }
     }
 
     // Функция расширения Long класса
@@ -149,10 +130,7 @@ class ActivityPlayer : AppCompatActivity() {
 
         }
 
-        vm.getPlayingTime.observe(this) {
-            binding.playerPlayTime.text = it.toTimeMmSs()
-            showAlertDialog(it.toTimeMmSs())
-        }
+        vm.getPlayingTime.observe(this) { binding.playerPlayTime.text = it.toTimeMmSs() }
 
         vm.loadCurrentMusicTrack()
 
@@ -162,20 +140,12 @@ class ActivityPlayer : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        musPlayer.pauseMusic()
-        trackPlayingTimeUpdate(false)
-    }
-
-    override fun finish() {
-        super.finish()
-        App.instance.saveCurrentScreen(Screen.SEARCH) // Сохраняем данные о переходе на главный экран приложения
+        vm.playPauseMusic(play = false)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // Удаляем наш runnable из очереди и выключаем плеер
-        handler.removeCallbacks(durationRunnable)
-        musPlayer.turnOffPlayer()
+        vm.turnOffPlayer()
     }
 
     enum class ButtonState {
