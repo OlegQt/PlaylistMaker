@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".presentation.ui.ActivitySettings">
+    tools:context=".presentation.ui.activities.ActivitySettings">
 
     <!-- Settings back to Menu-->
     <LinearLayout
@@ -87,6 +87,14 @@
             android:contentDescription="@string/user_agreement"
             android:src="@drawable/agreement" />
 
+
+
     </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/temp"
+        android:text="Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

@@ -1,6 +1,5 @@
-package com.playlistmaker.presentation.ui
+package com.playlistmaker.presentation.ui.activities
 
-import android.app.appsearch.AppSearchSchema
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -17,7 +16,6 @@ import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.ActivitySearchState
-import com.playlistmaker.presentation.models.SearchActivityView
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
 
 class ActivitySearch : AppCompatActivity() {

@@ -2,13 +2,13 @@ package com.playlistmaker.Theme
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.gson.Gson
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.Screen
 
 class App : Application() {
-    var darkTheme = true;
     var currentMusicTrack: MusicTrack? = null
     var currentScreen: String = String()
     lateinit var sharedPreferences: SharedPreferences
@@ -18,38 +18,38 @@ class App : Application() {
         super.onCreate()
         instance = this
 
-        // Прогружаем данные по стилю
         sharedPreferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-        // Грузим значение переключателя темы, если он есть в сохраненке
-        this.darkTheme = sharedPreferences.getBoolean(DARK_MODE_KEY, false)
-        // Принудительно меняем тему всего приложения
-        this.switchTheme(darkTheme)
-
         // Грузим текущий экран
         currentScreen =
             sharedPreferences.getString(CURRENT_SCREEN, Screen.MAIN.screenName).toString()
-
         // Грузим играющий трек
         currentMusicTrack = loadCurrentPlayingTrack()
+
+        applySavedTheme()
     }
 
-    fun switchTheme(darkThemeMode: Boolean) {
-        darkTheme = darkThemeMode
-        when (darkThemeMode) {
-            true -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            false -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+    private fun applySavedTheme() {
+        Toast.makeText(this.baseContext, "theme = ${getCurrentTheme()}", Toast.LENGTH_SHORT).show()
+        when (getCurrentTheme()) {
+            0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
-        sharedPreferences.edit().putBoolean(DARK_MODE_KEY, darkThemeMode).apply()
+    }
+
+    fun saveAndChangeTheme(theme: Int) {
+        if (getCurrentTheme() == 1) sharedPreferences.edit().putInt(THEME_MODE, 0).apply()
+        else sharedPreferences.edit().putInt(THEME_MODE, 1).apply()
+        applySavedTheme()
+    }
+
+
+    private fun getCurrentTheme(): Int {
+        return sharedPreferences.getInt(THEME_MODE, 0)
     }
 
     fun saveCurrentScreen(screen: Screen) {
         sharedPreferences.edit().putString(CURRENT_SCREEN, screen.screenName).apply()
-    }
-
-    fun saveCurrentPlayingTrack(trackToSafe: MusicTrack) {
-        currentMusicTrack = trackToSafe
-        val jsonTrack = Gson().toJson(trackToSafe, MusicTrack::class.java)
-        sharedPreferences.edit().putString(CURRENT_PLAYING_TRACK, jsonTrack).apply()
     }
 
     private fun loadCurrentPlayingTrack(): MusicTrack? {
@@ -62,7 +62,7 @@ class App : Application() {
     companion object {
         // Константы времени компиляции
         const val PREFERENCES = "APP_PREFERENCES"
-        const val DARK_MODE_KEY = "key_for_dark_mode_switch"
+        const val THEME_MODE = "key_for_dark_mode_switch"
         const val SEARCH_HISTORY = "key_for_search_history"
         const val CURRENT_SCREEN = "key_for_saving_current_string"
         const val CURRENT_PLAYING_TRACK = "key_for_saving_current_track"

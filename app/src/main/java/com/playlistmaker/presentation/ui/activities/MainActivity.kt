@@ -1,4 +1,4 @@
-package com.playlistmaker.presentation.ui
+package com.playlistmaker.presentation.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         when (App.instance.currentScreen) {
             Screen.SEARCH.screenName -> startActivity(searchScreen)
             Screen.PLAYER.screenName -> startActivity(playerScreen)
+            Screen.SETTINGS.screenName -> startActivity(settingsScreen)
         }
 
     }

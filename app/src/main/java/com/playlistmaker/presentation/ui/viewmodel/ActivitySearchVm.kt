@@ -11,15 +11,11 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.ActivitySearchState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.playlistmaker.Theme.App
 import com.playlistmaker.data.dto.MusicSearchRequest
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
-import com.playlistmaker.presentation.presenters.SearchActivityPresenter
-import com.playlistmaker.presentation.ui.ActivityPlayer
-import com.playlistmaker.presentation.ui.ActivitySearch
 import com.playlistmaker.util.Resource
 
 class ActivitySearchVm(application: Application) : AndroidViewModel(application) {
@@ -127,9 +123,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
 
             // Перезагружаем поиск с задержкой в 2сек
             mainHandler.removeCallbacksAndMessages(null)
-            mainHandler.postDelayed({ searchMusic(strSearch) },
-                SearchActivityPresenter.SEARCH_DELAY
-            )
+            mainHandler.postDelayed({ searchMusic(strSearch) }, SEARCH_DELAY)
         } else {
             mainHandler.removeCallbacksAndMessages(null)
             loadMusicHistorySearch()
@@ -147,8 +141,12 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
         // Если в истории поиска нет треков, отображаем начальное состояние экрана
         if (!history.data.isNullOrEmpty()) {
             musicSearchHistoryList = history.data
-            searchScreenState.postValue(ActivitySearchState.HistoryMusicContent(musicSearchHistoryList))
-        } else  searchScreenState.postValue(ActivitySearchState.InitialState(null))
+            searchScreenState.postValue(
+                ActivitySearchState.HistoryMusicContent(
+                    musicSearchHistoryList
+                )
+            )
+        } else searchScreenState.postValue(ActivitySearchState.InitialState(null))
 
     }
 

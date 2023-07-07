@@ -1,8 +1,6 @@
-package com.playlistmaker.presentation.ui
+package com.playlistmaker.presentation.ui.activities
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider

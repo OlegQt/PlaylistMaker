@@ -1,0 +1,57 @@
+package com.playlistmaker.presentation.ui.activities
+
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
+import com.playlistmaker.R
+import com.playlistmaker.Theme.App
+import com.playlistmaker.presentation.ui.viewmodel.ActivitySettingsVm
+
+class ActivitySettings : AppCompatActivity() {
+
+    private lateinit var vm: ActivitySettingsVm
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_settings)
+
+        val imgBack: ImageView = findViewById(R.id.backToMainActivity)
+        val imgShare: ImageView = findViewById(R.id.img_share)
+        val imgSupport = findViewById<View>(R.id.ask_support)
+        val imgAgreement: ImageView = findViewById(R.id.agreement)
+        val switchNightTheme: SwitchCompat = findViewById(R.id.night_theme_switch)
+
+        this.vm = ViewModelProvider(this)[ActivitySettingsVm::class.java]
+
+        imgBack.setOnClickListener { finish() }
+
+        // Переключение темы (день/ночь)
+        switchNightTheme.setOnCheckedChangeListener { button, state ->
+            Log.e("ww","switch")
+            vm.switchNightDayTheme(1) }
+
+        // Кнопка поделиться приложением
+        imgShare.setOnClickListener { vm.shareApplication() }
+
+        // Кнопка написать в поддержку
+        imgSupport.setOnClickListener { vm.sendTechnicalSupportMessage() }
+
+        // Кнопка пользовательское соглашение
+        imgAgreement.setOnClickListener { vm.userAgreement() }
+
+        findViewById<Button>(R.id.temp).setOnClickListener {
+            vm.switchNightDayTheme(1)
+        }
+
+
+    }
+}
