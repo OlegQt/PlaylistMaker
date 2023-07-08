@@ -12,7 +12,7 @@ import com.playlistmaker.R
 import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.databinding.ActivityPlayerBinding
-import com.playlistmaker.domain.usecase.MusicPlayerControllerImpl
+import com.playlistmaker.logic.MusicPlayerControllerImpl
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
 import java.text.SimpleDateFormat

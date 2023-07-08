@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.domain.usecase.MusicPlayerControllerImpl
+import com.playlistmaker.logic.MusicPlayerControllerImpl
 
 class PlayerVm(private val application: Application) : AndroidViewModel(application) {
 
