@@ -33,7 +33,7 @@ class ActivityPlayer : AppCompatActivity() {
     private fun showTrackInfo(track: MusicTrack): Boolean {
         val dateFormat = SimpleDateFormat("yyyy", Locale.getDefault())
         val date = dateFormat.parse(track.releaseDate)
-        val milliseconds = date.time
+        val milliseconds = date?.time
         val releaseYear = SimpleDateFormat("yyyy", Locale.getDefault()).format(milliseconds)
 
 

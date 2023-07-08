@@ -20,7 +20,7 @@ import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
 
 class ActivitySearch : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var vm:ActivitySearchVm
+    private lateinit var vm: ActivitySearchVm
 
 
     // Адаптеры для отображения найденных треков и истории просмотра треков
@@ -33,8 +33,8 @@ class ActivitySearch : AppCompatActivity() {
 
 
     // Функция для перехода на экран плеера
-    private fun startPlayerActivity(flag:Boolean) {
-        if(flag) {
+    private fun startPlayerActivity(flag: Boolean) {
+        if (flag) {
             finish()
             startActivity(Intent(App.instance, ActivityPlayer::class.java))
         }
@@ -126,11 +126,9 @@ class ActivitySearch : AppCompatActivity() {
         val factory = ActivitySearchVm.getFactory(this.application)
         vm = ViewModelProvider(this, factory = factory)[ActivitySearchVm::class.java]
 
-        vm.getSearchScreenState.observe(this){this.render(it)}
+        vm.getSearchScreenState.observe(this) { this.render(it) }
 
-        vm.getStartPlayerCommand.observe(this){
-            startPlayerActivity(it)
-        }
+        vm.getStartPlayerCommand.observe(this) { startPlayerActivity(it) }
 
 
         // Инициализация адаптера с описанием слушателя
@@ -139,7 +137,8 @@ class ActivitySearch : AppCompatActivity() {
                 vm.musicTrackOnClick(musicList[it])
             }
         binding.searchRecycleView.adapter = musicAdapter
-        binding.searchRecycleView.layoutManager =LinearLayoutManager(binding.searchRecycleView.context)
+        binding.searchRecycleView.layoutManager =
+            LinearLayoutManager(binding.searchRecycleView.context)
 
         musicSearchHistoryAdapter = SearchTrackAdapter(musicSearchHistoryList) {
             vm.saveCurrentPlayingTrack(musicSearchHistoryList[it])
@@ -195,7 +194,7 @@ class ActivitySearch : AppCompatActivity() {
             .show()
     }
 
-    fun render(state: ActivitySearchState) {
+    private fun render(state: ActivitySearchState) {
         when (state) {
             is ActivitySearchState.NothingFound -> stateNothingFound()
             is ActivitySearchState.MusicSearchContent -> updateMusicList(state.music)

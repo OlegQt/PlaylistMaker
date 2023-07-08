@@ -24,16 +24,8 @@ class MainActivity : AppCompatActivity() {
 
         val vm = ViewModelProvider(this)[ActivityMainVm::class.java]
 
-
-        // Объявление интентов
-        val settingsScreen = Intent(this, ActivitySettings::class.java)
-        val mediaScreen = Intent(this, ActivityMedia::class.java)
-        val searchScreen = Intent(this, ActivitySearch::class.java)
-        val playerScreen = Intent(this, ActivityPlayer::class.java)
-
         btnSearch.setOnClickListener { vm.loadAnotherActivity(Screen.SEARCH.screenName) }
         btnMedia.setOnClickListener { vm.loadAnotherActivity(Screen.MEDIA.screenName) }
         btnSettings.setOnClickListener { vm.loadAnotherActivity(Screen.SETTINGS.screenName) }
-
     }
 }
