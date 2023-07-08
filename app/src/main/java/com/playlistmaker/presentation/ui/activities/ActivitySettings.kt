@@ -12,8 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
+import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySettingsVm
 
 class ActivitySettings : AppCompatActivity() {
@@ -24,6 +26,9 @@ class ActivitySettings : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+        // Сохраняем текущий экран как главный в sharedPrefs
+        App.instance.saveCurrentScreen(Screen.SETTINGS)
+
         val imgBack: ImageView = findViewById(R.id.backToMainActivity)
         val imgShare: ImageView = findViewById(R.id.img_share)
         val imgSupport = findViewById<View>(R.id.ask_support)
@@ -32,12 +37,18 @@ class ActivitySettings : AppCompatActivity() {
 
         this.vm = ViewModelProvider(this)[ActivitySettingsVm::class.java]
 
-        imgBack.setOnClickListener { finish() }
+        // Начальное положение свича определяется загруженной темой
+        switchNightTheme.isChecked = vm.theme==1
+
+        imgBack.setOnClickListener {
+            finish()
+        }
 
         // Переключение темы (день/ночь)
-        switchNightTheme.setOnCheckedChangeListener { button, state ->
-            Log.e("ww","switch")
-            vm.switchNightDayTheme(1) }
+        switchNightTheme.setOnClickListener {
+            vm.switchTheme()
+        }
+
 
         // Кнопка поделиться приложением
         imgShare.setOnClickListener { vm.shareApplication() }
@@ -48,10 +59,12 @@ class ActivitySettings : AppCompatActivity() {
         // Кнопка пользовательское соглашение
         imgAgreement.setOnClickListener { vm.userAgreement() }
 
-        findViewById<Button>(R.id.temp).setOnClickListener {
-            vm.switchNightDayTheme(1)
-        }
-
-
     }
+
+    override fun finish() {
+        super.finish()
+        // Сохраняем данные о переходе на главный экран приложения
+        App.instance.saveCurrentScreen(Screen.MAIN)
+    }
+
 }

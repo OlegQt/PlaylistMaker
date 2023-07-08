@@ -2,14 +2,17 @@ package com.playlistmaker.presentation.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.models.Screen
+import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
 
 class MainActivity : AppCompatActivity() {
-    var btnSettings: Button? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,8 +20,10 @@ class MainActivity : AppCompatActivity() {
 
         val btnMedia = findViewById<Button>(R.id.media)
         val btnSearch = findViewById<Button>(R.id.search)
-        // Попробовал объявить переменную кнопки в поле класса без later-int
-        btnSettings = findViewById(R.id.settings)
+        val btnSettings: Button = findViewById(R.id.settings)
+
+        val vm = ViewModelProvider(this)[ActivityMainVm::class.java]
+
 
         // Объявление интентов
         val settingsScreen = Intent(this, ActivitySettings::class.java)
@@ -26,17 +31,9 @@ class MainActivity : AppCompatActivity() {
         val searchScreen = Intent(this, ActivitySearch::class.java)
         val playerScreen = Intent(this, ActivityPlayer::class.java)
 
-        btnSearch.setOnClickListener { startActivity(searchScreen) }
-        btnMedia.setOnClickListener { startActivity(mediaScreen) }
-        btnSettings?.setOnClickListener { startActivity(settingsScreen) }
-
-        // Ниже проверяем на каком экране было закрыто приложение в прошлом запуске
-        // Восстанавливаем нужный экран
-        when (App.instance.currentScreen) {
-            Screen.SEARCH.screenName -> startActivity(searchScreen)
-            Screen.PLAYER.screenName -> startActivity(playerScreen)
-            Screen.SETTINGS.screenName -> startActivity(settingsScreen)
-        }
+        btnSearch.setOnClickListener { vm.loadAnotherActivity(Screen.SEARCH.screenName) }
+        btnMedia.setOnClickListener { vm.loadAnotherActivity(Screen.MEDIA.screenName) }
+        btnSettings.setOnClickListener { vm.loadAnotherActivity(Screen.SETTINGS.screenName) }
 
     }
 }

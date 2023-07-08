@@ -1,5 +1,6 @@
 package com.playlistmaker.presentation.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
@@ -22,10 +23,7 @@ class ActivityPlayer : AppCompatActivity() {
     private lateinit var vm: PlayerVm
 
     private fun setUiBehaviour() {
-        binding.playerBtnBack.setOnClickListener {
-            App.instance.saveCurrentScreen(Screen.SEARCH)
-            finish()
-        }
+        binding.playerBtnBack.setOnClickListener { finish() }
 
         binding.playerBtnPlay.setOnClickListener {
             vm.pushPlayPauseButton()
@@ -134,6 +132,11 @@ class ActivityPlayer : AppCompatActivity() {
 
         setUiBehaviour() // Вешаем слушателей на элементы UI
 
+    }
+
+    override fun finish() {
+        super.finish()
+        startActivity( Intent(this, ActivitySearch::class.java))
     }
 
     override fun onPause() {

@@ -2,7 +2,7 @@ package com.playlistmaker.Theme
 
 import android.app.Application
 import android.content.SharedPreferences
-import android.widget.Toast
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.gson.Gson
 import com.playlistmaker.domain.models.MusicTrack
@@ -16,6 +16,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         instance = this
 
         sharedPreferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
@@ -25,31 +26,29 @@ class App : Application() {
         // Грузим играющий трек
         currentMusicTrack = loadCurrentPlayingTrack()
 
-        applySavedTheme()
+        applyTheme(getCurrentTheme())
     }
 
-
-    private fun applySavedTheme() {
-        Toast.makeText(this.baseContext, "theme = ${getCurrentTheme()}", Toast.LENGTH_SHORT).show()
-        when (getCurrentTheme()) {
+    fun applyTheme(theme: Int) {
+        saveAndChangeTheme(theme)
+        when (theme) {
             0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
     }
 
     fun saveAndChangeTheme(theme: Int) {
-        if (getCurrentTheme() == 1) sharedPreferences.edit().putInt(THEME_MODE, 0).apply()
-        else sharedPreferences.edit().putInt(THEME_MODE, 1).apply()
-        applySavedTheme()
+        sharedPreferences.edit().putInt(THEME_MODE, theme).apply()
     }
 
-
-    private fun getCurrentTheme(): Int {
+    fun getCurrentTheme(): Int {
         return sharedPreferences.getInt(THEME_MODE, 0)
     }
 
     fun saveCurrentScreen(screen: Screen) {
+        Log.e("ww","safe ${screen.screenName}")
         sharedPreferences.edit().putString(CURRENT_SCREEN, screen.screenName).apply()
+        currentScreen = screen.screenName
     }
 
     private fun loadCurrentPlayingTrack(): MusicTrack? {

@@ -11,8 +11,8 @@ class SearchMusicUseCase(private val musicRepo: MusicRepository) {
     fun executeSearch(searchParams: Any,consumer: MusicConsumer) {
          val searchThread = Thread({
             try {
-                val foundMovies = musicRepo.searchMusic(searchParams)
-                consumer.consume(foundMovies)
+                val foundMusic = musicRepo.searchMusic(searchParams)
+                consumer.consume(foundMusic)
             } catch (e: Exception) {
                 // Обработка ошибки при отсутствии интернета
                 consumer.consume(Resource.Error(-1))
