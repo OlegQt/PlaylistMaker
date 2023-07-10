@@ -26,6 +26,8 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     private var errorMessage = MutableLiveData<String>()
     fun getErrorMsg(): LiveData<String> = errorMessage
 
+    private val musRepo by lazy { Creator.getCreator().getMusicRepository() }
+
 
     init {
         searchScreenState.postValue(ActivitySearchState.InitialState(null))
@@ -88,7 +90,6 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     private fun safeMusicHistorySearch(musicList: ArrayList<MusicTrack>) {
-        val musRepo = Creator.getCreator().getMusicRepository()
         musRepo.safeMusicSearchHistory(musicList)
     }
 
@@ -99,7 +100,6 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     fun deleteMusicHistory() {
-        val musRepo = Creator.getCreator().getMusicRepository()
         musRepo.deleteAllMusicSearchHistory()
         musicSearchHistoryList.clear()
         searchScreenState.postValue(ActivitySearchState.InitialState(null))
@@ -121,8 +121,6 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     private fun loadMusicHistorySearch() {
-        val musRepo = Creator.getCreator().getMusicRepository()
-
         // Подгружаем историю поиска музыки
         val history = musRepo.loadMusicSearchHistory()
 
