@@ -46,7 +46,6 @@ class App : Application() {
     }
 
     fun saveCurrentScreen(screen: Screen) {
-        Log.e("ww","safe ${screen.screenName}")
         sharedPreferences.edit().putString(CURRENT_SCREEN, screen.screenName).apply()
         currentScreen = screen.screenName
     }

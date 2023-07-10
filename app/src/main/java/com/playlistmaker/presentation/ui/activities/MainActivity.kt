@@ -25,12 +25,20 @@ class MainActivity : AppCompatActivity() {
 
         val vm = ViewModelProvider(this)[ActivityMainVm::class.java]
 
-        vm.getErrorMsg().observe(this){
-            MaterialAlertDialogBuilder(this)
-                .setMessage(it)
-                .setTitle("Dialog")
-                .setNeutralButton("OK", null)
-                .show()
+        vm.screen.observe(this){
+            val intent = when (it) {
+                Screen.SEARCH.screenName -> Intent(this, ActivitySearch::class.java)
+                Screen.SETTINGS.screenName -> Intent(this, ActivitySettings::class.java)
+                Screen.PLAYER.screenName -> Intent(this, ActivityPlayer::class.java)
+                Screen.MEDIA.screenName -> Intent(this, ActivityMedia::class.java)
+                else -> Intent(this, MainActivity::class.java)
+            }
+
+            try {
+                startActivity(intent)
+            } catch (error: Exception) {
+
+            }
         }
 
 

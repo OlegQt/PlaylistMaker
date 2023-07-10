@@ -41,6 +41,7 @@ class Creator private constructor(){
         fun getCreator():Creator{
             if(instance==null) {
                 instance = Creator()
+
             }
             return instance!!
         }
