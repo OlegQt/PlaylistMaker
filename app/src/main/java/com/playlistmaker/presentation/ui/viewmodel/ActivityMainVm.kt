@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Intent
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.presentation.ui.activities.ActivityMedia
@@ -11,11 +13,15 @@ import com.playlistmaker.presentation.ui.activities.ActivityPlayer
 import com.playlistmaker.presentation.ui.activities.ActivitySearch
 import com.playlistmaker.presentation.ui.activities.ActivitySettings
 import com.playlistmaker.presentation.ui.activities.MainActivity
+import com.playlistmaker.util.Creator
 
 
 class ActivityMainVm(application: Application):AndroidViewModel(application) {
     val app = application
     var currentScreen:String = App.instance.currentScreen
+
+    private var errorMessage = MutableLiveData<String>()
+    fun getErrorMsg():LiveData<String> = errorMessage
 
     init {
         // Если сохраненный экран отличается от текущего
@@ -23,6 +29,14 @@ class ActivityMainVm(application: Application):AndroidViewModel(application) {
         if (!currentScreen.equals(Screen.MAIN.screenName)){
             loadAnotherActivity(currentScreen)
         }
+
+
+        val cA = Creator.getCreator()
+        val cB = Creator.getCreator()
+        val cC = Creator.getCreator()
+        cC.count=54
+        errorMessage.value = "$cA"
+
     }
 
     fun loadAnotherActivity(screenName: String){

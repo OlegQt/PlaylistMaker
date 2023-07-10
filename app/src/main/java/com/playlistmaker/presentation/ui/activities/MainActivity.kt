@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.models.Screen
@@ -23,6 +24,16 @@ class MainActivity : AppCompatActivity() {
         val btnSettings: Button = findViewById(R.id.settings)
 
         val vm = ViewModelProvider(this)[ActivityMainVm::class.java]
+
+        vm.getErrorMsg().observe(this){
+            MaterialAlertDialogBuilder(this)
+                .setMessage(it)
+                .setTitle("Dialog")
+                .setNeutralButton("OK", null)
+                .show()
+        }
+
+
 
         btnSearch.setOnClickListener { vm.loadAnotherActivity(Screen.SEARCH.screenName) }
         btnMedia.setOnClickListener { vm.loadAnotherActivity(Screen.MEDIA.screenName) }
