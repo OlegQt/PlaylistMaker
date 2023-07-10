@@ -16,6 +16,7 @@ import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
+import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
 
 class ActivitySearchVm(application: Application) : AndroidViewModel(application) {
@@ -29,15 +30,18 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     private var startPlayerApp = MutableLiveData<Boolean>()
     val getStartPlayerCommand = startPlayerApp as LiveData<Boolean>
 
+    private var errorMessage = MutableLiveData<String>()
+    fun getErrorMsg(): LiveData<String> = errorMessage
+
 
     init {
         searchScreenState.postValue(ActivitySearchState.InitialState(null))
+
     }
 
     private fun searchMusic(songName: String) {
-        val musRequest = MusicSearchRequest(songName)
-        val musRepo = MusicRepositoryImpl(RetrofitNetworkClient())
-        val searchUseCase = SearchMusicUseCase(musRepo)
+        val musRequest = Creator.getCreator().createMusicSearchRequest(songName)
+        val searchUseCase = Creator.getCreator().provideSearchMusicUseCase()
 
         // Используем UseCase DOMAIN слоя
         searchUseCase.executeSearch(musRequest) { foundMusic ->
@@ -68,14 +72,8 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
             // Блокируем доступ к нажатиям на треки на время
             mainHandler.postDelayed({ musicTrackIsClickable = true }, CLICK_DELAY)
             musicTrackIsClickable = false
-        } else {
-            Toast.makeText(
-                getApplication(),
-                "${trackClicked.trackName} Double click detected",
-                Toast.LENGTH_SHORT
-            ).show()
-            //state.showAlertDialog("${trackClicked.trackName} Double click detected")
-        }
+        } else errorMessage.value = "Double click detected"
+
     }
 
     private fun addMusicTrackToHistorySearch(musicTrackToSafe: MusicTrack) {

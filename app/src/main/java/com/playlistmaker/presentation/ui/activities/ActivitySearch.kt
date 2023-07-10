@@ -130,6 +130,14 @@ class ActivitySearch : AppCompatActivity() {
 
         vm.getStartPlayerCommand.observe(this) { startPlayerActivity(it) }
 
+        vm.getErrorMsg().observe(this){
+            MaterialAlertDialogBuilder(this)
+                .setMessage(it)
+                .setTitle("Dialog")
+                .setNeutralButton("OK", null)
+                .show()
+        }
+
 
         // Инициализация адаптера с описанием слушателя
         musicAdapter =

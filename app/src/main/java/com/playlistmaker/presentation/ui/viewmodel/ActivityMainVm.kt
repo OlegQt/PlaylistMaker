@@ -29,14 +29,6 @@ class ActivityMainVm(application: Application):AndroidViewModel(application) {
         if (!currentScreen.equals(Screen.MAIN.screenName)){
             loadAnotherActivity(currentScreen)
         }
-
-
-        val cA = Creator.getCreator()
-        val cB = Creator.getCreator()
-        val cC = Creator.getCreator()
-        cC.count=54
-        errorMessage.value = "$cA"
-
     }
 
     fun loadAnotherActivity(screenName: String){
