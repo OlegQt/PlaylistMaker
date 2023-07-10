@@ -15,14 +15,18 @@ class Creator private constructor(){
     }
 
     fun createMusicSearchRequest(strRequest:String):MusicSearchRequest{
-        return MusicSearchRequest(strRequest)
+        return MusicSearchRequest(songName = strRequest)
     }
 
     fun getMusicRepository():MusicRepositoryImpl{
-        return MusicRepositoryImpl(RetrofitNetworkClient())
+        return MusicRepositoryImpl(networkClient = RetrofitNetworkClient())
     }
     fun provideSearchMusicUseCase():SearchMusicUseCase{
-        return SearchMusicUseCase(getMusicRepository())
+        return SearchMusicUseCase(musicRepo = getMusicRepository())
+    }
+
+    fun getMusicTrackRepository(context: Context):MusicTrackRepositoryImpl{
+        return MusicTrackRepositoryImpl(context = context)
     }
 
 

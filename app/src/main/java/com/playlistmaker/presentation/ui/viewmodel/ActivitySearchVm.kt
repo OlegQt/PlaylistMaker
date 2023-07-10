@@ -1,9 +1,7 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
 import android.app.Application
-import android.content.Intent
 import android.os.Looper
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,11 +9,6 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.ActivitySearchState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.playlistmaker.data.dto.MusicSearchRequest
-import com.playlistmaker.data.network.RetrofitNetworkClient
-import com.playlistmaker.data.repository.MusicRepositoryImpl
-import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
-import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
 
@@ -95,21 +88,20 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     private fun safeMusicHistorySearch(musicList: ArrayList<MusicTrack>) {
-        val musRepo = MusicRepositoryImpl(RetrofitNetworkClient())
+        val musRepo = Creator.getCreator().getMusicRepository()
         musRepo.safeMusicSearchHistory(musicList)
     }
 
     fun saveCurrentPlayingTrack(track: MusicTrack) {
-        val musTrackRepo: MusicTrackRepositoryImpl =
-            MusicTrackRepositoryImpl(context = getApplication())
+        val musTrackRepo = Creator.getCreator().getMusicTrackRepository(context = getApplication())
         musTrackRepo.setCurrentMusicTrack(track)
         startPlayerApp.postValue(true)
     }
 
     fun deleteMusicHistory() {
-        val musRepo = MusicRepositoryImpl(RetrofitNetworkClient())
-        musicSearchHistoryList.clear()
+        val musRepo = Creator.getCreator().getMusicRepository()
         musRepo.deleteAllMusicSearchHistory()
+        musicSearchHistoryList.clear()
         searchScreenState.postValue(ActivitySearchState.InitialState(null))
     }
 
@@ -129,7 +121,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     private fun loadMusicHistorySearch() {
-        val musRepo = MusicRepositoryImpl(RetrofitNetworkClient())
+        val musRepo = Creator.getCreator().getMusicRepository()
 
         // Подгружаем историю поиска музыки
         val history = musRepo.loadMusicSearchHistory()
