@@ -1,12 +1,12 @@
 package com.playlistmaker.domain.usecase
 
+import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.util.Resource
 import java.lang.Exception
 
 class SearchMusicUseCase(private val musicRepo: MusicRepository) {
-    var resourceAnswer: Resource<ArrayList<MusicTrack>> = Resource.Error(0)
 
     fun executeSearch(searchParams: Any,consumer: MusicConsumer) {
          val searchThread = Thread({
@@ -15,7 +15,7 @@ class SearchMusicUseCase(private val musicRepo: MusicRepository) {
                 consumer.consume(foundMusic)
             } catch (e: Exception) {
                 // Обработка ошибки при отсутствии интернета
-                consumer.consume(Resource.Error(-1))
+                consumer.consume(Resource.Error(ErrorList.NETWORK_TROUBLES))
             }
         }, "searchMusic")
         searchThread.start()

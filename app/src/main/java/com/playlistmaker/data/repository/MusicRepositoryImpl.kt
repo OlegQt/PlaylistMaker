@@ -6,6 +6,7 @@ import com.playlistmaker.Theme.App
 import com.playlistmaker.data.NetworkClient
 import com.playlistmaker.data.dto.MusicSearchResponse
 import com.playlistmaker.data.mapper.MusicTrackMapper
+import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.util.Resource
@@ -16,7 +17,7 @@ class MusicRepositoryImpl(private val networkClient: NetworkClient) : MusicRepos
     override fun searchMusic(searchParams: Any): Resource<ArrayList<MusicTrack>> {
         val response = networkClient.doRequest(searchParams)
         return when (response.resultCode) {
-            -1 -> Resource.Error(response.resultCode)
+            -1 -> Resource.Error(ErrorList.NETWORK_TROUBLES)
             200 -> {
                 val resultMusicList: ArrayList<MusicTrack> = ArrayList()
                 // Цикл ниже преобразует все данные в данные модели слоя DATA
@@ -24,11 +25,11 @@ class MusicRepositoryImpl(private val networkClient: NetworkClient) : MusicRepos
                     resultMusicList.add(MusicTrackMapper().mapFromDto(it))
                 }
 
-                if (resultMusicList.isEmpty()) return Resource.Error(-500)
+                if (resultMusicList.isEmpty()) return Resource.Error(ErrorList.NOTHING_FOUND)
                 else return Resource.Success(resultMusicList)
             }
 
-            else -> Resource.Error(response.resultCode)
+            else -> Resource.Error(ErrorList.UNKNOWN_ERROR)
         }
     }
 
@@ -43,9 +44,8 @@ class MusicRepositoryImpl(private val networkClient: NetworkClient) : MusicRepos
         val jSonHistory = App.instance.sharedPreferences.getString(App.SEARCH_HISTORY, "")
         val data = Gson().fromJson(jSonHistory, Array<MusicTrack>::class.java)
 
-        return if (data.isNullOrEmpty()) Resource.Error(0)
+        return if (data.isNullOrEmpty()) Resource.Error(ErrorList.NOTHING_FOUND)
         else Resource.Success(data.toCollection(ArrayList<MusicTrack>()))
-
     }
 
     override fun deleteAllMusicSearchHistory() {

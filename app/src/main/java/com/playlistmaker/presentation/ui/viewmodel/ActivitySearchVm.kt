@@ -9,6 +9,7 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.ActivitySearchState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
 
@@ -46,9 +47,16 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
 
     private fun analiseMusicSearchResponse(result: Resource<ArrayList<MusicTrack>>) {
         if (result.data.isNullOrEmpty()) {
-            when (result.errorCode) {
-                -1 -> searchScreenState.postValue((ActivitySearchState.InternetTroubles(null)))
-                -500 -> searchScreenState.postValue((ActivitySearchState.NothingFound(null)))
+            when (result.error) {
+                ErrorList.NETWORK_TROUBLES -> {
+                    searchScreenState.postValue((ActivitySearchState.InternetTroubles(null)))
+                }
+
+                ErrorList.NOTHING_FOUND -> {
+                    searchScreenState.postValue((ActivitySearchState.NothingFound(null)))
+                }
+
+                else -> {}
             }
         } else {
             searchScreenState.postValue(ActivitySearchState.MusicSearchContent(result.data))
