@@ -7,31 +7,29 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.logic.MusicPlayerControllerImpl
+import com.playlistmaker.domain.models.PlayerState
+import com.playlistmaker.util.Creator
+
 
 class PlayerVm(private val application: Application) : AndroidViewModel(application) {
 
-    private val musTrackRepo = MusicTrackRepositoryImpl(application.baseContext)
+    private val musTrackRepo = Creator.getCreator().getMusicTrackRepository(context = application.baseContext)
     private val handler = android.os.Handler(Looper.getMainLooper())
-    lateinit var playingTimeUpdate: Runnable
-
-    private var temporalTime = 1000
 
     private var playingTime = MutableLiveData<Long>()
     private var playerState =
-        MutableLiveData<MusicPlayerControllerImpl.PlayerState>() // Состояние плеера
+        MutableLiveData<PlayerState>() // Состояние плеера
     private val currentPlayingMusTrack = MutableLiveData<MusicTrack>() // Текущий загруженный трек
 
     // Геттеры для lifeData
-    val getPlayerState = playerState as LiveData<MusicPlayerControllerImpl.PlayerState>
+    val getPlayerState = playerState as LiveData<PlayerState>
     val getCurrentMusTrack = this.currentPlayingMusTrack as LiveData<MusicTrack>
     val getPlayingTime = this.playingTime as LiveData<Long>
 
     // Переменная для хранения нашего плеера
     // В параметры передается объект реализующий функциональный интерфейс по обновлению состояния плеера
-    private val musicalPlayer = MusicPlayerControllerImpl() { this.playerState.postValue(it) }
+    private val musicalPlayer = Creator.getCreator().provideMusicPlayer(){playerState.postValue(it)}
 
     // Запускается при переходе на экран плеера
     // допускается перемещение в блок init
@@ -60,7 +58,7 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
 
     fun pushPlayPauseButton() {
         when (playerState.value) {
-            MusicPlayerControllerImpl.PlayerState.STATE_PLAYING -> playPauseMusic(false)
+            PlayerState.STATE_PLAYING -> playPauseMusic(false)
             else -> playPauseMusic(true)
         }
     }

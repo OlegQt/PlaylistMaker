@@ -1,6 +1,7 @@
-package com.playlistmaker.logic
-
+package com.playlistmaker.data.playerimpl
 import android.media.MediaPlayer
+import com.playlistmaker.domain.models.OnPlayerStateListener
+import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.domain.usecase.MusicPlayerController
 import java.io.IOException
 
@@ -64,15 +65,5 @@ class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
 
     fun isPlaying(): Boolean = mediaPlayer.isPlaying
 
-    fun interface OnPlayerStateListener {
-        fun playerStateChanged(state: PlayerState)
-    }
 
-    enum class PlayerState {
-        STATE_DEFAULT,
-        STATE_PREPARED,
-        STATE_PLAYING,
-        STATE_PAUSED,
-        STATE_COMPLETE
-    }
 }

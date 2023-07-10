@@ -12,8 +12,9 @@ import com.playlistmaker.R
 import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.databinding.ActivityPlayerBinding
-import com.playlistmaker.logic.MusicPlayerControllerImpl
+import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
 import java.text.SimpleDateFormat
 import java.util.*
@@ -106,16 +107,16 @@ class ActivityPlayer : AppCompatActivity() {
 
         vm.getPlayerState.observe(this) { state ->
             when (state) {
-                MusicPlayerControllerImpl.PlayerState.STATE_PREPARED -> {}
-                MusicPlayerControllerImpl.PlayerState.STATE_PAUSED -> {
+                PlayerState.STATE_PREPARED -> {}
+                PlayerState.STATE_PAUSED -> {
                     changeBtnPlayPause(ButtonState.BUTTON_PLAY)
                 }
 
-                MusicPlayerControllerImpl.PlayerState.STATE_COMPLETE -> {
+                PlayerState.STATE_COMPLETE -> {
                     changeBtnPlayPause(ButtonState.BUTTON_PLAY)
                 }
 
-                MusicPlayerControllerImpl.PlayerState.STATE_PLAYING -> {
+                PlayerState.STATE_PLAYING -> {
                     changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
                 }
 
