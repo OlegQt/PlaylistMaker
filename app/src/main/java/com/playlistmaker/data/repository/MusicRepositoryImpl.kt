@@ -1,8 +1,7 @@
 package com.playlistmaker.data.repository
 
-import android.content.Context
 import com.google.gson.Gson
-import com.playlistmaker.Theme.App
+import com.playlistmaker.appstart.App
 import com.playlistmaker.data.NetworkClient
 import com.playlistmaker.data.dto.MusicSearchResponse
 import com.playlistmaker.data.mapper.MusicTrackMapper
@@ -10,7 +9,6 @@ import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.util.Resource
-import okhttp3.Response
 
 class MusicRepositoryImpl(private val networkClient: NetworkClient) : MusicRepository {
 

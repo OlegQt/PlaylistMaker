@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.R
-import com.playlistmaker.Theme.App
-import com.playlistmaker.presentation.models.Screen
+import com.playlistmaker.appstart.App
 import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.ActivitySearchState
@@ -118,8 +117,6 @@ class ActivitySearch : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        App.instance.saveCurrentScreen(Screen.SEARCH) // Сохраняем данные о переходе на главный экран приложения
-
         val factory = ActivitySearchVm.getFactory(this.application)
         vm = ViewModelProvider(this, factory = factory)[ActivitySearchVm::class.java]
 
@@ -127,7 +124,7 @@ class ActivitySearch : AppCompatActivity() {
 
         vm.getStartPlayerCommand.observe(this) { startPlayerActivity() }
 
-        vm.getErrorMsg().observe(this){
+        vm.getErrorMsg().observe(this) {
             MaterialAlertDialogBuilder(this)
                 .setMessage(it)
                 .setTitle("Dialog")
@@ -166,11 +163,7 @@ class ActivitySearch : AppCompatActivity() {
         binding.btnClearHistory.setOnClickListener { vm.deleteMusicHistory() }
         binding.btnReload.setOnClickListener { vm.searchLineTyping(binding.txtSearch.toString()) }
         binding.clsSearch.setOnClickListener { binding.txtSearch.text.clear() }
-        binding.btnBack.setOnClickListener {
-            App.instance.saveCurrentScreen(Screen.MAIN) // Сохраняем экран
-            finish()
-        }
-
+        binding.btnBack.setOnClickListener { finish() }
         binding.txtSearch.setText("")
 
     }
@@ -185,19 +178,6 @@ class ActivitySearch : AppCompatActivity() {
         this.binding.txtSearch.setText(savedInstanceState.getString("searchTxt").toString())
     }
 
-    override fun finish() {
-        super.finish()
-        // Сохраняем данные о переходе на главный экран приложения
-        App.instance.saveCurrentScreen(Screen.MAIN)
-    }
-
-    fun showAlertDialog(msg: String) {
-        MaterialAlertDialogBuilder(this)
-            .setMessage(msg)
-            .setTitle("Dialog")
-            .setNeutralButton("OK", null)
-            .show()
-    }
 
     private fun render(state: ActivitySearchState) {
         when (state) {
@@ -207,7 +187,6 @@ class ActivitySearch : AppCompatActivity() {
             is ActivitySearchState.InternetTroubles -> stateInternetTroubles()
             is ActivitySearchState.Loading -> stateLoading()
             is ActivitySearchState.HistoryMusicContent -> stateShowMusicSearchHistory(state.music)
-            else -> {}
         }
         // Проверка состояния кнопки очистки поисковой строки
         // происходит при любом State

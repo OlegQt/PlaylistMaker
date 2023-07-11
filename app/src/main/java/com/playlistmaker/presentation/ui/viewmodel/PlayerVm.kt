@@ -36,17 +36,15 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
     fun loadCurrentMusicTrack() {
         val musTrack = musTrackRepo.getCurrentMusicTrack()
         if (musTrack != null) this.currentPlayingMusTrack.postValue(musTrack)
-
-
     }
 
-    fun updatePlayingTime() {
+    private fun updatePlayingTime() {
         playingTime.postValue(musicalPlayer.getCurrentPos().toLong())
         handler.postDelayed({ updatePlayingTime() }, 100)
 
     }
 
-    fun startTimer() {
+    private fun startTimer() {
         handler.post { updatePlayingTime() }
     }
 

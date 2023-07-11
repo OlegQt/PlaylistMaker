@@ -25,7 +25,6 @@ class Creator private constructor(){
     fun getMusicTrackRepository(context: Context):MusicTrackRepositoryImpl{
         return MusicTrackRepositoryImpl(context = context)
     }
-
     fun provideMusicPlayer(externalListener: OnPlayerStateListener):MusicPlayerControllerImpl{
         return MusicPlayerControllerImpl(listener = externalListener)
     }

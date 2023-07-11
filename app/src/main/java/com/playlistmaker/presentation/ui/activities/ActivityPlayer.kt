@@ -9,15 +9,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
-import com.playlistmaker.Theme.App
-import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.databinding.ActivityPlayerBinding
-import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 class ActivityPlayer : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
@@ -94,9 +91,6 @@ class ActivityPlayer : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Сохраняем текущий экран как главный в sharedPrefs
-        App.instance.saveCurrentScreen(Screen.PLAYER)
-
         val factory = PlayerVm.getFactory(this.application)
         vm = ViewModelProvider(this, factory = factory)[PlayerVm::class.java]
 
@@ -133,11 +127,6 @@ class ActivityPlayer : AppCompatActivity() {
 
         setUiBehaviour() // Вешаем слушателей на элементы UI
 
-    }
-
-    override fun finish() {
-        super.finish()
-        startActivity( Intent(this, ActivitySearch::class.java))
     }
 
     override fun onPause() {
