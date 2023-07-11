@@ -2,18 +2,20 @@ package com.playlistmaker.data.repository
 
 import android.content.Context
 import com.google.gson.Gson
-import com.playlistmaker.appstart.App
 import com.playlistmaker.data.dto.MusicTrackDto
 import com.playlistmaker.data.mapper.MusicTrackMapper
-import com.playlistmaker.domain.repository.MusicTrackRepository
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.domain.repository.MusicTrackRepository
+
+private const val PREFERENCES = "APP_PREFERENCES"
+private const val CURRENT_PLAYING_TRACK = "key_for_saving_current_track"
 
 class MusicTrackRepositoryImpl(context: Context): MusicTrackRepository{
-    private val sharedPreferences = context.getSharedPreferences(App.PREFERENCES, Context.MODE_PRIVATE)
+    private val sharedPreferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 
     override fun getCurrentMusicTrack(): MusicTrack? {
         // Загрузили трек
-        val jsonTrack = sharedPreferences.getString(App.CURRENT_PLAYING_TRACK, "")
+        val jsonTrack = sharedPreferences.getString(CURRENT_PLAYING_TRACK, "")
 
         // Если трек загружен успешно форматируем в класс DTO и делаем mapping
         return if(jsonTrack.isNullOrEmpty()) null
@@ -29,6 +31,6 @@ class MusicTrackRepositoryImpl(context: Context): MusicTrackRepository{
 
         // Сохраняем трек
         val jsonTrack = Gson().toJson(musicTrackDto, MusicTrackDto::class.java)
-        sharedPreferences.edit().putString(App.CURRENT_PLAYING_TRACK, jsonTrack).apply()
+        sharedPreferences.edit().putString(CURRENT_PLAYING_TRACK, jsonTrack).apply()
     }
 }

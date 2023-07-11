@@ -1,6 +1,5 @@
 package com.playlistmaker.presentation.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity

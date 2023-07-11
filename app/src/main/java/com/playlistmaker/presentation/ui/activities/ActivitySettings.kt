@@ -29,7 +29,7 @@ class ActivitySettings : AppCompatActivity() {
         this.vm = ViewModelProvider(this)[ActivitySettingsVm::class.java]
 
         // Начальное положение свича определяется загруженной темой
-        switchNightTheme.isChecked = vm.theme == 1
+        switchNightTheme.isChecked = vm.isNightMode
 
         imgBack.setOnClickListener {
             finish()

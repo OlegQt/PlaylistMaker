@@ -2,41 +2,34 @@ package com.playlistmaker.appstart
 
 import android.app.Application
 import android.content.SharedPreferences
+import com.playlistmaker.util.Creator
 import androidx.appcompat.app.AppCompatDelegate
+import com.playlistmaker.domain.models.Theme
+import com.playlistmaker.domain.usecase.SettingsController
 
 class App : Application() {
-    lateinit var sharedPreferences: SharedPreferences
+    private lateinit var settingsController:SettingsController
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        sharedPreferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-        applyTheme(getCurrentTheme())
+
+        // Загружаем сохраненную тему
+        settingsController = Creator.getCreator().provideSettingsController(applicationContext)
+
+        applyTheme(settingsController.loadMode())
     }
 
-    fun applyTheme(theme: Int) {
-        saveAndChangeTheme(theme)
-        when (theme) {
-            0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    private fun applyTheme(themeMode:Theme) {
+        when (themeMode) {
+            Theme.DAY_THEME -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            Theme.NIGHT_THEME -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
     }
-
-    private fun saveAndChangeTheme(theme: Int) {
-        sharedPreferences.edit().putInt(THEME_MODE, theme).apply()
-    }
-
-    fun getCurrentTheme(): Int {
-        return sharedPreferences.getInt(THEME_MODE, 0)
-    }
-
 
     companion object {
         // Константы времени компиляции
         const val PREFERENCES = "APP_PREFERENCES"
-        const val THEME_MODE = "key_for_dark_mode_switch"
-        const val SEARCH_HISTORY = "key_for_search_history"
-        const val CURRENT_PLAYING_TRACK = "key_for_saving_current_track"
 
         // Для удобного доступа к App
         lateinit var instance: App

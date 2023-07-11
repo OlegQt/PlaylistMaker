@@ -28,7 +28,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     private var errorMessage = MutableLiveData<String>()
     fun getErrorMsg(): LiveData<String> = errorMessage
 
-    private val musRepo by lazy { Creator.getCreator().getMusicRepository() }
+    private val musRepo by lazy { Creator.getCreator().getMusicRepository(application) }
 
 
     init {
@@ -37,7 +37,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
 
     private fun searchMusic(songName: String) {
         val musRequest = Creator.getCreator().createMusicSearchRequest(songName)
-        val searchUseCase = Creator.getCreator().provideSearchMusicUseCase()
+        val searchUseCase = Creator.getCreator().provideSearchMusicUseCase(getApplication())
 
         // Используем UseCase DOMAIN слоя
         searchUseCase.executeSearch(musRequest) { foundMusic ->
@@ -102,7 +102,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     fun saveCurrentPlayingTrack(track: MusicTrack) {
-        val musTrackRepo = Creator.getCreator().getMusicTrackRepository(context = getApplication())
+        val musTrackRepo = Creator.getCreator().getMusicTrackRepository(externalContext =  getApplication())
         musTrackRepo.setCurrentMusicTrack(track)
     }
 

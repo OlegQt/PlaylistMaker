@@ -6,8 +6,10 @@ import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
+import com.playlistmaker.data.repository.SettingsRepositoryImpl
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
+import com.playlistmaker.domain.usecase.SettingsController
 
 class Creator private constructor(){
 
@@ -15,20 +17,26 @@ class Creator private constructor(){
         return MusicSearchRequest(songName = strRequest)
     }
 
-    fun getMusicRepository():MusicRepositoryImpl{
-        return MusicRepositoryImpl(networkClient = RetrofitNetworkClient())
+    fun getMusicRepository(externalContext: Context):MusicRepositoryImpl{
+        return MusicRepositoryImpl(networkClient = RetrofitNetworkClient(), context = externalContext)
     }
-    fun provideSearchMusicUseCase():SearchMusicUseCase{
-        return SearchMusicUseCase(musicRepo = getMusicRepository())
+    fun provideSearchMusicUseCase(context: Context):SearchMusicUseCase{
+        return SearchMusicUseCase(musicRepo = getMusicRepository(externalContext = context))
     }
 
-    fun getMusicTrackRepository(context: Context):MusicTrackRepositoryImpl{
-        return MusicTrackRepositoryImpl(context = context)
+    fun getMusicTrackRepository(externalContext: Context):MusicTrackRepositoryImpl{
+        return MusicTrackRepositoryImpl(context = externalContext)
     }
     fun provideMusicPlayer(externalListener: OnPlayerStateListener):MusicPlayerControllerImpl{
         return MusicPlayerControllerImpl(listener = externalListener)
     }
 
+    fun getSettingsRepository(context: Context):SettingsRepositoryImpl{
+        return SettingsRepositoryImpl(context = context)
+    }
+    fun provideSettingsController(externalContext: Context):SettingsController{
+        return SettingsController(settingsRepository = getSettingsRepository(context = externalContext) )
+    }
 
     override fun toString(): String {
         return "Class Creator"

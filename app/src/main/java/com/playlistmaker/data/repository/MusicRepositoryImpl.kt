@@ -1,5 +1,6 @@
 package com.playlistmaker.data.repository
 
+import android.content.Context
 import com.google.gson.Gson
 import com.playlistmaker.appstart.App
 import com.playlistmaker.data.NetworkClient
@@ -10,7 +11,11 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.util.Resource
 
-class MusicRepositoryImpl(private val networkClient: NetworkClient) : MusicRepository {
+private const val PREFERENCES = "APP_PREFERENCES"
+private const val SEARCH_HISTORY = "key_for_search_history"
+
+class MusicRepositoryImpl(private val networkClient: NetworkClient,context: Context) : MusicRepository {
+    private val sharedPreferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 
     override fun searchMusic(searchParams: Any): Resource<ArrayList<MusicTrack>> {
         val response = networkClient.doRequest(searchParams)
@@ -34,12 +39,12 @@ class MusicRepositoryImpl(private val networkClient: NetworkClient) : MusicRepos
     override fun safeMusicSearchHistory(musicList: ArrayList<MusicTrack>) {
         if (musicList.isNotEmpty()) {
             val jSonHistory = Gson().toJson(musicList)
-            App.instance.sharedPreferences.edit().putString(App.SEARCH_HISTORY, jSonHistory).apply()
+            sharedPreferences.edit().putString(SEARCH_HISTORY, jSonHistory).apply()
         }
     }
 
     override fun loadMusicSearchHistory(): Resource<ArrayList<MusicTrack>> {
-        val jSonHistory = App.instance.sharedPreferences.getString(App.SEARCH_HISTORY, "")
+        val jSonHistory = sharedPreferences.getString(SEARCH_HISTORY, "")
         val data = Gson().fromJson(jSonHistory, Array<MusicTrack>::class.java)
 
         return if (data.isNullOrEmpty()) Resource.Error(ErrorList.NOTHING_FOUND)
@@ -47,6 +52,6 @@ class MusicRepositoryImpl(private val networkClient: NetworkClient) : MusicRepos
     }
 
     override fun deleteAllMusicSearchHistory() {
-        App.instance.sharedPreferences.edit().remove(App.SEARCH_HISTORY).apply()
+        sharedPreferences.edit().remove(SEARCH_HISTORY).apply()
     }
 }
