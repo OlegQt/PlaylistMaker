@@ -10,6 +10,7 @@ import com.playlistmaker.presentation.models.ActivitySearchState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.playlistmaker.domain.models.ErrorList
+import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
 
@@ -21,8 +22,8 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     private var searchScreenState = MutableLiveData<ActivitySearchState>()
     val getSearchScreenState = searchScreenState as LiveData<ActivitySearchState>
 
-    private var startPlayerApp = MutableLiveData<Boolean>()
-    val getStartPlayerCommand = startPlayerApp as LiveData<Boolean>
+    private var startPlayerApp = SingleLiveEvent<MusicTrack>()
+    val getStartPlayerCommand = startPlayerApp as LiveData<MusicTrack>
 
     private var errorMessage = MutableLiveData<String>()
     fun getErrorMsg(): LiveData<String> = errorMessage
@@ -31,8 +32,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
 
 
     init {
-        searchScreenState.postValue(ActivitySearchState.InitialState(null))
-
+        searchScreenState.value = ActivitySearchState.InitialState(null)
     }
 
     private fun searchMusic(songName: String) {
@@ -70,7 +70,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
             // и запускаем плеер
             addMusicTrackToHistorySearch(musicTrackToSafe = trackClicked)
             saveCurrentPlayingTrack(track = trackClicked)
-            this.startPlayerApp.postValue(true)
+            this.startPlayerApp.postValue(trackClicked)
 
             // Блокируем доступ к нажатиям на треки на время
             mainHandler.postDelayed({ musicTrackIsClickable = true }, CLICK_DELAY)
@@ -104,7 +104,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     fun saveCurrentPlayingTrack(track: MusicTrack) {
         val musTrackRepo = Creator.getCreator().getMusicTrackRepository(context = getApplication())
         musTrackRepo.setCurrentMusicTrack(track)
-        startPlayerApp.postValue(true)
+        //startPlayerApp.postValue(true)
     }
 
     fun deleteMusicHistory() {

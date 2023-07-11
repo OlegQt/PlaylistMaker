@@ -33,11 +33,8 @@ class ActivitySearch : AppCompatActivity() {
 
 
     // Функция для перехода на экран плеера
-    private fun startPlayerActivity(flag: Boolean) {
-        if (flag) {
-            finish()
-            startActivity(Intent(App.instance, ActivityPlayer::class.java))
-        }
+    private fun startPlayerActivity() {
+        startActivity(Intent(App.instance, ActivityPlayer::class.java))
     }
 
     private fun clsButtonVisibility() {
@@ -128,7 +125,7 @@ class ActivitySearch : AppCompatActivity() {
 
         vm.getSearchScreenState.observe(this) { this.render(it) }
 
-        vm.getStartPlayerCommand.observe(this) { startPlayerActivity(it) }
+        vm.getStartPlayerCommand.observe(this) { startPlayerActivity() }
 
         vm.getErrorMsg().observe(this){
             MaterialAlertDialogBuilder(this)
@@ -150,7 +147,7 @@ class ActivitySearch : AppCompatActivity() {
 
         musicSearchHistoryAdapter = SearchTrackAdapter(musicSearchHistoryList) {
             vm.saveCurrentPlayingTrack(musicSearchHistoryList[it])
-            //this.startPlayerActivity()
+            this.startPlayerActivity()
         }
         binding.historySearchRecycleView.adapter = musicSearchHistoryAdapter
         binding.historySearchRecycleView.layoutManager =
