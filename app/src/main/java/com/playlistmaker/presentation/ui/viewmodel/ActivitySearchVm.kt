@@ -102,7 +102,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     fun saveCurrentPlayingTrack(track: MusicTrack) {
-        val musTrackRepo = Creator.getCreator().getMusicTrackRepository(externalContext = getApplication())
+        val musTrackRepo = Creator.getCreator().getMusicTrackRepository(context = getApplication())
         musTrackRepo.setCurrentMusicTrack(track)
         //startPlayerApp.postValue(true)
     }

@@ -6,10 +6,7 @@ import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
-import com.playlistmaker.data.repository.ScreenRepositoryImpl
 import com.playlistmaker.domain.models.OnPlayerStateListener
-import com.playlistmaker.domain.usecase.LoadScreenUseCase
-import com.playlistmaker.domain.usecase.SafeLastScreenUseCase
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
 
 class Creator private constructor(){
@@ -25,25 +22,14 @@ class Creator private constructor(){
         return SearchMusicUseCase(musicRepo = getMusicRepository())
     }
 
-    fun getMusicTrackRepository(externalContext: Context):MusicTrackRepositoryImpl{
-        return MusicTrackRepositoryImpl(context = externalContext)
+    fun getMusicTrackRepository(context: Context):MusicTrackRepositoryImpl{
+        return MusicTrackRepositoryImpl(context = context)
     }
 
     fun provideMusicPlayer(externalListener: OnPlayerStateListener):MusicPlayerControllerImpl{
         return MusicPlayerControllerImpl(listener = externalListener)
     }
 
-    private fun getScreenRepository(context: Context):ScreenRepositoryImpl{
-        return ScreenRepositoryImpl(context)
-    }
-
-    fun provideLoadLastScreenUseCase(externalContext: Context):LoadScreenUseCase{
-        return LoadScreenUseCase(getScreenRepository(context = externalContext))
-    }
-
-    fun provideSafeLastScreenUseCase(externalContext: Context):SafeLastScreenUseCase{
-        return SafeLastScreenUseCase(getScreenRepository(context = externalContext))
-    }
 
     override fun toString(): String {
         return "Class Creator"

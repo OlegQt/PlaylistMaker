@@ -14,7 +14,7 @@ import com.playlistmaker.util.Creator
 
 class PlayerVm(private val application: Application) : AndroidViewModel(application) {
 
-    private val musTrackRepo = Creator.getCreator().getMusicTrackRepository(externalContext = application.baseContext)
+    private val musTrackRepo = Creator.getCreator().getMusicTrackRepository(context = application.baseContext)
     private val handler = android.os.Handler(Looper.getMainLooper())
 
     private var playingTime = MutableLiveData<Long>()

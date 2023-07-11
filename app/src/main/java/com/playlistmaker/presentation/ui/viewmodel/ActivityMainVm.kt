@@ -2,14 +2,14 @@ package com.playlistmaker.presentation.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import com.playlistmaker.Theme.App
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.presentation.models.Screen
-import com.playlistmaker.util.Creator
 
 
-class ActivityMainVm(app:Application):AndroidViewModel(app) {
-    private val loadLastScreenUseCase = Creator.getCreator().provideLoadLastScreenUseCase(app.baseContext)
-    private var currentScreen:String = loadLastScreenUseCase.execute()
+class ActivityMainVm():ViewModel() {
+    var currentScreen:String = App.instance.currentScreen
 
     val screen = SingleLiveEvent<String>()
 

@@ -41,12 +41,7 @@ class ActivitySettings : AppCompatActivity() {
         switchNightTheme.isChecked = vm.theme == 1
 
         imgBack.setOnClickListener {
-            //finish()
-            try {
-                startActivity(Intent(this,MainActivity::class.java))
-            } catch (error: Exception) {
-
-            }
+            finish()
         }
 
         // Переключение темы (день/ночь)
@@ -69,11 +64,6 @@ class ActivitySettings : AppCompatActivity() {
     override fun finish() {
         super.finish()
         // Сохраняем данные о переходе на главный экран приложения
-        App.instance.saveCurrentScreen(Screen.SETTINGS)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
         App.instance.saveCurrentScreen(Screen.MAIN)
     }
 
