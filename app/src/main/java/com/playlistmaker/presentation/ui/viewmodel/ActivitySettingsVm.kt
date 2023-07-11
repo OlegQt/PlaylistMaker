@@ -7,14 +7,15 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import com.playlistmaker.R
 import com.playlistmaker.Theme.App
-import com.playlistmaker.presentation.models.Screen
+import com.playlistmaker.util.Creator
 
 class ActivitySettingsVm(private val application: Application) : AndroidViewModel(application) {
     private val app = application
+    private var safeLastScreenUseCase = Creator.getCreator().provideSafeLastScreenUseCase(app.baseContext)
     var theme: Int = App.instance.getCurrentTheme()
 
     init {
-        App.instance.saveCurrentScreen(Screen.SETTINGS)
+        //safeLastScreenUseCase.execute(Screen.SETTINGS.screenName)
     }
 
     fun setTheme() {
