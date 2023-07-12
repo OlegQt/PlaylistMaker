@@ -8,6 +8,7 @@ import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.data.repository.SettingsRepositoryImpl
 import com.playlistmaker.domain.models.OnPlayerStateListener
+import com.playlistmaker.domain.models.SearchRequest
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.domain.repository.MusicTrackRepository
 import com.playlistmaker.domain.repository.SettingsRepository
@@ -21,7 +22,7 @@ import com.playlistmaker.domain.usecase.SettingsController
 
 class Creator private constructor() {
 
-    fun createMusicSearchRequest(strRequest: String): MusicSearchRequest {
+    fun createMusicSearchRequest(strRequest: String): SearchRequest {
         return MusicSearchRequest(songName = strRequest)
     }
 
