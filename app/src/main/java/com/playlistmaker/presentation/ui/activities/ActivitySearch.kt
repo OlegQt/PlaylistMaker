@@ -9,11 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.R
-import com.playlistmaker.appstart.App
 import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
 
@@ -33,7 +32,7 @@ class ActivitySearch : AppCompatActivity() {
 
     // Функция для перехода на экран плеера
     private fun startPlayerActivity() {
-        startActivity(Intent(App.instance, ActivityPlayer::class.java))
+        startActivity(Intent(this, ActivityPlayer::class.java))
     }
 
     private fun clsButtonVisibility() {

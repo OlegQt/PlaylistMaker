@@ -8,45 +8,93 @@ import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.data.repository.SettingsRepositoryImpl
 import com.playlistmaker.domain.models.OnPlayerStateListener
+import com.playlistmaker.domain.repository.MusicRepository
+import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.LoadLastPlayingMusicTrackUseCase
+import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
+import com.playlistmaker.domain.usecase.SafeMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.domain.usecase.SettingsController
 
-class Creator private constructor(){
+class Creator private constructor() {
 
-    fun createMusicSearchRequest(strRequest:String):MusicSearchRequest{
+    fun createMusicSearchRequest(strRequest: String): MusicSearchRequest {
         return MusicSearchRequest(songName = strRequest)
     }
 
-    fun getMusicRepository(externalContext: Context):MusicRepositoryImpl{
-        return MusicRepositoryImpl(networkClient = RetrofitNetworkClient(), context = externalContext)
+    // Репозиторий списка треков (истории либо найденных)
+    private fun getMusicRepository(externalContext: Context): MusicRepository {
+        return MusicRepositoryImpl(
+            networkClient = RetrofitNetworkClient(),
+            context = externalContext
+        )
     }
-    fun provideSearchMusicUseCase(context: Context):SearchMusicUseCase{
+
+    // UseCase для поиска музыки
+    fun provideSearchMusicUseCase(context: Context): SearchMusicUseCase {
         return SearchMusicUseCase(musicRepo = getMusicRepository(externalContext = context))
     }
 
-    fun getMusicTrackRepository(externalContext: Context):MusicTrackRepositoryImpl{
+    // UseCase для сохранения истории найденных музыкальных треков
+    fun provideSafeMusicSearchHistory(context: Context): SafeMusicSearchHistoryUseCase {
+        return SafeMusicSearchHistoryUseCase(getMusicRepository(externalContext = context))
+    }
+
+    // UseCase для загрузки истории найденных музыкальных треков
+    fun provideLoadMusicSearchHistory(context: Context): LoadMusicSearchHistoryUseCase {
+        return LoadMusicSearchHistoryUseCase(getMusicRepository(externalContext = context))
+    }
+
+    // UseCase для удаления истории найденных музыкальных треков
+    fun provideDeleteMusicSearchHistory(context: Context): DeleteMusicSearchHistoryUseCase {
+        return DeleteMusicSearchHistoryUseCase(getMusicRepository(externalContext = context))
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // Далее UseCase для работы с конкретным музыкальным треком
+    /////////////////////////////////////////////////////////////////////////////////
+
+    private fun getMusicTrackRepository(externalContext: Context): MusicTrackRepositoryImpl {
         return MusicTrackRepositoryImpl(context = externalContext)
     }
-    fun provideMusicPlayer(externalListener: OnPlayerStateListener):MusicPlayerControllerImpl{
+
+    // UseCase загрузки последнего проигранного трека
+    fun provideLoadLastPlayingTrackUseCase(context: Context):LoadLastPlayingMusicTrackUseCase{
+        return LoadLastPlayingMusicTrackUseCase(getMusicTrackRepository(externalContext = context))
+    }
+
+    // UseCase сохранения последнего проигранного трека
+    fun provideSafePlayingTrackUseCase(context: Context):SafeCurrentPlayingTrackUseCase{
+        return SafeCurrentPlayingTrackUseCase(getMusicTrackRepository(externalContext = context))
+    }
+
+    fun provideMusicPlayer(externalListener: OnPlayerStateListener): MusicPlayerControllerImpl {
         return MusicPlayerControllerImpl(listener = externalListener)
     }
 
-    fun getSettingsRepository(context: Context):SettingsRepositoryImpl{
+    /////////////////////////////////////////////////////////////////////////////////
+    // Далее UseCase для работы настройками приложения (тема день/ночь)
+    /////////////////////////////////////////////////////////////////////////////////
+
+    private fun getSettingsRepository(context: Context): SettingsRepositoryImpl {
         return SettingsRepositoryImpl(context = context)
     }
-    fun provideSettingsController(externalContext: Context):SettingsController{
-        return SettingsController(settingsRepository = getSettingsRepository(context = externalContext) )
+
+    fun provideSettingsController(externalContext: Context): SettingsController {
+        return SettingsController(settingsRepository = getSettingsRepository(context = externalContext))
     }
 
     override fun toString(): String {
         return "Class Creator"
     }
 
-    companion object{
-        var instance:Creator? = null
+    companion object {
+        var instance: Creator? = null
 
-        fun getCreator():Creator{
-            if(instance==null) {
+        fun getCreator(): Creator {
+            if (instance == null) {
                 instance = Creator()
 
             }

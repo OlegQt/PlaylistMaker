@@ -10,11 +10,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.util.Creator
+import com.playlistmaker.util.Resource
 
 
 class PlayerVm(private val application: Application) : AndroidViewModel(application) {
 
-    private val musTrackRepo = Creator.getCreator().getMusicTrackRepository(externalContext = application.baseContext)
+    private val loadLastPlayingTrackUseCase by lazy {
+        Creator.getCreator().provideLoadLastPlayingTrackUseCase(application)
+    }
     private val handler = android.os.Handler(Looper.getMainLooper())
 
     private var playingTime = MutableLiveData<Long>()
@@ -29,13 +32,16 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
 
     // Переменная для хранения нашего плеера
     // В параметры передается объект реализующий функциональный интерфейс по обновлению состояния плеера
-    private val musicalPlayer = Creator.getCreator().provideMusicPlayer(){playerState.postValue(it)}
+    private val musicalPlayer =
+        Creator.getCreator().provideMusicPlayer() { playerState.postValue(it) }
 
     // Запускается при переходе на экран плеера
     // допускается перемещение в блок init
     fun loadCurrentMusicTrack() {
-        val musTrack = musTrackRepo.getCurrentMusicTrack()
-        if (musTrack != null) this.currentPlayingMusTrack.postValue(musTrack)
+        val loadResult = loadLastPlayingTrackUseCase.execute()
+        if (loadResult is Resource.Success) {
+            this.currentPlayingMusTrack.postValue(loadResult.data)
+        }
     }
 
     private fun updatePlayingTime() {
@@ -61,14 +67,15 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun playPauseMusic(play:Boolean){
-        when(play){
+    fun playPauseMusic(play: Boolean) {
+        when (play) {
             true -> {
                 // Запускаем воспроизведение музыки
                 // и запускаем таймер времени проигрывания музыки
                 musicalPlayer.playMusic()
                 startTimer()
             }
+
             false -> {
                 // Останавливаем воспроизведение музыки
                 // и удаляем таймер времени проигрывания музыки

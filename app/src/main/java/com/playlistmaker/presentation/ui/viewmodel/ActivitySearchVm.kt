@@ -19,6 +19,14 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     private var musicTrackIsClickable = true
     private var musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
 
+    // UseCase block
+    private val historySafeUseCase by lazy { Creator.getCreator().provideSafeMusicSearchHistory(application) }
+    private val loadHistoryUseCase by lazy { Creator.getCreator().provideLoadMusicSearchHistory(application) }
+    private val deleteHistoryUseCase by lazy { Creator.getCreator().provideDeleteMusicSearchHistory(application) }
+    private val safePlayingTrackUseCase by lazy { Creator.getCreator().provideSafePlayingTrackUseCase(application) }
+
+
+    // LiveData block
     private var searchScreenState = MutableLiveData<ActivitySearchState>()
     val getSearchScreenState = searchScreenState as LiveData<ActivitySearchState>
 
@@ -27,8 +35,6 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
 
     private var errorMessage = MutableLiveData<String>()
     fun getErrorMsg(): LiveData<String> = errorMessage
-
-    private val musRepo by lazy { Creator.getCreator().getMusicRepository(application) }
 
 
     init {
@@ -98,16 +104,15 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     private fun safeMusicHistorySearch(musicList: ArrayList<MusicTrack>) {
-        musRepo.safeMusicSearchHistory(musicList)
+        historySafeUseCase.execute(musicList)
     }
 
     fun saveCurrentPlayingTrack(track: MusicTrack) {
-        val musTrackRepo = Creator.getCreator().getMusicTrackRepository(externalContext =  getApplication())
-        musTrackRepo.setCurrentMusicTrack(track)
+        this.safePlayingTrackUseCase.execute(track)
     }
 
     fun deleteMusicHistory() {
-        musRepo.deleteAllMusicSearchHistory()
+        deleteHistoryUseCase.execute()
         musicSearchHistoryList.clear()
         searchScreenState.postValue(ActivitySearchState.InitialState(null))
     }
@@ -129,7 +134,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
 
     private fun loadMusicHistorySearch() {
         // Подгружаем историю поиска музыки
-        val history = musRepo.loadMusicSearchHistory()
+        val history = loadHistoryUseCase.execute()
 
         // Если история поиска не пуста запускаем изменение состояния activity
         // отображаем recycler с историей поиска треков
