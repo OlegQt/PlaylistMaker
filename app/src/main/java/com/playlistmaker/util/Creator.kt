@@ -1,6 +1,8 @@
 package com.playlistmaker.util
 
 import android.content.Context
+import com.playlistmaker.data.NetworkClient
+import com.playlistmaker.data.dto.SearchResponse
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.data.repository.MusicRepositoryImpl

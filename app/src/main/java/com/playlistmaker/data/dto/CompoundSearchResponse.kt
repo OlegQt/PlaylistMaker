@@ -1,6 +1,6 @@
 package com.playlistmaker.data.dto
 
-data class MusicSearchResponse(
+data class CompoundSearchResponse(
     val resultCount: Int,
     val results: ArrayList<MusicTrackDto>
-):MusicResponse()
+):SearchResponse()

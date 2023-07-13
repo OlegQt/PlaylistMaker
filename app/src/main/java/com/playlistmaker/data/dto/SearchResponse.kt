@@ -1,5 +1,5 @@
 package com.playlistmaker.data.dto
 
-open class MusicResponse(){
+open class SearchResponse(){
     var resultCode = -1
 }

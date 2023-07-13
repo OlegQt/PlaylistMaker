@@ -2,9 +2,9 @@ package com.playlistmaker.data.repository
 
 import android.content.Context
 import com.google.gson.Gson
-import com.playlistmaker.data.NetworkClient
-import com.playlistmaker.data.dto.MusicSearchResponse
+import com.playlistmaker.data.dto.CompoundSearchResponse
 import com.playlistmaker.data.mapper.MusicTrackMapper
+import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
@@ -14,7 +14,7 @@ import com.playlistmaker.util.Resource
 private const val PREFERENCES = "APP_PREFERENCES"
 private const val SEARCH_HISTORY = "key_for_search_history"
 
-class MusicRepositoryImpl(private val networkClient: NetworkClient, context: Context) :
+class MusicRepositoryImpl(private val networkClient: RetrofitNetworkClient, context: Context) :
     MusicRepository {
     private val sharedPreferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 
@@ -25,7 +25,7 @@ class MusicRepositoryImpl(private val networkClient: NetworkClient, context: Con
             200 -> {
                 val resultMusicList: ArrayList<MusicTrack> = ArrayList()
                 // Цикл ниже преобразует все данные в данные модели слоя DATA
-                (response as MusicSearchResponse).results.forEach {
+                (response as CompoundSearchResponse).results.forEach {
                     resultMusicList.add(MusicTrackMapper().mapFromDto(it))
                 }
 
