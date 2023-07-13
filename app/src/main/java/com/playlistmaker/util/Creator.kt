@@ -19,11 +19,6 @@ import com.playlistmaker.domain.usecase.SettingsController
 
 class Creator private constructor() {
 
-    //
-    fun createMusicSearchRequest(strRequest: String): SearchRequest {
-        return SearchRequest.MusicSearchRequest(searchParam = strRequest)
-    }
-
     // Репозиторий списка треков (истории либо найденных)
     private fun getMusicRepository(externalContext: Context): MusicRepository {
         return MusicRepositoryImpl(
