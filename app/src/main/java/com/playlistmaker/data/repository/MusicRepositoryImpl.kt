@@ -2,9 +2,7 @@ package com.playlistmaker.data.repository
 
 import android.content.Context
 import com.google.gson.Gson
-import com.playlistmaker.appstart.App
 import com.playlistmaker.data.NetworkClient
-import com.playlistmaker.data.dto.MusicSearchRequest
 import com.playlistmaker.data.dto.MusicSearchResponse
 import com.playlistmaker.data.mapper.MusicTrackMapper
 import com.playlistmaker.domain.models.ErrorList

@@ -3,7 +3,6 @@ import android.media.MediaPlayer
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.domain.usecase.MusicPlayerController
-import java.io.IOException
 
 class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
     MusicPlayerController {
@@ -30,18 +29,9 @@ class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
     override fun preparePlayer(musTrackUrl:String) {
         try {
             mediaPlayer.setDataSource(musTrackUrl)
-        } catch (e: IOException) {
-            //
-        }
-
-        try {
             mediaPlayer.prepareAsync()
-        } catch (e: IllegalStateException) {
-            //
-        } catch (e: NullPointerException) {
-            //
-        } catch (e: IOException) {
-            //
+        } catch (t: Throwable) {
+            // The base class for all errors and exceptions
         }
     }
 
@@ -63,7 +53,7 @@ class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
 
     fun getCurrentPos() = mediaPlayer.currentPosition
 
-    fun isPlaying(): Boolean = mediaPlayer.isPlaying
+    //fun isPlaying(): Boolean = mediaPlayer.isPlaying
 
 
 }
