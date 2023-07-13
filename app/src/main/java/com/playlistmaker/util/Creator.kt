@@ -27,6 +27,12 @@ class Creator private constructor() {
         )
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
+    // Далее UseCase для работы со списком музыкальных треков
+    // Поиск музыки, сохранение истории прослушивания треков,
+    // загрузка истории прослушанных треков, удаление истории
+    /////////////////////////////////////////////////////////////////////////////////
+
     // UseCase для поиска музыки
     fun provideSearchMusicUseCase(context: Context): SearchMusicUseCase {
         return SearchMusicUseCase(musicRepo = getMusicRepository(externalContext = context))
