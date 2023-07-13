@@ -10,6 +10,7 @@ import com.playlistmaker.presentation.models.ActivitySearchState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.playlistmaker.domain.models.ErrorList
+import com.playlistmaker.domain.models.SearchRequest
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
@@ -42,7 +43,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     private fun searchMusic(songName: String) {
-        val musRequest = Creator.getCreator().createMusicSearchRequest(songName)
+        val musRequest = SearchRequest.MusicSearchRequest(searchParam = songName)
         val searchUseCase = Creator.getCreator().provideSearchMusicUseCase(getApplication())
 
         // Используем UseCase DOMAIN слоя

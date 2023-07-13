@@ -1,4 +1,5 @@
 package com.playlistmaker.domain.models
 
-abstract class SearchRequest(searchParam:Any) {
+sealed interface SearchRequest{
+    class MusicSearchRequest(val searchParam:String):SearchRequest
 }

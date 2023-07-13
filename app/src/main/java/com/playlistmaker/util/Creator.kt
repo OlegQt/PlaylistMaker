@@ -1,7 +1,6 @@
 package com.playlistmaker.util
 
 import android.content.Context
-import com.playlistmaker.data.dto.MusicSearchRequest
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.data.repository.MusicRepositoryImpl
@@ -10,8 +9,6 @@ import com.playlistmaker.data.repository.SettingsRepositoryImpl
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.SearchRequest
 import com.playlistmaker.domain.repository.MusicRepository
-import com.playlistmaker.domain.repository.MusicTrackRepository
-import com.playlistmaker.domain.repository.SettingsRepository
 import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.LoadLastPlayingMusicTrackUseCase
 import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
@@ -21,10 +18,6 @@ import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.domain.usecase.SettingsController
 
 class Creator private constructor() {
-
-    fun createMusicSearchRequest(strRequest: String): SearchRequest {
-        return MusicSearchRequest(songName = strRequest)
-    }
 
     // Репозиторий списка треков (истории либо найденных)
     private fun getMusicRepository(externalContext: Context): MusicRepository {
@@ -59,7 +52,7 @@ class Creator private constructor() {
     // Далее UseCase для работы с конкретным музыкальным треком
     /////////////////////////////////////////////////////////////////////////////////
 
-    private fun getMusicTrackRepository(externalContext: Context): MusicTrackRepository {
+    private fun getMusicTrackRepository(externalContext: Context): MusicTrackRepositoryImpl {
         return MusicTrackRepositoryImpl(context = externalContext)
     }
 
@@ -81,12 +74,12 @@ class Creator private constructor() {
     // Далее UseCase для работы настройками приложения (тема день/ночь)
     /////////////////////////////////////////////////////////////////////////////////
 
-    private fun getSettingsRepository(context: Context): SettingsRepository {
+    private fun getSettingsRepository(context: Context): SettingsRepositoryImpl {
         return SettingsRepositoryImpl(context = context)
     }
 
     fun provideSettingsController(externalContext: Context): SettingsController {
-        return SettingsController(getSettingsRepository(context = externalContext))
+        return SettingsController(settingsRepository = getSettingsRepository(context = externalContext))
     }
 
     override fun toString(): String {
