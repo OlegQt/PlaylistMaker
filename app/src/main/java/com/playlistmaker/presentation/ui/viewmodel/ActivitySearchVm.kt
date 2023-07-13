@@ -42,6 +42,7 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     }
 
     private fun searchMusic(songName: String) {
+
         val musRequest = Creator.getCreator().createMusicSearchRequest(songName)
         val searchUseCase = Creator.getCreator().provideSearchMusicUseCase(getApplication())
 
