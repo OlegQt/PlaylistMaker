@@ -16,7 +16,6 @@ class App : Application() {
 
         // Загружаем сохраненную тему
         settingsController = Creator.getCreator().provideSettingsController(applicationContext)
-
         applyTheme(settingsController.loadMode())
     }
 
@@ -28,9 +27,6 @@ class App : Application() {
     }
 
     companion object {
-        // Константы времени компиляции
-        const val PREFERENCES = "APP_PREFERENCES"
-
         // Для удобного доступа к App
         lateinit var instance: App
             private set // Менять значение можно только внутри этого класса
