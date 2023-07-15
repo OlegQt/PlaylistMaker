@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.ActivitySettings">
+    tools:context=".presentation.ui.activities.ActivitySettings">
 
     <!-- Settings back to Menu-->
     <LinearLayout
@@ -86,6 +86,8 @@
             style="@style/settings_img"
             android:contentDescription="@string/user_agreement"
             android:src="@drawable/agreement" />
+
+
 
     </LinearLayout>
 
