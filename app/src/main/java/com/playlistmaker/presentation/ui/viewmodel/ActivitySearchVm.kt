@@ -11,9 +11,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.models.SearchRequest
+import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
+import org.koin.java.KoinJavaComponent.inject
 
 class ActivitySearchVm(application: Application) : AndroidViewModel(application) {
     private val mainHandler = android.os.Handler(Looper.getMainLooper())
@@ -25,7 +27,6 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
     private val loadHistoryUseCase by lazy { Creator.getCreator().provideLoadMusicSearchHistory(application) }
     private val deleteHistoryUseCase by lazy { Creator.getCreator().provideDeleteMusicSearchHistory(application) }
     private val safePlayingTrackUseCase by lazy { Creator.getCreator().provideSafePlayingTrackUseCase(application) }
-
 
     // LiveData block
     private var searchScreenState = MutableLiveData<ActivitySearchState>()

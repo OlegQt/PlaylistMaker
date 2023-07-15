@@ -12,14 +12,19 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
 import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActivitySearch : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var vm: ActivitySearchVm
 
+    // KOIN viewModel
+    private var searchVm= viewModel<ActivitySearchVm>()
 
     // Адаптеры для отображения найденных треков и истории просмотра треков
     private lateinit var musicAdapter: SearchTrackAdapter
@@ -29,6 +34,7 @@ class ActivitySearch : AppCompatActivity() {
     private val musicList: ArrayList<MusicTrack> = ArrayList()
     private val musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
 
+    private val searchMusicUseCase:SearchMusicUseCase by inject()
 
     // Функция для перехода на экран плеера
     private fun startPlayerActivity() {
