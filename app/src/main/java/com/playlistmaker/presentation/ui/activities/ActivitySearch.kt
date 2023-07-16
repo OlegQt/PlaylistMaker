@@ -6,25 +6,22 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
 import com.playlistmaker.databinding.ActivitySearchBinding
 import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActivitySearch : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var vm: ActivitySearchVm
+    private var vm:ActivitySearchVm by viewModel()
 
     // KOIN viewModel
-    private var searchVm= viewModel<ActivitySearchVm>()
+
 
     // Адаптеры для отображения найденных треков и истории просмотра треков
     private lateinit var musicAdapter: SearchTrackAdapter
@@ -33,8 +30,6 @@ class ActivitySearch : AppCompatActivity() {
     // List of tracks
     private val musicList: ArrayList<MusicTrack> = ArrayList()
     private val musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
-
-    private val searchMusicUseCase:SearchMusicUseCase by inject()
 
     // Функция для перехода на экран плеера
     private fun startPlayerActivity() {
@@ -122,8 +117,8 @@ class ActivitySearch : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val factory = ActivitySearchVm.getFactory(this.application)
-        vm = ViewModelProvider(this, factory = factory)[ActivitySearchVm::class.java]
+        //val factory = ActivitySearchVm.getFactory(this.application)
+        //vm = ViewModelProvider(this, factory = factory)[ActivitySearchVm::class.java]
 
         vm.getSearchScreenState.observe(this) { this.render(it) }
 
@@ -170,6 +165,7 @@ class ActivitySearch : AppCompatActivity() {
         binding.clsSearch.setOnClickListener { binding.txtSearch.text.clear() }
         binding.btnBack.setOnClickListener { finish() }
         binding.txtSearch.setText("")
+
 
     }
 

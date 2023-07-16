@@ -4,11 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
 import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +21,9 @@ class MainActivity : AppCompatActivity() {
         val btnSearch = findViewById<Button>(R.id.search)
         val btnSettings: Button = findViewById(R.id.settings)
 
-        val vm = ViewModelProvider(this)[ActivityMainVm::class.java]
+        //val vm = ViewModelProvider(this)[ActivityMainVm::class.java]
+        val vm:ActivityMainVm by viewModel()
+
 
         vm.screen.observe(this) {
             val intent = when (it) {

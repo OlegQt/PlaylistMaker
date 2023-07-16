@@ -10,7 +10,9 @@ import com.playlistmaker.di.presentationModule
 import com.playlistmaker.domain.models.Theme
 import com.playlistmaker.domain.usecase.SettingsController
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.logger.AndroidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 class App : Application() {
     private lateinit var settingsController:SettingsController
@@ -21,6 +23,7 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
+            AndroidLogger(Level.DEBUG)
             // Передаём все необходимые модули
             modules(dataModule, domainModule, presentationModule)
         }
