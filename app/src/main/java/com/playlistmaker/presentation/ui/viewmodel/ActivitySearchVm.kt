@@ -19,6 +19,7 @@ import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
+import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent.getKoin
 import org.koin.java.KoinJavaComponent.inject
 
@@ -39,6 +40,8 @@ class ActivitySearchVm(
     //private val loadHistoryUseCase by lazy { Creator.getCreator().provideLoadMusicSearchHistory(application) }
     //private val deleteHistoryUseCase by lazy { Creator.getCreator().provideDeleteMusicSearchHistory(application) }
     //private val safePlayingTrackUseCase by lazy { Creator.getCreator().provideSafePlayingTrackUseCase(application) }
+
+    //val temporalUseCase:SearchMusicUseCase by inject()
 
     //
 

@@ -6,8 +6,10 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
+import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.models.Screen
 import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
