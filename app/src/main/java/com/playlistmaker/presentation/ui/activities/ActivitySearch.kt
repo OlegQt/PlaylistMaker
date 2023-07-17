@@ -18,7 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActivitySearch : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    private var vm:ActivitySearchVm by viewModel()
+    private val vm:ActivitySearchVm by viewModel()
 
     // KOIN viewModel
 

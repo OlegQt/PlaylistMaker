@@ -18,9 +18,11 @@ val dataModule = module {
         MusicRepositoryImpl(networkClient = get(), context = get())
     }
 
-    single<NetworkClient<SearchRequest, SearchResponse>> {
+   single<NetworkClient<SearchRequest, SearchResponse>> {
         RetrofitNetworkClient()
     }
+
+    single{RetrofitNetworkClient()}
 
     single<MusicTrackRepository>{
         MusicTrackRepositoryImpl(context = get())

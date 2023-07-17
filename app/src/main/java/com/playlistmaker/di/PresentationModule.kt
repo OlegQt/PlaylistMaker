@@ -6,14 +6,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val presentationModule = module {
-    viewModel<ActivitySearchVm> {
-        ActivitySearchVm(
-            historySafeUseCase = get(),
-            loadHistoryUseCase = get(),
-            deleteHistoryUseCase = get(),
-            safePlayingTrackUseCase = get(),
-            searchUseCase = get()
-        )
-    }
+    viewModel<ActivitySearchVm> { ActivitySearchVm() }
     viewModel<ActivityMainVm> { ActivityMainVm() }
 }

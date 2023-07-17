@@ -23,27 +23,25 @@ import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent.getKoin
 import org.koin.java.KoinJavaComponent.inject
 
-class ActivitySearchVm(
-    private val historySafeUseCase: SafeMusicSearchHistoryUseCase,
-    private val loadHistoryUseCase: LoadMusicSearchHistoryUseCase,
-    private val deleteHistoryUseCase: DeleteMusicSearchHistoryUseCase,
-    private val safePlayingTrackUseCase: SafeCurrentPlayingTrackUseCase,
-    private val searchUseCase:SearchMusicUseCase
-
-) : ViewModel() {
+class ActivitySearchVm() : ViewModel() {
     private val mainHandler = android.os.Handler(Looper.getMainLooper())
     private var musicTrackIsClickable = true
     private var musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
 
     // UseCase block
+
     //private val historySafeUseCase by lazy { Creator.getCreator().provideSafeMusicSearchHistory(application) }
     //private val loadHistoryUseCase by lazy { Creator.getCreator().provideLoadMusicSearchHistory(application) }
     //private val deleteHistoryUseCase by lazy { Creator.getCreator().provideDeleteMusicSearchHistory(application) }
     //private val safePlayingTrackUseCase by lazy { Creator.getCreator().provideSafePlayingTrackUseCase(application) }
+    //private val searchUseCase:SearchMusicUseCase
 
-    //val temporalUseCase:SearchMusicUseCase by inject()
 
-    //
+    private val historySafeUseCase: SafeMusicSearchHistoryUseCase = getKoin().get()
+    private val loadHistoryUseCase: LoadMusicSearchHistoryUseCase = getKoin().get()
+    private val deleteHistoryUseCase: DeleteMusicSearchHistoryUseCase = getKoin().get()
+    private val safePlayingTrackUseCase: SafeCurrentPlayingTrackUseCase = getKoin().get()
+    private val searchUseCase: SearchMusicUseCase = getKoin().get()
 
     // LiveData block
     private var searchScreenState = MutableLiveData<ActivitySearchState>()
@@ -168,6 +166,7 @@ class ActivitySearchVm(
         } else searchScreenState.postValue(ActivitySearchState.InitialState(null))
 
     }
+
     companion object {
         const val SEARCH_DELAY = 2000L
         const val CLICK_DELAY = 3000L

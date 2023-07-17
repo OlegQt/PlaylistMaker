@@ -2,6 +2,7 @@ package com.playlistmaker.di
 
 import android.content.Context
 import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.LoadLastPlayingMusicTrackUseCase
 import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
 import com.playlistmaker.domain.usecase.SafeMusicSearchHistoryUseCase
@@ -31,5 +32,7 @@ val domainModule = module {
 
     // UseCase сохранения последнего проигранного трека
     factory { SafeCurrentPlayingTrackUseCase(musicTrackRepository = get()) }
+
+    factory { LoadLastPlayingMusicTrackUseCase(musicTrackRepository = get()) }
 
 }
