@@ -53,7 +53,4 @@ class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
 
     fun getCurrentPos() = mediaPlayer.currentPosition
 
-    //fun isPlaying(): Boolean = mediaPlayer.isPlaying
-
-
 }

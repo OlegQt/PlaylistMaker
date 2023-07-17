@@ -1,15 +1,11 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
-import android.app.Application
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.presentation.models.ActivitySearchState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.playlistmaker.domain.models.ErrorList
+import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
 import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
@@ -17,11 +13,9 @@ import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
 import com.playlistmaker.domain.usecase.SafeMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.SingleLiveEvent
-import com.playlistmaker.util.Creator
+import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.util.Resource
-import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent.getKoin
-import org.koin.java.KoinJavaComponent.inject
 
 class ActivitySearchVm() : ViewModel() {
     private val mainHandler = android.os.Handler(Looper.getMainLooper())

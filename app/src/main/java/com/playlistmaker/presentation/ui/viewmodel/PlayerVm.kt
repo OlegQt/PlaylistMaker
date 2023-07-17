@@ -9,15 +9,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayerState
+import com.playlistmaker.domain.usecase.LoadLastPlayingMusicTrackUseCase
 import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
+import org.koin.java.KoinJavaComponent.getKoin
 
 
-class PlayerVm(private val application: Application) : AndroidViewModel(application) {
+class PlayerVm() :ViewModel() {
 
-    private val loadLastPlayingTrackUseCase by lazy {
+ /*   private val loadLastPlayingTrackUseCase by lazy {
         Creator.getCreator().provideLoadLastPlayingTrackUseCase(application)
-    }
+    }*/
+
+    private val loadLastPlayingTrackUseCase:LoadLastPlayingMusicTrackUseCase = getKoin().get()
+
     private val handler = android.os.Handler(Looper.getMainLooper())
 
     private var playingTime = MutableLiveData<Long>()
@@ -90,7 +95,7 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
     }
 
     // Фабрика для создания ViewModel с пробросом Activity в конструктор
-    companion object {
+/*    companion object {
         fun getFactory(app: Application): ViewModelProvider.Factory {
             val factory = object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -103,5 +108,5 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
             return factory
 
         }
-    }
+    }*/
 }
