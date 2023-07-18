@@ -19,11 +19,6 @@ import org.koin.java.KoinJavaComponent.getKoin
 
 
 class PlayerVm() :ViewModel() {
-
- /*   private val loadLastPlayingTrackUseCase by lazy {
-        Creator.getCreator().provideLoadLastPlayingTrackUseCase(application)
-    }*/
-
     private val loadLastPlayingTrackUseCase:LoadLastPlayingMusicTrackUseCase = getKoin().get()
 
     private val handler = android.os.Handler(Looper.getMainLooper())
@@ -37,10 +32,6 @@ class PlayerVm() :ViewModel() {
     val getPlayerState = playerState as LiveData<PlayerState>
     val getCurrentMusTrack = this.currentPlayingMusTrack as LiveData<MusicTrack>
     val getPlayingTime = this.playingTime as LiveData<Long>
-
-    // Переменная для хранения нашего плеера
-    // В параметры передается объект реализующий функциональный интерфейс по обновлению состояния плеера
-    /*private val musicalPlayer =        Creator.getCreator().provideMusicPlayer() { playerState.postValue(it) }*/
 
     // Создаем инстанс музыкального плеера через KOIN, в конструктор передаем объект типа
     // функционального интерфейса
@@ -103,20 +94,4 @@ class PlayerVm() :ViewModel() {
     fun turnOffPlayer() {
         musicalPlayer.turnOffPlayer()
     }
-
-    // Фабрика для создания ViewModel с пробросом Activity в конструктор
-/*    companion object {
-        fun getFactory(app: Application): ViewModelProvider.Factory {
-            val factory = object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    if (modelClass.isAssignableFrom(PlayerVm::class.java)) {
-                        return PlayerVm(application = app) as T
-                    }
-                    throw IllegalArgumentException("Unknown ViewModel class")
-                }
-            }
-            return factory
-
-        }
-    }*/
 }

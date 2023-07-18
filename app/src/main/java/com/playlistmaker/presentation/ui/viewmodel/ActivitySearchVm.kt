@@ -165,22 +165,4 @@ class ActivitySearchVm() : ViewModel() {
         const val SEARCH_DELAY = 2000L
         const val CLICK_DELAY = 3000L
     }
-
-    /*    // Фабрика для создания ViewModel с пробросом Activity в конструктор
-        companion object {
-            const val SEARCH_DELAY = 2000L
-            const val CLICK_DELAY = 3000L
-
-            fun getFactory(app: Application): ViewModelProvider.Factory {
-                val factory = object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        if (modelClass.isAssignableFrom(ActivitySearchVm::class.java)) {
-                            return ActivitySearchVm(application = app) as T
-                        }
-                        throw IllegalArgumentException("Unknown ViewModel class")
-                    }
-                }
-                return factory
-            }
-        }*/
 }

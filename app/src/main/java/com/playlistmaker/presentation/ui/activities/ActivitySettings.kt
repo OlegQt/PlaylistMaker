@@ -11,10 +11,12 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.R
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySettingsVm
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActivitySettings : AppCompatActivity() {
 
-    private lateinit var vm: ActivitySettingsVm
+    private val vm: ActivitySettingsVm by viewModel()
+    //private val vm = ViewModelProvider(this)[ActivitySettingsVm::class.java]
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +27,6 @@ class ActivitySettings : AppCompatActivity() {
         val imgSupport = findViewById<View>(R.id.ask_support)
         val imgAgreement: ImageView = findViewById(R.id.agreement)
         val switchNightTheme: SwitchCompat = findViewById(R.id.night_theme_switch)
-
-        this.vm = ViewModelProvider(this)[ActivitySettingsVm::class.java]
 
         // Начальное положение свича определяется загруженной темой
         switchNightTheme.isChecked = vm.isNightMode

@@ -10,6 +10,7 @@ import com.playlistmaker.domain.usecase.MusicPlayerController
 import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
 import com.playlistmaker.domain.usecase.SafeMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
+import com.playlistmaker.domain.usecase.SettingsController
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -42,4 +43,4 @@ val domainModule = module {
         MusicPlayerControllerImpl(listener = externalListener)
     }
 
-}
+    factory{SettingsController(settingsRepository = get())}}
