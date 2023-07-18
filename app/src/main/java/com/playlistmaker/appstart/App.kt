@@ -1,14 +1,13 @@
 package com.playlistmaker.appstart
 
 import android.app.Application
-import android.content.SharedPreferences
-import com.playlistmaker.util.Creator
 import androidx.appcompat.app.AppCompatDelegate
 import com.playlistmaker.di.dataModule
 import com.playlistmaker.di.domainModule
 import com.playlistmaker.di.presentationModule
 import com.playlistmaker.domain.models.Theme
 import com.playlistmaker.domain.usecase.SettingsController
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.logger.AndroidLogger
 import org.koin.core.context.startKoin
@@ -29,7 +28,7 @@ class App : Application() {
         }
 
         // Загружаем сохраненную тему
-        settingsController = Creator.getCreator().provideSettingsController(applicationContext)
+        val settingsController:SettingsController  = getKoin().get()
         applyTheme(settingsController.loadMode())
     }
 

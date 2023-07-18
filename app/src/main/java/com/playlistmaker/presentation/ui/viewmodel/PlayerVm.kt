@@ -1,18 +1,14 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
-import android.app.Application
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.domain.usecase.LoadLastPlayingMusicTrackUseCase
 import com.playlistmaker.domain.usecase.MusicPlayerController
-import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
 import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
