@@ -14,24 +14,16 @@ import org.koin.dsl.module
 
 val domainModule = module {
     // UseCase для поиска музыки
-    factory<SearchMusicUseCase> {
-        SearchMusicUseCase(musicRepo = get())
-    }
+    factory { SearchMusicUseCase(musicRepo = get()) }
 
     // UseCase для сохранения истории найденных музыкальных треков
-    factory<SafeMusicSearchHistoryUseCase> {
-        SafeMusicSearchHistoryUseCase(musicRepository = get())
-    }
+    factory { SafeMusicSearchHistoryUseCase(musicRepository = get()) }
 
     // UseCase для загрузки истории найденных музыкальных треков
-    factory<LoadMusicSearchHistoryUseCase>{
-        LoadMusicSearchHistoryUseCase(musicRepository = get())
-    }
+    factory { LoadMusicSearchHistoryUseCase(musicRepository = get()) }
 
     // UseCase для удаления истории найденных музыкальных треков
-    factory<DeleteMusicSearchHistoryUseCase>{
-        DeleteMusicSearchHistoryUseCase(musicRepository = get())
-    }
+    factory { DeleteMusicSearchHistoryUseCase(musicRepository = get()) }
 
     // UseCase сохранения последнего проигранного трека
     factory { SafeCurrentPlayingTrackUseCase(musicTrackRepository = get()) }
@@ -40,9 +32,10 @@ val domainModule = module {
     factory { LoadLastPlayingMusicTrackUseCase(musicTrackRepository = get()) }
 
     // UseCase для загрузки контроллера проигрыванием музыки
-    factory<MusicPlayerController> {(externalListener:OnPlayerStateListener) ->
+    factory<MusicPlayerController> { (externalListener: OnPlayerStateListener) ->
         MusicPlayerControllerImpl(listener = externalListener)
     }
 
     // UseCase для загрузки контроллера настроек приложения
-    factory{SettingsController(settingsRepository = get())}}
+    factory { SettingsController(settingsRepository = get()) }
+}
