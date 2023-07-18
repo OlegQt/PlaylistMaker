@@ -16,7 +16,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ActivitySettings : AppCompatActivity() {
 
     private val vm: ActivitySettingsVm by viewModel()
-    //private val vm = ViewModelProvider(this)[ActivitySettingsVm::class.java]
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

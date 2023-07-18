@@ -22,15 +22,7 @@ class ActivitySearchVm() : ViewModel() {
     private var musicTrackIsClickable = true
     private var musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
 
-    // UseCase block
-
-    //private val historySafeUseCase by lazy { Creator.getCreator().provideSafeMusicSearchHistory(application) }
-    //private val loadHistoryUseCase by lazy { Creator.getCreator().provideLoadMusicSearchHistory(application) }
-    //private val deleteHistoryUseCase by lazy { Creator.getCreator().provideDeleteMusicSearchHistory(application) }
-    //private val safePlayingTrackUseCase by lazy { Creator.getCreator().provideSafePlayingTrackUseCase(application) }
-    //private val searchUseCase:SearchMusicUseCase
-
-
+    // UseCase block by DI KOIN
     private val historySafeUseCase: SafeMusicSearchHistoryUseCase = getKoin().get()
     private val loadHistoryUseCase: LoadMusicSearchHistoryUseCase = getKoin().get()
     private val deleteHistoryUseCase: DeleteMusicSearchHistoryUseCase = getKoin().get()
@@ -54,7 +46,6 @@ class ActivitySearchVm() : ViewModel() {
 
     private fun searchMusic(songName: String) {
         val musRequest = SearchRequest.MusicSearchRequest(searchParam = songName)
-        //val searchUseCase = Creator.getCreator().provideSearchMusicUseCase(getApplication())
 
         // Используем UseCase DOMAIN слоя
         searchUseCase.executeSearch(musRequest) { foundMusic ->

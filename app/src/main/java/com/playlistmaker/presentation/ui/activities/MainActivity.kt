@@ -23,9 +23,7 @@ class MainActivity : AppCompatActivity() {
         val btnSearch = findViewById<Button>(R.id.search)
         val btnSettings: Button = findViewById(R.id.settings)
 
-        //val vm = ViewModelProvider(this)[ActivityMainVm::class.java]
-        val vm:ActivityMainVm by viewModel()
-
+        val vm: ActivityMainVm by viewModel()
 
         vm.screen.observe(this) {
             val intent = when (it) {
@@ -39,7 +37,11 @@ class MainActivity : AppCompatActivity() {
             try {
                 startActivity(intent)
             } catch (error: Exception) {
-                Snackbar.make(btnMedia,getString(R.string.error_loading_activity),Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    btnMedia,
+                    getString(R.string.error_loading_activity),
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
         }
 

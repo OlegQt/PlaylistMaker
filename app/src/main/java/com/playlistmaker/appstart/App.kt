@@ -14,8 +14,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 
 class App : Application() {
-    private lateinit var settingsController:SettingsController
-
     override fun onCreate() {
         super.onCreate()
         instance = this

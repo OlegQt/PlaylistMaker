@@ -18,7 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActivitySearch : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    private val vm:ActivitySearchVm by viewModel()
+    private val vm: ActivitySearchVm by viewModel()
 
     // KOIN viewModel
 
@@ -116,9 +116,6 @@ class ActivitySearch : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        //val factory = ActivitySearchVm.getFactory(this.application)
-        //vm = ViewModelProvider(this, factory = factory)[ActivitySearchVm::class.java]
 
         vm.getSearchScreenState.observe(this) { this.render(it) }
 

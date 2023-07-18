@@ -1,5 +1,6 @@
 package com.playlistmaker.di
 
+import android.content.Context
 import com.playlistmaker.data.network.ItunesMediaSearchApi
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.repository.MusicRepositoryImpl
@@ -12,6 +13,7 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+const val PREFERENCES = "APP_PREFERENCES"
 
 val dataModule = module {
 
@@ -31,12 +33,18 @@ val dataModule = module {
             .create(ItunesMediaSearchApi::class.java)
     }
 
+    single {(context:Context) ->
+        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+    }
+
     single{RetrofitNetworkClient()}
 
+    // Репозиторий для загрузки и сохранения текущего (играющего) трека
     single<MusicTrackRepository>{
         MusicTrackRepositoryImpl(context = get())
     }
 
+    // Репозиторий загрузки и сохранения настроек приложения
     single<SettingsRepository>{
         SettingsRepositoryImpl(get())
     }

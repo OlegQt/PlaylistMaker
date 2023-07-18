@@ -1,6 +1,5 @@
 package com.playlistmaker.di
 
-import android.content.Context
 import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
@@ -37,10 +36,13 @@ val domainModule = module {
     // UseCase сохранения последнего проигранного трека
     factory { SafeCurrentPlayingTrackUseCase(musicTrackRepository = get()) }
 
+    // UseCase загрузки последнего проигранного трека
     factory { LoadLastPlayingMusicTrackUseCase(musicTrackRepository = get()) }
 
+    // UseCase для загрузки контроллера проигрыванием музыки
     factory<MusicPlayerController> {(externalListener:OnPlayerStateListener) ->
         MusicPlayerControllerImpl(listener = externalListener)
     }
 
+    // UseCase для загрузки контроллера настроек приложения
     factory{SettingsController(settingsRepository = get())}}

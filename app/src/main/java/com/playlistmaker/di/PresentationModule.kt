@@ -1,6 +1,5 @@
 package com.playlistmaker.di
 
-import com.playlistmaker.presentation.ui.activities.ActivitySettings
 import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySettingsVm
