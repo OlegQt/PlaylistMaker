@@ -1,9 +1,12 @@
 package com.playlistmaker.di
 
 import android.content.Context
+import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
+import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.LoadLastPlayingMusicTrackUseCase
 import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.MusicPlayerController
 import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
 import com.playlistmaker.domain.usecase.SafeMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
@@ -34,5 +37,9 @@ val domainModule = module {
     factory { SafeCurrentPlayingTrackUseCase(musicTrackRepository = get()) }
 
     factory { LoadLastPlayingMusicTrackUseCase(musicTrackRepository = get()) }
+
+    factory<MusicPlayerController> {(externalListener:OnPlayerStateListener) ->
+        MusicPlayerControllerImpl(listener = externalListener)
+    }
 
 }

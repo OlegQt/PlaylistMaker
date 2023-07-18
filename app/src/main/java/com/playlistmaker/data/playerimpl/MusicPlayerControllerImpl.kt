@@ -51,6 +51,6 @@ class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
         currentState = PlayerState.STATE_DEFAULT
     }
 
-    fun getCurrentPos() = mediaPlayer.currentPosition
+    override fun getCurrentPos(): Int = mediaPlayer.currentPosition
 
 }

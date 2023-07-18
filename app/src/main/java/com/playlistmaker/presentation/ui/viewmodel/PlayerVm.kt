@@ -8,10 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.domain.usecase.LoadLastPlayingMusicTrackUseCase
+import com.playlistmaker.domain.usecase.MusicPlayerController
 import com.playlistmaker.util.Creator
 import com.playlistmaker.util.Resource
+import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
 
 
@@ -37,8 +40,15 @@ class PlayerVm() :ViewModel() {
 
     // Переменная для хранения нашего плеера
     // В параметры передается объект реализующий функциональный интерфейс по обновлению состояния плеера
-    private val musicalPlayer =
-        Creator.getCreator().provideMusicPlayer() { playerState.postValue(it) }
+    /*private val musicalPlayer =        Creator.getCreator().provideMusicPlayer() { playerState.postValue(it) }*/
+
+    // Создаем инстанс музыкального плеера через KOIN, в конструктор передаем объект типа
+    // функционального интерфейса
+    private val musicalPlayer:MusicPlayerController = getKoin().get(){ parametersOf(object :OnPlayerStateListener{
+        override fun playerStateChanged(state: PlayerState) {
+            playerState.postValue(state)
+        }
+    }) }
 
     // Запускается при переходе на экран плеера
     // допускается перемещение в блок init
