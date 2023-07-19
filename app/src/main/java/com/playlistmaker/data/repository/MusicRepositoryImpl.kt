@@ -20,6 +20,7 @@ class MusicRepositoryImpl(private val networkClient: RetrofitNetworkClient, cont
     MusicRepository {
     private val sharedPreferences: SharedPreferences = KoinJavaComponent.getKoin()
         .get() { parametersOf(context) }
+    private val gSon: Gson = KoinJavaComponent.getKoin().get()
 
     override fun searchMusic(searchParams: SearchRequest): Resource<ArrayList<MusicTrack>> {
         val response = networkClient.doRequest(searchParams)
@@ -42,14 +43,14 @@ class MusicRepositoryImpl(private val networkClient: RetrofitNetworkClient, cont
 
     override fun safeMusicSearchHistory(musicList: ArrayList<MusicTrack>) {
         if (musicList.isNotEmpty()) {
-            val jSonHistory = Gson().toJson(musicList)
+            val jSonHistory = gSon.toJson(musicList)
             sharedPreferences.edit().putString(SEARCH_HISTORY, jSonHistory).apply()
         }
     }
 
     override fun loadMusicSearchHistory(): Resource<ArrayList<MusicTrack>> {
         val jSonHistory = sharedPreferences.getString(SEARCH_HISTORY, "")
-        val data = Gson().fromJson(jSonHistory, Array<MusicTrack>::class.java)
+        val data = gSon.fromJson(jSonHistory, Array<MusicTrack>::class.java)
 
         return if (data.isNullOrEmpty()) Resource.Error(ErrorList.NOTHING_FOUND)
         else Resource.Success(data.toCollection(ArrayList<MusicTrack>()))

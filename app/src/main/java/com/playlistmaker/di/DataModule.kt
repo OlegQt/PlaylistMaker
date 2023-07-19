@@ -1,6 +1,7 @@
 package com.playlistmaker.di
 
 import android.content.Context
+import com.google.gson.Gson
 import com.playlistmaker.data.network.ItunesMediaSearchApi
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.repository.MusicRepositoryImpl
@@ -18,11 +19,9 @@ const val PREFERENCES = "APP_PREFERENCES"
 val dataModule = module {
 
     // Репозиторий списка треков (истории либо найденных)
-    single<MusicRepository>{
-        MusicRepositoryImpl(networkClient = get(), context = get())
-    }
+    single<MusicRepository> { MusicRepositoryImpl(networkClient = get(), context = get()) }
 
-    single<ItunesMediaSearchApi>{
+    single<ItunesMediaSearchApi> {
         val baseUrl = "https://itunes.apple.com"
 
         // retrofit initialisation will come with class member initialisation
@@ -33,19 +32,21 @@ val dataModule = module {
             .create(ItunesMediaSearchApi::class.java)
     }
 
-    single {(context:Context) ->
+    factory { Gson() }
+
+    single { (context: Context) ->
         context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
     }
 
-    single{RetrofitNetworkClient()}
+    single { RetrofitNetworkClient() }
 
     // Репозиторий для загрузки и сохранения текущего (играющего) трека
-    single<MusicTrackRepository>{
+    single<MusicTrackRepository> {
         MusicTrackRepositoryImpl(context = get())
     }
 
     // Репозиторий загрузки и сохранения настроек приложения
-    single<SettingsRepository>{
+    single<SettingsRepository> {
         SettingsRepositoryImpl(get())
     }
 }
