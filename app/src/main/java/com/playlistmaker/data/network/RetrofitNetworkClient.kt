@@ -7,10 +7,10 @@ import org.koin.java.KoinJavaComponent.getKoin
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetworkClient : NetworkClient<SearchRequest,SearchResponse> {
+class RetrofitNetworkClient(private val mediaApi:ItunesMediaSearchApi) : NetworkClient<SearchRequest,SearchResponse> {
 
     // Связываем с интерфейсом ItunesMedia via DI KOIN
-    private val mediaApi:ItunesMediaSearchApi = getKoin().get()
+    //private val mediaApi:ItunesMediaSearchApi = getKoin().get()
 
     override fun doRequest(request: SearchRequest): SearchResponse {
         when (request) {

@@ -16,13 +16,12 @@ import org.koin.java.KoinJavaComponent
 
 private const val SEARCH_HISTORY = "key_for_search_history"
 
-class MusicRepositoryImpl(private val networkClient: RetrofitNetworkClient, context: Context) :
-    MusicRepository {
-    private val sharedPreferences: SharedPreferences = KoinJavaComponent.getKoin()
-        .get() { parametersOf(context) }
-    private val gSon: Gson = KoinJavaComponent.getKoin().get()
-
-    override fun searchMusic(searchParams: SearchRequest): Resource<ArrayList<MusicTrack>> {
+class MusicRepositoryImpl(
+    private val networkClient: RetrofitNetworkClient,
+    private val sharedPreferences: SharedPreferences,
+    private val gSon: Gson
+) : MusicRepository {
+        override fun searchMusic(searchParams: SearchRequest): Resource<ArrayList<MusicTrack>> {
         val response = networkClient.doRequest(searchParams)
         return when (response.resultCode) {
             -1 -> Resource.Error(ErrorList.NETWORK_TROUBLES)

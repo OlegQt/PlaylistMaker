@@ -19,7 +19,13 @@ const val PREFERENCES = "APP_PREFERENCES"
 val dataModule = module {
 
     // Репозиторий списка треков (истории либо найденных)
-    single<MusicRepository> { MusicRepositoryImpl(networkClient = get(), context = get()) }
+    single<MusicRepository> {
+        MusicRepositoryImpl(
+            networkClient = get(),
+            sharedPreferences = get(),
+            gSon = get()
+        )
+    }
 
     single<ItunesMediaSearchApi> {
         val baseUrl = "https://itunes.apple.com"
@@ -38,7 +44,7 @@ val dataModule = module {
         context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
     }
 
-    single { RetrofitNetworkClient() }
+    single { RetrofitNetworkClient(mediaApi = get()) }
 
     // Репозиторий для загрузки и сохранения текущего (играющего) трека
     single<MusicTrackRepository> {
