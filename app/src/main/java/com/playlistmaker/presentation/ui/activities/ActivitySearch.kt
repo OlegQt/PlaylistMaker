@@ -140,8 +140,10 @@ class ActivitySearch : AppCompatActivity() {
             LinearLayoutManager(binding.searchRecycleView.context)
 
         musicSearchHistoryAdapter = SearchTrackAdapter(musicSearchHistoryList) {
-            vm.saveCurrentPlayingTrack(musicSearchHistoryList[it])
-            this.startPlayerActivity()
+            //vm.saveCurrentPlayingTrack(musicSearchHistoryList[it])
+            //this.startPlayerActivity()
+
+            vm.onHistoryTrackListClick(musicSearchHistoryList[it])
         }
         binding.historySearchRecycleView.adapter = musicSearchHistoryAdapter
         binding.historySearchRecycleView.layoutManager =

@@ -105,11 +105,28 @@ class ActivitySearchVm() : ViewModel() {
         this.safeMusicHistorySearch(musicSearchHistoryList)
     }
 
+    fun onHistoryTrackListClick(trackClicked: MusicTrack) {
+        // Добавляем нажатый трек в историю просмотра треков и
+        // сохраняем нажатый трек, как играющий
+        // и запускаем плеер
+        this.musicTrackOnClick(trackClicked)
+
+        // Запускаем функцию отображения истории поиска с обновленным списком треков
+        // Задержка специально, чтобы убрать визуальный проскок трека до загрузки медиа плеера
+        mainHandler.postDelayed({
+            searchScreenState.postValue(
+                ActivitySearchState.HistoryMusicContent(
+                    musicSearchHistoryList
+                )
+            )
+        }, CLICK_DELAY)
+    }
+
     private fun safeMusicHistorySearch(musicList: ArrayList<MusicTrack>) {
         historySafeUseCase.execute(musicList)
     }
 
-    fun saveCurrentPlayingTrack(track: MusicTrack) {
+    private fun saveCurrentPlayingTrack(track: MusicTrack) {
         this.safePlayingTrackUseCase.execute(track)
     }
 
@@ -154,6 +171,6 @@ class ActivitySearchVm() : ViewModel() {
 
     companion object {
         const val SEARCH_DELAY = 2000L
-        const val CLICK_DELAY = 3000L
+        const val CLICK_DELAY = 300L
     }
 }
