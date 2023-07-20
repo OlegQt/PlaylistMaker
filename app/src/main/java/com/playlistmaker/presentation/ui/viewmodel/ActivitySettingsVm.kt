@@ -6,12 +6,10 @@ import com.playlistmaker.domain.models.Theme
 import com.playlistmaker.domain.usecase.SettingsController
 import org.koin.java.KoinJavaComponent.getKoin
 
-class ActivitySettingsVm() : ViewModel() {
-    //private val settingsController = Creator.getCreator().provideSettingsController(app.baseContext)
-    private val settingsController:SettingsController = getKoin().get()
-
-    val isNightMode = settingsController.loadMode().themeCode==1
-
+class ActivitySettingsVm(
+    private val settingsController: SettingsController
+) : ViewModel() {
+    val isNightMode = settingsController.loadMode().themeCode == 1
 
     fun switchTheme() {
         when (settingsController.loadMode()) {

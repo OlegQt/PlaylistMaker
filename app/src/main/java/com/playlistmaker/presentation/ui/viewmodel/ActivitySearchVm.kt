@@ -17,17 +17,17 @@ import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.util.Resource
 import org.koin.java.KoinJavaComponent.getKoin
 
-class ActivitySearchVm() : ViewModel() {
+class ActivitySearchVm(
+    private val historySafeUseCase: SafeMusicSearchHistoryUseCase,
+    private val loadHistoryUseCase: LoadMusicSearchHistoryUseCase,
+    private val deleteHistoryUseCase: DeleteMusicSearchHistoryUseCase,
+    private val safePlayingTrackUseCase: SafeCurrentPlayingTrackUseCase,
+    private val searchUseCase: SearchMusicUseCase = getKoin().get()
+
+) : ViewModel() {
     private val mainHandler = android.os.Handler(Looper.getMainLooper())
     private var musicTrackIsClickable = true
     private var musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
-
-    // UseCase block by DI KOIN
-    private val historySafeUseCase: SafeMusicSearchHistoryUseCase = getKoin().get()
-    private val loadHistoryUseCase: LoadMusicSearchHistoryUseCase = getKoin().get()
-    private val deleteHistoryUseCase: DeleteMusicSearchHistoryUseCase = getKoin().get()
-    private val safePlayingTrackUseCase: SafeCurrentPlayingTrackUseCase = getKoin().get()
-    private val searchUseCase: SearchMusicUseCase = getKoin().get()
 
     // LiveData block
     private var searchScreenState = MutableLiveData<ActivitySearchState>()

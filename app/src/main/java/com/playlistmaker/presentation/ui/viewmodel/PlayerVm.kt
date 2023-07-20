@@ -14,9 +14,8 @@ import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
 
 
-class PlayerVm() :ViewModel() {
-    private val loadLastPlayingTrackUseCase:LoadLastPlayingMusicTrackUseCase = getKoin().get()
-
+class PlayerVm(private val loadLastPlayingTrackUseCase: LoadLastPlayingMusicTrackUseCase) :
+    ViewModel() {
     private val handler = android.os.Handler(Looper.getMainLooper())
 
     private var playingTime = MutableLiveData<Long>()
@@ -31,11 +30,13 @@ class PlayerVm() :ViewModel() {
 
     // Создаем инстанс музыкального плеера через KOIN, в конструктор передаем объект типа
     // функционального интерфейса
-    private val musicalPlayer:MusicPlayerController = getKoin().get(){ parametersOf(object :OnPlayerStateListener{
-        override fun playerStateChanged(state: PlayerState) {
-            playerState.postValue(state)
-        }
-    }) }
+    private val musicalPlayer: MusicPlayerController = getKoin().get() {
+        parametersOf(object : OnPlayerStateListener {
+            override fun playerStateChanged(state: PlayerState) {
+                playerState.postValue(state)
+            }
+        })
+    }
 
     // Запускается при переходе на экран плеера
     // допускается перемещение в блок init

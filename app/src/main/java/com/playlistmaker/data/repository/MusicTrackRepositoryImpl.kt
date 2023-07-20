@@ -15,9 +15,7 @@ import org.koin.java.KoinJavaComponent.getKoin
 
 private const val CURRENT_PLAYING_TRACK = "key_for_saving_current_track"
 
-class MusicTrackRepositoryImpl(context: Context): MusicTrackRepository{
-    private val sharedPreferences:SharedPreferences = getKoin().get() { parametersOf(context)}
-    private val gSon: Gson = KoinJavaComponent.getKoin().get()
+class MusicTrackRepositoryImpl(private val sharedPreferences:SharedPreferences, private val gSon: Gson): MusicTrackRepository{
 
     override fun getCurrentMusicTrack(): Resource<MusicTrack> {
         // Загрузили трек

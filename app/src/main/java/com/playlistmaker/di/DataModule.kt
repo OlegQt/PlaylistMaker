@@ -10,6 +10,7 @@ import com.playlistmaker.data.repository.SettingsRepositoryImpl
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.domain.repository.MusicTrackRepository
 import com.playlistmaker.domain.repository.SettingsRepository
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -40,19 +41,21 @@ val dataModule = module {
 
     factory { Gson() }
 
-    single { (context: Context) ->
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-    }
+    single { androidContext().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE) }
 
-    single { RetrofitNetworkClient(mediaApi = get()) }
 
     // Репозиторий для загрузки и сохранения текущего (играющего) трека
     single<MusicTrackRepository> {
-        MusicTrackRepositoryImpl(context = get())
+        MusicTrackRepositoryImpl(
+            sharedPreferences = get(),
+            gSon = get()
+        )
     }
 
     // Репозиторий загрузки и сохранения настроек приложения
-    single<SettingsRepository> {
-        SettingsRepositoryImpl(get())
-    }
+    single<SettingsRepository> { SettingsRepositoryImpl(sharedPreferences = get()) }
+
+    single { RetrofitNetworkClient(mediaApi = get()) }
+
+
 }
