@@ -3,7 +3,6 @@ package com.playlistmaker.presentation.ui.activities
 import android.os.Bundle
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -12,12 +11,13 @@ import com.playlistmaker.databinding.ActivityPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class ActivityPlayer : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
-    private lateinit var vm: PlayerVm
+    private val vm:PlayerVm by viewModel()
 
     private fun setUiBehaviour() {
         binding.playerBtnBack.setOnClickListener { finish() }
@@ -89,9 +89,6 @@ class ActivityPlayer : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val factory = PlayerVm.getFactory(this.application)
-        vm = ViewModelProvider(this, factory = factory)[PlayerVm::class.java]
 
         vm.getCurrentMusTrack.observe(this) {
             this.showTrackInfo(it)

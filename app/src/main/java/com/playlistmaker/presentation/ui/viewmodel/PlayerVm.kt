@@ -1,23 +1,21 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
-import android.app.Application
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
-import com.playlistmaker.util.Creator
+import com.playlistmaker.domain.usecase.LoadLastPlayingMusicTrackUseCase
+import com.playlistmaker.domain.usecase.MusicPlayerController
 import com.playlistmaker.util.Resource
+import org.koin.core.parameter.parametersOf
+import org.koin.java.KoinJavaComponent.getKoin
 
 
-class PlayerVm(private val application: Application) : AndroidViewModel(application) {
-
-    private val loadLastPlayingTrackUseCase by lazy {
-        Creator.getCreator().provideLoadLastPlayingTrackUseCase(application)
-    }
+class PlayerVm(private val loadLastPlayingTrackUseCase: LoadLastPlayingMusicTrackUseCase) :
+    ViewModel() {
     private val handler = android.os.Handler(Looper.getMainLooper())
 
     private var playingTime = MutableLiveData<Long>()
@@ -30,10 +28,15 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
     val getCurrentMusTrack = this.currentPlayingMusTrack as LiveData<MusicTrack>
     val getPlayingTime = this.playingTime as LiveData<Long>
 
-    // Переменная для хранения нашего плеера
-    // В параметры передается объект реализующий функциональный интерфейс по обновлению состояния плеера
-    private val musicalPlayer =
-        Creator.getCreator().provideMusicPlayer() { playerState.postValue(it) }
+    // Создаем инстанс музыкального плеера через KOIN, в конструктор передаем объект типа
+    // функционального интерфейса
+    private val musicalPlayer: MusicPlayerController = getKoin().get() {
+        parametersOf(object : OnPlayerStateListener {
+            override fun playerStateChanged(state: PlayerState) {
+                playerState.postValue(state)
+            }
+        })
+    }
 
     // Запускается при переходе на экран плеера
     // допускается перемещение в блок init
@@ -87,21 +90,5 @@ class PlayerVm(private val application: Application) : AndroidViewModel(applicat
 
     fun turnOffPlayer() {
         musicalPlayer.turnOffPlayer()
-    }
-
-    // Фабрика для создания ViewModel с пробросом Activity в конструктор
-    companion object {
-        fun getFactory(app: Application): ViewModelProvider.Factory {
-            val factory = object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    if (modelClass.isAssignableFrom(PlayerVm::class.java)) {
-                        return PlayerVm(application = app) as T
-                    }
-                    throw IllegalArgumentException("Unknown ViewModel class")
-                }
-            }
-            return factory
-
-        }
     }
 }

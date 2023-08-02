@@ -1,31 +1,33 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
-import android.app.Application
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.presentation.models.ActivitySearchState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.playlistmaker.domain.models.ErrorList
+import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
+import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
+import com.playlistmaker.domain.usecase.SafeMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.SingleLiveEvent
-import com.playlistmaker.util.Creator
+import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.util.Resource
+import org.koin.java.KoinJavaComponent.getKoin
 
-class ActivitySearchVm(application: Application) : AndroidViewModel(application) {
+class ActivitySearchVm(
+    private val historySafeUseCase: SafeMusicSearchHistoryUseCase,
+    private val loadHistoryUseCase: LoadMusicSearchHistoryUseCase,
+    private val deleteHistoryUseCase: DeleteMusicSearchHistoryUseCase,
+    private val safePlayingTrackUseCase: SafeCurrentPlayingTrackUseCase,
+    private val searchUseCase: SearchMusicUseCase = getKoin().get()
+
+) : ViewModel() {
     private val mainHandler = android.os.Handler(Looper.getMainLooper())
     private var musicTrackIsClickable = true
     private var musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
-
-    // UseCase block
-    private val historySafeUseCase by lazy { Creator.getCreator().provideSafeMusicSearchHistory(application) }
-    private val loadHistoryUseCase by lazy { Creator.getCreator().provideLoadMusicSearchHistory(application) }
-    private val deleteHistoryUseCase by lazy { Creator.getCreator().provideDeleteMusicSearchHistory(application) }
-    private val safePlayingTrackUseCase by lazy { Creator.getCreator().provideSafePlayingTrackUseCase(application) }
-
 
     // LiveData block
     private var searchScreenState = MutableLiveData<ActivitySearchState>()
@@ -44,7 +46,6 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
 
     private fun searchMusic(songName: String) {
         val musRequest = SearchRequest.MusicSearchRequest(searchParam = songName)
-        val searchUseCase = Creator.getCreator().provideSearchMusicUseCase(getApplication())
 
         // Используем UseCase DOMAIN слоя
         searchUseCase.executeSearch(musRequest) { foundMusic ->
@@ -104,11 +105,28 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
         this.safeMusicHistorySearch(musicSearchHistoryList)
     }
 
+    fun onHistoryTrackListClick(trackClicked: MusicTrack) {
+        // Добавляем нажатый трек в историю просмотра треков и
+        // сохраняем нажатый трек, как играющий
+        // и запускаем плеер
+        this.musicTrackOnClick(trackClicked)
+
+        // Запускаем функцию отображения истории поиска с обновленным списком треков
+        // Задержка специально, чтобы убрать визуальный проскок трека до загрузки медиа плеера
+        mainHandler.postDelayed({
+            searchScreenState.postValue(
+                ActivitySearchState.HistoryMusicContent(
+                    musicSearchHistoryList
+                )
+            )
+        }, CLICK_DELAY)
+    }
+
     private fun safeMusicHistorySearch(musicList: ArrayList<MusicTrack>) {
         historySafeUseCase.execute(musicList)
     }
 
-    fun saveCurrentPlayingTrack(track: MusicTrack) {
+    private fun saveCurrentPlayingTrack(track: MusicTrack) {
         this.safePlayingTrackUseCase.execute(track)
     }
 
@@ -151,21 +169,8 @@ class ActivitySearchVm(application: Application) : AndroidViewModel(application)
 
     }
 
-    // Фабрика для создания ViewModel с пробросом Activity в конструктор
     companion object {
         const val SEARCH_DELAY = 2000L
-        const val CLICK_DELAY = 3000L
-
-        fun getFactory(app: Application): ViewModelProvider.Factory {
-            val factory = object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    if (modelClass.isAssignableFrom(ActivitySearchVm::class.java)) {
-                        return ActivitySearchVm(application = app) as T
-                    }
-                    throw IllegalArgumentException("Unknown ViewModel class")
-                }
-            }
-            return factory
-        }
+        const val CLICK_DELAY = 300L
     }
 }

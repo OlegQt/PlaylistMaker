@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
@@ -15,10 +14,13 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActivitySearch : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var vm: ActivitySearchVm
+    private val vm: ActivitySearchVm by viewModel()
+
+    // KOIN viewModel
 
 
     // Адаптеры для отображения найденных треков и истории просмотра треков
@@ -28,7 +30,6 @@ class ActivitySearch : AppCompatActivity() {
     // List of tracks
     private val musicList: ArrayList<MusicTrack> = ArrayList()
     private val musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
-
 
     // Функция для перехода на экран плеера
     private fun startPlayerActivity() {
@@ -116,9 +117,6 @@ class ActivitySearch : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val factory = ActivitySearchVm.getFactory(this.application)
-        vm = ViewModelProvider(this, factory = factory)[ActivitySearchVm::class.java]
-
         vm.getSearchScreenState.observe(this) { this.render(it) }
 
         vm.getStartPlayerCommand.observe(this) { startPlayerActivity() }
@@ -142,8 +140,10 @@ class ActivitySearch : AppCompatActivity() {
             LinearLayoutManager(binding.searchRecycleView.context)
 
         musicSearchHistoryAdapter = SearchTrackAdapter(musicSearchHistoryList) {
-            vm.saveCurrentPlayingTrack(musicSearchHistoryList[it])
-            this.startPlayerActivity()
+            //vm.saveCurrentPlayingTrack(musicSearchHistoryList[it])
+            //this.startPlayerActivity()
+
+            vm.onHistoryTrackListClick(musicSearchHistoryList[it])
         }
         binding.historySearchRecycleView.adapter = musicSearchHistoryAdapter
         binding.historySearchRecycleView.layoutManager =
@@ -164,6 +164,7 @@ class ActivitySearch : AppCompatActivity() {
         binding.clsSearch.setOnClickListener { binding.txtSearch.text.clear() }
         binding.btnBack.setOnClickListener { finish() }
         binding.txtSearch.setText("")
+
 
     }
 

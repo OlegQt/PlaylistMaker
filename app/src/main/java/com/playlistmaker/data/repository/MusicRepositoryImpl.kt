@@ -1,6 +1,7 @@
 package com.playlistmaker.data.repository
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.playlistmaker.data.dto.CompoundSearchResponse
 import com.playlistmaker.data.mapper.MusicTrackMapper
@@ -10,15 +11,17 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.util.Resource
+import org.koin.core.parameter.parametersOf
+import org.koin.java.KoinJavaComponent
 
-private const val PREFERENCES = "APP_PREFERENCES"
 private const val SEARCH_HISTORY = "key_for_search_history"
 
-class MusicRepositoryImpl(private val networkClient: RetrofitNetworkClient, context: Context) :
-    MusicRepository {
-    private val sharedPreferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-
-    override fun searchMusic(searchParams: SearchRequest): Resource<ArrayList<MusicTrack>> {
+class MusicRepositoryImpl(
+    private val networkClient: RetrofitNetworkClient,
+    private val sharedPreferences: SharedPreferences,
+    private val gSon: Gson
+) : MusicRepository {
+        override fun searchMusic(searchParams: SearchRequest): Resource<ArrayList<MusicTrack>> {
         val response = networkClient.doRequest(searchParams)
         return when (response.resultCode) {
             -1 -> Resource.Error(ErrorList.NETWORK_TROUBLES)
@@ -39,14 +42,14 @@ class MusicRepositoryImpl(private val networkClient: RetrofitNetworkClient, cont
 
     override fun safeMusicSearchHistory(musicList: ArrayList<MusicTrack>) {
         if (musicList.isNotEmpty()) {
-            val jSonHistory = Gson().toJson(musicList)
+            val jSonHistory = gSon.toJson(musicList)
             sharedPreferences.edit().putString(SEARCH_HISTORY, jSonHistory).apply()
         }
     }
 
     override fun loadMusicSearchHistory(): Resource<ArrayList<MusicTrack>> {
         val jSonHistory = sharedPreferences.getString(SEARCH_HISTORY, "")
-        val data = Gson().fromJson(jSonHistory, Array<MusicTrack>::class.java)
+        val data = gSon.fromJson(jSonHistory, Array<MusicTrack>::class.java)
 
         return if (data.isNullOrEmpty()) Resource.Error(ErrorList.NOTHING_FOUND)
         else Resource.Success(data.toCollection(ArrayList<MusicTrack>()))

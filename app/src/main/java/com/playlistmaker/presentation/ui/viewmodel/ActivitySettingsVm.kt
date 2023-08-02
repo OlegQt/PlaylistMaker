@@ -1,17 +1,15 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
-import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
-import com.playlistmaker.appstart.App
 import com.playlistmaker.domain.models.Theme
-import com.playlistmaker.util.Creator
+import com.playlistmaker.domain.usecase.SettingsController
+import org.koin.java.KoinJavaComponent.getKoin
 
-class ActivitySettingsVm(app:Application) : AndroidViewModel(app) {
-    private val settingsController = Creator.getCreator().provideSettingsController(app.baseContext)
-    val isNightMode = settingsController.loadMode().themeCode==1
-
+class ActivitySettingsVm(
+    private val settingsController: SettingsController
+) : ViewModel() {
+    val isNightMode = settingsController.loadMode().themeCode == 1
 
     fun switchTheme() {
         when (settingsController.loadMode()) {
