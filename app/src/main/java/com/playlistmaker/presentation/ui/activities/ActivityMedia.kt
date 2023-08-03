@@ -8,6 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.playlistmaker.databinding.ActivityMediaBinding
 import com.playlistmaker.presentation.ui.fragments.FavouriteTracksFragment
+import com.playlistmaker.presentation.ui.fragments.PlayListsFragment
 
 class ActivityMedia : AppCompatActivity() {
     lateinit var binding: ActivityMediaBinding
@@ -18,8 +19,8 @@ class ActivityMedia : AppCompatActivity() {
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        fragmentMap["Избранные треки"] = FavouriteTracksFragment()
-        fragmentMap["Плейлисты"] = FavouriteTracksFragment()
+        fragmentMap["Избранные треки"] = FavouriteTracksFragment.newInstance("")
+        fragmentMap["Плейлисты"] = PlayListsFragment.newInstance()
 
         fragmentMap.keys.forEach {
             binding.mediaStorageTab.addTab(binding.mediaStorageTab.newTab().setText(it))
@@ -30,6 +31,8 @@ class ActivityMedia : AppCompatActivity() {
             tab,pos ->
             tab.text = fragmentMap.keys.elementAt(pos)
         }.attach()
+
+        binding.backToMainActivity.setOnClickListener { finish() }
 
     }
 }
