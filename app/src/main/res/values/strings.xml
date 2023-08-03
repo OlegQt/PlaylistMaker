@@ -29,6 +29,8 @@
     <string name="song_genre">Жанр</string>
     <string name="song_country">Страна</string>
     <string name="playing_time">00:00</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

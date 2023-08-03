@@ -39,7 +39,6 @@ class ActivitySearchVm(
     private var errorMessage = MutableLiveData<String>()
     fun getErrorMsg(): LiveData<String> = errorMessage
 
-
     init {
         searchScreenState.value = ActivitySearchState.InitialState(null)
     }
