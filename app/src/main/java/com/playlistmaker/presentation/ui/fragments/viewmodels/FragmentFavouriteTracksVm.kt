@@ -17,5 +17,8 @@ class FragmentFavouriteTracksVm : ViewModel() {
         // TODO: Здесь прописать загрузку избранных треков
         // Временно ставим принудительную заглушку
         fragmentState.value = FragmentFavouriteTracksState.NothingFound(null)
+
+        // Check if favourite tracks list is not empty below
+        //fragmentState.value = FragmentFavouriteTracksState.Content(arrayListOf())
     }
 }

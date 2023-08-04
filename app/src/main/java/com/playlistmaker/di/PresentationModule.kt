@@ -5,6 +5,7 @@ import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
 import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.ui.fragments.viewmodels.FragmentFavouriteTracksVm
+import com.playlistmaker.presentation.ui.fragments.viewmodels.FragmentPlayListsVm
 import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
 import com.playlistmaker.presentation.ui.viewmodel.ActivitySettingsVm
@@ -33,4 +34,5 @@ val presentationModule = module {
         ActivitySettingsVm(settingsController = get())
     }
     viewModel { FragmentFavouriteTracksVm() }
+    viewModel { FragmentPlayListsVm() }
 }

@@ -33,6 +33,8 @@ class FavouriteTracksFragment : Fragment() {
                 is FragmentFavouriteTracksState.Content -> {
                     binding.stubLayout.visibility = View.GONE
                     binding.favouriteTracksRecycler.visibility = View.VISIBLE
+                    // TODO: скопировать треки во внутренний список и обновить адаптер recycler
+                    // TODO: Don't forget to check if arrayList is empty
                 }
             }
         }
@@ -44,7 +46,6 @@ class FavouriteTracksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //TODO: Извлечение параметров для view элементов ниже
         //binding.txtStubMainError.text=arguments?.getString(PARAM_TITLE)
-
 
     }
 
