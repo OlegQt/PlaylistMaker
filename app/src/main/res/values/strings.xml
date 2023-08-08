@@ -19,6 +19,7 @@
     <string name="you_have_search">Вы искали</string>
     <string name="error_loading_activity">Не удалось запустить activity</string>
 
+
     <string name="android_developer_course" translatable="false">https://practicum.yandex.ru/android-developer/</string>
     <string name="android_yandex_offer" translatable="false"> https://yandex.ru/legal/practicum_offer/ </string>
     <string name="share_type" translatable="false"> text/plain </string>
@@ -29,6 +30,13 @@
     <string name="song_genre">Жанр</string>
     <string name="song_country">Страна</string>
     <string name="playing_time">00:00</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="empty_media_storage">Ваша медиатека пуста</string>
+    <string name="Create_new_playlist">Новый плейлист</string>
+    <string name="no_playlist_found">Вы не создали \n ни одного плейлиста</string>
+    <string name="favouriteTracks">Избранные треки</string>
+    <string name="Playlists">Плейлисты</string>
 
 
 </resources>
