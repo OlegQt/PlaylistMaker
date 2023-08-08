@@ -13,8 +13,6 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,8 +42,6 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
-
-
 
         btnSearch.setOnClickListener { vm.loadAnotherActivity(Screen.SEARCH.screenName) }
         btnMedia.setOnClickListener { vm.loadAnotherActivity(Screen.MEDIA.screenName) }

@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
+import com.playlistmaker.R
 import com.playlistmaker.databinding.ActivityMediaBinding
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.fragments.FavouriteTracksFragment
@@ -15,6 +16,7 @@ import com.playlistmaker.presentation.ui.fragments.PlayListsFragment
 
 class ActivityMedia : AppCompatActivity() ,AlertMessaging{
     private lateinit var binding: ActivityMediaBinding
+    private lateinit var mediator: TabLayoutMediator
 
     // Хранение фрагментов внутри коллекции fragmentMap
     private val fragmentMap = mutableMapOf<String, Fragment>()
@@ -26,8 +28,8 @@ class ActivityMedia : AppCompatActivity() ,AlertMessaging{
         setContentView(binding.root)
 
         // Заполняем коллекцию нужными фрагментами
-        fragmentMap["Избранные треки"] = FavouriteTracksFragment.newInstance("")
-        fragmentMap["Плейлисты"] = PlayListsFragment.newInstance()
+        fragmentMap[getString(R.string.favouriteTracks)] = FavouriteTracksFragment.newInstance("")
+        fragmentMap[getString(R.string.Playlists)] = PlayListsFragment.newInstance()
 
         // Динамически создаем TabItems
         fragmentMap.keys.forEach {
@@ -36,13 +38,19 @@ class ActivityMedia : AppCompatActivity() ,AlertMessaging{
 
         // Инициализация адаптера для
         binding.mediaStorageFragmentPlaceholder.adapter = MediaPager(this,fragmentMap)
-        TabLayoutMediator(binding.mediaStorageTab,binding.mediaStorageFragmentPlaceholder){
+        mediator = TabLayoutMediator(binding.mediaStorageTab,binding.mediaStorageFragmentPlaceholder){
             tab,pos ->
             tab.text = fragmentMap.keys.elementAt(pos)
-        }.attach()
+        }
+        mediator.attach()
 
         // Возврат назад через кнопку "назад"
         binding.backToMainActivity.setOnClickListener { finish() }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mediator.detach()
     }
 
     // Есть ли необходимость выносить данный класс в отдельный файл? По сути он используется только
