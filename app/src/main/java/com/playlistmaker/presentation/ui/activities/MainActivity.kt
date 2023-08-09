@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.playlistmaker.R
-import com.playlistmaker.presentation.ui.fragments.SettingsFragment
+import com.playlistmaker.presentation.ui.fragments.MediaLibraryFragment
 import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         if(savedInstanceState==null){
             supportFragmentManager.commit {
-                add(R.id.root_placeholder, SettingsFragment())
+                add(R.id.root_placeholder, MediaLibraryFragment())
             }
         }
 

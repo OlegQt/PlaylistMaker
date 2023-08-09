@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.FragmentFavouriteTracksState
-import com.playlistmaker.presentation.ui.viewmodels.FragmentFavouriteTracksVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 

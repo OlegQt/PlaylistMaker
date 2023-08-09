@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
-import com.playlistmaker.presentation.ui.viewmodels.FragmentPlayListsVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 

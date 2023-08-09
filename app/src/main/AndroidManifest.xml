@@ -23,14 +23,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".presentation.ui.activities.ActivityMedia"
+            android:name=".presentation.ui.fragments.MediaLibraryFragment"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".presentation.ui.activities.ActivitySearch"
+            android:name=".presentation.ui.fragments.SearchFragment"
             android:exported="false"
             android:theme="@style/Theme.YandexPracticumPlaylistMaker">
             <meta-data

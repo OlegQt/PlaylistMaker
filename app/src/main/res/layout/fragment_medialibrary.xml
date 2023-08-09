@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_marginStart="4dp"
-    tools:context=".presentation.ui.activities.ActivityMedia">
+    tools:context=".presentation.ui.fragments.MediaLibraryFragment">
 
     <ImageView
         android:id="@+id/backToMainActivity"

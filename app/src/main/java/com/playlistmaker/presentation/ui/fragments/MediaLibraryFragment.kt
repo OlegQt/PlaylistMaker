@@ -1,30 +1,33 @@
-package com.playlistmaker.presentation.ui.activities
+package com.playlistmaker.presentation.ui.fragments
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.playlistmaker.R
-import com.playlistmaker.databinding.ActivityMediaBinding
+import com.playlistmaker.databinding.FragmentMedialibraryBinding
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.fragments.medialibrary.FavouriteTracksFragment
 import com.playlistmaker.presentation.ui.fragments.medialibrary.PlayListsFragment
 
-class ActivityMedia : AppCompatActivity() ,AlertMessaging{
-    private lateinit var binding: ActivityMediaBinding
+class MediaLibraryFragment : Fragment() ,AlertMessaging{
+    private lateinit var binding: FragmentMedialibraryBinding
     private lateinit var mediator: TabLayoutMediator
 
     // Хранение фрагментов внутри коллекции fragmentMap
     private val fragmentMap = mutableMapOf<String, Fragment>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivityMediaBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentMedialibraryBinding.inflate(layoutInflater)
 
         // Заполняем коллекцию нужными фрагментами
         fragmentMap[getString(R.string.favouriteTracks)] = FavouriteTracksFragment.newInstance("")
@@ -36,7 +39,7 @@ class ActivityMedia : AppCompatActivity() ,AlertMessaging{
         }
 
         // Инициализация адаптера для
-        binding.mediaStorageFragmentPlaceholder.adapter = MediaPager(this,fragmentMap)
+        binding.mediaStorageFragmentPlaceholder.adapter = MediaPager(requireActivity(),fragmentMap)
         mediator = TabLayoutMediator(binding.mediaStorageTab,binding.mediaStorageFragmentPlaceholder){
             tab,pos ->
             tab.text = fragmentMap.keys.elementAt(pos)
@@ -44,7 +47,9 @@ class ActivityMedia : AppCompatActivity() ,AlertMessaging{
         mediator.attach()
 
         // Возврат назад через кнопку "назад"
-        binding.backToMainActivity.setOnClickListener { finish() }
+        //binding.backToMainActivity.setOnClickListener { finish() }
+
+        return binding.root
     }
 
     override fun onPause() {
@@ -61,7 +66,7 @@ class ActivityMedia : AppCompatActivity() ,AlertMessaging{
     }
 
     override fun showAlertDialog(alertMessage: String) {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(requireActivity())
             .setTitle("Alert")
             .setMessage(alertMessage)
             .setPositiveButton("OK",null)

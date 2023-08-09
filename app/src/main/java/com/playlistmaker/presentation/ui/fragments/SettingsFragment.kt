@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentSettingsBinding
-import com.playlistmaker.presentation.ui.viewmodel.ActivitySettingsVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentSettingsVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : Fragment() {
 
-    private val vm: ActivitySettingsVm by viewModel()
+    private val vm: FragmentSettingsVm by viewModel()
     private var binding: FragmentSettingsBinding? = null
 
     override fun onCreateView(

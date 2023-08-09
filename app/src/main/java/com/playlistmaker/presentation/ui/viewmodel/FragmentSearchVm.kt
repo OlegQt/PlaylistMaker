@@ -17,7 +17,7 @@ import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.util.Resource
 import org.koin.java.KoinJavaComponent.getKoin
 
-class ActivitySearchVm(
+class FragmentSearchVm(
     private val historySafeUseCase: SafeMusicSearchHistoryUseCase,
     private val loadHistoryUseCase: LoadMusicSearchHistoryUseCase,
     private val deleteHistoryUseCase: DeleteMusicSearchHistoryUseCase,
