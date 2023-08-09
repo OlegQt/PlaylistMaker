@@ -7,9 +7,11 @@
         android:icon="@drawable/search_pic"/>
 
     <item android:title="Mediateca"
-        android:id="@+id/PageB"/>
+        android:id="@+id/PageB"
+        android:icon="@drawable/ic_media"/>
 
     <item android:title="Settings"
-        android:id="@+id/PageC"/>
+        android:id="@+id/PageC"
+        android:icon="@drawable/ic_options"/>
 
 </menu>
