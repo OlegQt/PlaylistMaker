@@ -1,7 +1,6 @@
 package com.playlistmaker.presentation.ui.activities
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -11,8 +10,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.playlistmaker.R
 import com.playlistmaker.databinding.ActivityMediaBinding
 import com.playlistmaker.presentation.models.AlertMessaging
-import com.playlistmaker.presentation.ui.fragments.FavouriteTracksFragment
-import com.playlistmaker.presentation.ui.fragments.PlayListsFragment
+import com.playlistmaker.presentation.ui.fragments.medialibrary.FavouriteTracksFragment
+import com.playlistmaker.presentation.ui.fragments.medialibrary.PlayListsFragment
 
 class ActivityMedia : AppCompatActivity() ,AlertMessaging{
     private lateinit var binding: ActivityMediaBinding

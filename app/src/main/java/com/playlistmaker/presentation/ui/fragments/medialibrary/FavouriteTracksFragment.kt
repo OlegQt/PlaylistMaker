@@ -1,4 +1,4 @@
-package com.playlistmaker.presentation.ui.fragments
+package com.playlistmaker.presentation.ui.fragments.medialibrary
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,14 +8,14 @@ import androidx.fragment.app.Fragment
 import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.FragmentFavouriteTracksState
-import com.playlistmaker.presentation.ui.fragments.viewmodels.FragmentFavouriteTracksVm
+import com.playlistmaker.presentation.ui.viewmodels.FragmentFavouriteTracksVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class FavouriteTracksFragment : Fragment() {
 
     private lateinit var binding:FragmentFavouriteTracksBinding
-    private val vm:FragmentFavouriteTracksVm by viewModel()
+    private val vm: FragmentFavouriteTracksVm by viewModel()
     private var favouriteTracksList = arrayListOf<MusicTrack>()
 
     override fun onCreateView(
@@ -53,7 +53,7 @@ class FavouriteTracksFragment : Fragment() {
         // На данном этапе не требуется передавать никаких параметров, однако в задании
         // жестко задано создавать фрагмент через instance
         private const val PARAM_TITLE = "PARAM_TITLE"
-        fun newInstance(strParam:String)=FavouriteTracksFragment().apply {
+        fun newInstance(strParam:String)= FavouriteTracksFragment().apply {
             arguments = Bundle().apply { putString(PARAM_TITLE,strParam) }
         }
     }

@@ -38,7 +38,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".presentation.ui.activities.ActivitySettings"
+            android:name=".presentation.ui.fragments.SettingsFragment"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

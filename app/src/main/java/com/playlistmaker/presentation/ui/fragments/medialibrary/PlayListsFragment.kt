@@ -1,15 +1,14 @@
-package com.playlistmaker.presentation.ui.fragments
+package com.playlistmaker.presentation.ui.fragments.medialibrary
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
-import com.playlistmaker.presentation.ui.fragments.viewmodels.FragmentPlayListsVm
+import com.playlistmaker.presentation.ui.viewmodels.FragmentPlayListsVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 

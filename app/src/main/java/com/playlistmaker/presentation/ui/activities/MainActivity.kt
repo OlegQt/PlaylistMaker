@@ -1,15 +1,11 @@
 package com.playlistmaker.presentation.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.commit
 import com.playlistmaker.R
-import com.playlistmaker.domain.usecase.SearchMusicUseCase
-import com.playlistmaker.presentation.models.Screen
+import com.playlistmaker.presentation.ui.fragments.SettingsFragment
 import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -17,13 +13,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val btnMedia = findViewById<Button>(R.id.media)
-        val btnSearch = findViewById<Button>(R.id.search)
-        val btnSettings: Button = findViewById(R.id.settings)
+        //val btnMedia = findViewById<Button>(R.id.media)
+        //val btnSearch = findViewById<Button>(R.id.search)
+        //val btnSettings: Button = findViewById(R.id.settings)
 
         val vm: ActivityMainVm by viewModel()
 
-        vm.screen.observe(this) {
+        if(savedInstanceState==null){
+            supportFragmentManager.commit {
+                add(R.id.root_placeholder, SettingsFragment())
+            }
+        }
+
+/*        vm.screen.observe(this) {
             val intent = when (it) {
                 Screen.SEARCH.screenName -> Intent(this, ActivitySearch::class.java)
                 Screen.SETTINGS.screenName -> Intent(this, ActivitySettings::class.java)
@@ -35,16 +37,16 @@ class MainActivity : AppCompatActivity() {
             try {
                 startActivity(intent)
             } catch (error: Exception) {
-                Snackbar.make(
+                *//*Snackbar.make(
                     btnMedia,
                     getString(R.string.error_loading_activity),
                     Snackbar.LENGTH_SHORT
-                ).show()
+                ).show()*//*
             }
-        }
+        }*/
 
-        btnSearch.setOnClickListener { vm.loadAnotherActivity(Screen.SEARCH.screenName) }
-        btnMedia.setOnClickListener { vm.loadAnotherActivity(Screen.MEDIA.screenName) }
-        btnSettings.setOnClickListener { vm.loadAnotherActivity(Screen.SETTINGS.screenName) }
+        //btnSearch.setOnClickListener { vm.loadAnotherActivity(Screen.SEARCH.screenName) }
+        //btnMedia.setOnClickListener { vm.loadAnotherActivity(Screen.MEDIA.screenName) }
+        //btnSettings.setOnClickListener { vm.loadAnotherActivity(Screen.SETTINGS.screenName) }
     }
 }
