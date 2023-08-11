@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:title="Search"
-        android:id="@+id/pageA"
+    <item android:title="@string/search"
+        android:id="@+id/searchFragment"
         android:icon="@drawable/search_pic"/>
 
-    <item android:title="Mediateca"
-        android:id="@+id/PageB"
+    <item android:title="@string/media_library"
+        android:id="@+id/mediaLibraryFragment"
         android:icon="@drawable/ic_media"/>
 
-    <item android:title="Settings"
-        android:id="@+id/PageC"
+    <item android:title="@string/options"
+        android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_options"/>
 
 </menu>
