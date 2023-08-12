@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.Gson
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentSearchBinding
 import com.playlistmaker.domain.models.MusicTrack
@@ -35,8 +36,11 @@ class SearchFragment : Fragment() {
     private val musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
 
     // Функция для перехода на экран плеера
-    private fun startPlayerActivity() {
-        startActivity(Intent(requireContext(), ActivityPlayer::class.java))
+    private fun startPlayerActivity(musicTrackToPlay:MusicTrack) {
+        val intentPlayerActivity = Intent(requireContext(), ActivityPlayer::class.java)
+        //TODO: Проверить передачу данных
+        intentPlayerActivity.putExtra("track",Gson().toJson(musicTrackToPlay))
+        startActivity(intentPlayerActivity)
     }
 
     private fun clsButtonVisibility() {
@@ -126,7 +130,9 @@ class SearchFragment : Fragment() {
 
         vm.getSearchScreenState.observe(viewLifecycleOwner) { this.render(it) }
 
-        vm.getStartPlayerCommand.observe(viewLifecycleOwner) { startPlayerActivity() }
+        vm.getStartPlayerCommand.observe(viewLifecycleOwner) {
+            startPlayerActivity(it)
+        }
 
         vm.getErrorMsg().observe(viewLifecycleOwner) {
             MaterialAlertDialogBuilder(requireActivity())
