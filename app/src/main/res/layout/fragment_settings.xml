@@ -13,22 +13,14 @@
         style="@style/settings_layout_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="14dp"
         android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/backToMainActivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="@string/options"
-            android:src="@drawable/back_to_main_screen"
-            app:tint="?attr/colorOnPrimary" />
 
         <TextView
             style="@style/settings_text_back"
             android:text="@string/options" />
+
     </LinearLayout>
 
     <!-- Dark theme -->
@@ -42,7 +34,8 @@
             android:id="@+id/night_theme_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            style="@style/settings_switch_style" />
+
     </LinearLayout>
 
     <!-- Share app -->
@@ -86,7 +79,6 @@
             style="@style/settings_img"
             android:contentDescription="@string/user_agreement"
             android:src="@drawable/agreement" />
-
 
 
     </LinearLayout>

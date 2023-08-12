@@ -9,25 +9,15 @@
     android:layout_marginStart="4dp"
     tools:context=".presentation.ui.fragments.MediaLibraryFragment">
 
-    <ImageView
-        android:id="@+id/backToMainActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/options"
-        android:src="@drawable/back_to_main_screen"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="12dp"
-        app:tint="?attr/colorOnPrimary"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
+        android:id="@+id/txt_article"
         style="@style/settings_text_back"
         android:text="@string/media_library"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="14dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintStart_toEndOf="@id/backToMainActivity"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.tabs.TabLayout
@@ -37,8 +27,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp"
-        app:layout_constraintTop_toBottomOf="@id/backToMainActivity"
-        app:tabTextAppearance="@style/tab_layout_text"/>
+        app:tabTextAppearance="@style/tab_layout_text"
+        android:contentDescription="@string/media_library"
+
+        app:layout_constraintTop_toBottomOf="@id/txt_article"
+        />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/media_storage_fragment_placeholder"

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
+    <style name="settings_switch_style">
+        <item name="thumbTint">@color/yp_blue</item>
+        <item name="trackTint">@color/yp_dk_blue</item>
+    </style>
 
 </resources>
