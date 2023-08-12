@@ -38,8 +38,7 @@ class SearchFragment : Fragment() {
     // Функция для перехода на экран плеера
     private fun startPlayerActivity(musicTrackToPlay:MusicTrack) {
         val intentPlayerActivity = Intent(requireContext(), ActivityPlayer::class.java)
-        //TODO: Проверить передачу данных
-        intentPlayerActivity.putExtra("track",Gson().toJson(musicTrackToPlay))
+        intentPlayerActivity.putExtra("track",musicTrackToPlay)
         startActivity(intentPlayerActivity)
     }
 
@@ -153,9 +152,6 @@ class SearchFragment : Fragment() {
             LinearLayoutManager(binding.searchRecycleView.context)
 
         musicSearchHistoryAdapter = SearchTrackAdapter(musicSearchHistoryList) {
-            //vm.saveCurrentPlayingTrack(musicSearchHistoryList[it])
-            //this.startPlayerActivity()
-
             vm.onHistoryTrackListClick(musicSearchHistoryList[it])
         }
         binding.historySearchRecycleView.adapter = musicSearchHistoryAdapter
@@ -175,7 +171,6 @@ class SearchFragment : Fragment() {
         binding.btnClearHistory.setOnClickListener { vm.deleteMusicHistory() }
         binding.btnReload.setOnClickListener { vm.searchLineTyping(binding.txtSearch.toString()) }
         binding.clsSearch.setOnClickListener { binding.txtSearch.text.clear() }
-        //binding.btnBack.setOnClickListener { finish() }
         binding.txtSearch.setText("")
 
         return binding.root

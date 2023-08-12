@@ -76,7 +76,7 @@ class FragmentSearchVm(
             // сохраняем нажатый трек, как играющий
             // и запускаем плеер
             addMusicTrackToHistorySearch(musicTrackToSafe = trackClicked)
-            saveCurrentPlayingTrack(track = trackClicked)
+            //saveCurrentPlayingTrack(track = trackClicked)
             this.startPlayerApp.postValue(trackClicked)
 
             // Блокируем доступ к нажатиям на треки на время

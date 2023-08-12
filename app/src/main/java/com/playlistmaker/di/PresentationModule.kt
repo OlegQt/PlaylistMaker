@@ -20,11 +20,7 @@ val presentationModule = module {
         )
     }
     viewModel<ActivityMainVm> { ActivityMainVm() }
-    viewModel<PlayerVm> {
-        PlayerVm(
-            loadLastPlayingTrackUseCase = get()
-        )
-    }
+    viewModel<PlayerVm> { PlayerVm() }
     viewModel<FragmentSettingsVm> {
         FragmentSettingsVm(settingsController = get())
     }

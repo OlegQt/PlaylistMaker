@@ -14,7 +14,7 @@ import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
 
 
-class PlayerVm(private val loadLastPlayingTrackUseCase: LoadLastPlayingMusicTrackUseCase) :
+class PlayerVm() :
     ViewModel() {
     private val handler = android.os.Handler(Looper.getMainLooper())
 
@@ -40,11 +40,8 @@ class PlayerVm(private val loadLastPlayingTrackUseCase: LoadLastPlayingMusicTrac
 
     // Запускается при переходе на экран плеера
     // допускается перемещение в блок init
-    fun loadCurrentMusicTrack() {
-        val loadResult = loadLastPlayingTrackUseCase.execute()
-        if (loadResult is Resource.Success) {
-            this.currentPlayingMusTrack.postValue(loadResult.data)
-        }
+    fun loadCurrentMusicTrack(trackToPlay:MusicTrack) {
+        this.currentPlayingMusTrack.postValue(trackToPlay)
     }
 
     private fun updatePlayingTime() {
