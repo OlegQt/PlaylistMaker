@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import com.playlistmaker.R
+import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
 import com.playlistmaker.databinding.FragmentSearchBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.logic.SearchTrackAdapter
@@ -21,7 +22,8 @@ import com.playlistmaker.presentation.ui.viewmodel.FragmentSearchVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
-    private lateinit var binding: FragmentSearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
     private val vm: FragmentSearchVm by viewModel()
 
     // KOIN viewModel
@@ -36,9 +38,9 @@ class SearchFragment : Fragment() {
     private val musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
 
     // Функция для перехода на экран плеера
-    private fun startPlayerActivity(musicTrackToPlay:MusicTrack) {
+    private fun startPlayerActivity(musicTrackToPlay: MusicTrack) {
         val intentPlayerActivity = Intent(requireContext(), ActivityPlayer::class.java)
-        intentPlayerActivity.putExtra("track",musicTrackToPlay)
+        intentPlayerActivity.putExtra("track", musicTrackToPlay)
         startActivity(intentPlayerActivity)
     }
 
@@ -125,7 +127,7 @@ class SearchFragment : Fragment() {
     ): View? {
 
 
-        binding = FragmentSearchBinding.inflate(inflater,container,false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         vm.getSearchScreenState.observe(viewLifecycleOwner) { this.render(it) }
 
@@ -176,16 +178,10 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
-/*    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("searchTxt", binding.txtSearch.text.toString())
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
-
-    override fun ё  (savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        this.binding.txtSearch.setText(savedInstanceState.getString("searchTxt").toString())
-    }*/
-
 
     private fun render(state: ActivitySearchState) {
         when (state) {

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
 import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
@@ -14,14 +15,15 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayListsFragment : Fragment() {
     private val vm: FragmentPlayListsVm by viewModel()
-    private lateinit var binding: FragmentPlaylistsBinding
+    private var _binding: FragmentPlaylistsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -47,6 +49,11 @@ class PlayListsFragment : Fragment() {
         binding.btnReload.setOnClickListener {
             (requireActivity() as AlertMessaging).showAlertDialog("Temporal stub message")
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 

@@ -6,17 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.commit
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentMedialibraryBinding
 import com.playlistmaker.presentation.models.AlertMessaging
+import com.playlistmaker.presentation.ui.activities.MainActivity
 import com.playlistmaker.presentation.ui.fragments.medialibrary.FavouriteTracksFragment
 import com.playlistmaker.presentation.ui.fragments.medialibrary.PlayListsFragment
 
 class MediaLibraryFragment : Fragment() ,AlertMessaging{
-    private lateinit var binding: FragmentMedialibraryBinding
+
+    private var _binding: FragmentMedialibraryBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var mediator: TabLayoutMediator
 
     // Хранение фрагментов внутри коллекции fragmentMap
@@ -27,7 +34,7 @@ class MediaLibraryFragment : Fragment() ,AlertMessaging{
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMedialibraryBinding.inflate(layoutInflater)
+        _binding = FragmentMedialibraryBinding.inflate(layoutInflater)
 
         // Заполняем коллекцию нужными фрагментами
         fragmentMap[getString(R.string.favouriteTracks)] = FavouriteTracksFragment.newInstance("")
@@ -46,9 +53,6 @@ class MediaLibraryFragment : Fragment() ,AlertMessaging{
         }
         mediator.attach()
 
-        // Возврат назад через кнопку "назад"
-        //binding.backToMainActivity.setOnClickListener { finish() }
-
         return binding.root
     }
 
@@ -57,12 +61,9 @@ class MediaLibraryFragment : Fragment() ,AlertMessaging{
         mediator.detach()
     }
 
-    // Есть ли необходимость выносить данный класс в отдельный файл? По сути он используется только
-    // в момент подключения адаптера к viewpager2
-    class MediaPager(activityFr: FragmentActivity, private val fragmentMap: Map<String, Fragment>) :
-        FragmentStateAdapter(activityFr) {
-        override fun getItemCount() = fragmentMap.size
-        override fun createFragment(position: Int) = fragmentMap.values.elementAt(position)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun showAlertDialog(alertMessage: String) {
@@ -73,5 +74,12 @@ class MediaLibraryFragment : Fragment() ,AlertMessaging{
             .show()
     }
 
+    // Есть ли необходимость выносить данный класс в отдельный файл? По сути он используется только
+    // в момент подключения адаптера к viewpager2
+    class MediaPager(activityFr: FragmentActivity, private val fragmentMap: Map<String, Fragment>) :
+        FragmentStateAdapter(activityFr) {
+        override fun getItemCount() = fragmentMap.size
+        override fun createFragment(position: Int) = fragmentMap.values.elementAt(position)
+    }
 }
 

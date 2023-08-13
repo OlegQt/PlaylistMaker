@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.playlistmaker.R
+import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
 import com.playlistmaker.databinding.FragmentSettingsBinding
 import com.playlistmaker.presentation.ui.viewmodel.FragmentSettingsVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -15,14 +16,16 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SettingsFragment : Fragment() {
 
     private val vm: FragmentSettingsVm by viewModel()
-    private var binding: FragmentSettingsBinding? = null
+
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         // Переключение темы (день/ночь)
         binding().nightThemeSwitch.setOnClickListener { vm.switchTheme() }
@@ -47,6 +50,11 @@ class SettingsFragment : Fragment() {
 
         // Начальное положение свича определяется загруженной темой
         binding().nightThemeSwitch.isChecked = vm.isNightMode
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun binding() = this.binding!!
@@ -83,14 +91,14 @@ class SettingsFragment : Fragment() {
         }
     }
 
-        private fun userAgreement() {
-            val address: Uri = Uri.parse(getString(R.string.android_yandex_offer))
-            val openLink: Intent = Intent(Intent.ACTION_VIEW, address)
-            try {
-                startActivity(openLink)
-            } catch (error: java.lang.Exception) {
-                //get and show exception message
-                //Toast.makeText(baseContext, error.message, Toast.LENGTH_LONG).show()
-            }
+    private fun userAgreement() {
+        val address: Uri = Uri.parse(getString(R.string.android_yandex_offer))
+        val openLink: Intent = Intent(Intent.ACTION_VIEW, address)
+        try {
+            startActivity(openLink)
+        } catch (error: java.lang.Exception) {
+            //get and show exception message
+            //Toast.makeText(baseContext, error.message, Toast.LENGTH_LONG).show()
         }
+    }
 }

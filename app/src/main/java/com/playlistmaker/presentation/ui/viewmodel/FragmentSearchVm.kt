@@ -80,7 +80,7 @@ class FragmentSearchVm(
             this.startPlayerApp.postValue(trackClicked)
 
             // Блокируем доступ к нажатиям на треки на время
-            mainHandler.postDelayed({ musicTrackIsClickable = true }, CLICK_DELAY)
+            mainHandler.postDelayed({ musicTrackIsClickable = true }, CLICK_DELAY_MLS)
             musicTrackIsClickable = false
         } else errorMessage.value = "Double click detected"
 
@@ -118,7 +118,7 @@ class FragmentSearchVm(
                     musicSearchHistoryList
                 )
             )
-        }, CLICK_DELAY)
+        }, REORDER_HISTORY_MLS)
     }
 
     private fun safeMusicHistorySearch(musicList: ArrayList<MusicTrack>) {
@@ -143,7 +143,7 @@ class FragmentSearchVm(
 
             // Перезагружаем поиск с задержкой в 2сек
             mainHandler.removeCallbacksAndMessages(null)
-            mainHandler.postDelayed({ searchMusic(strSearch) }, SEARCH_DELAY)
+            mainHandler.postDelayed({ searchMusic(strSearch) }, SEARCH_DELAY_MLS)
         } else {
             mainHandler.removeCallbacksAndMessages(null)
             loadMusicHistorySearch()
@@ -169,7 +169,8 @@ class FragmentSearchVm(
     }
 
     companion object {
-        const val SEARCH_DELAY = 2000L
-        const val CLICK_DELAY = 300L
+        const val SEARCH_DELAY_MLS = 2000L
+        const val CLICK_DELAY_MLS = 300L
+        const val REORDER_HISTORY_MLS = 1000L
     }
 }
