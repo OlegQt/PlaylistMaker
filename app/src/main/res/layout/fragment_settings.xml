@@ -24,19 +24,33 @@
     </LinearLayout>
 
     <!-- Dark theme -->
-    <LinearLayout style="@style/setting_minor_layout">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_marginTop="@dimen/night_theme_margin_top"
+        android:paddingStart="@dimen/padding_left_right"
+        android:paddingEnd="@dimen/search_stub_btn_hor_pad">
 
         <TextView
+            android:id="@+id/theme_lbl"
             style="@style/settings_minor_txt"
-            android:text="@string/night_theme" />
+            android:layout_width="wrap_content"
+            android:text="@string/night_theme"
+
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"/>
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/night_theme_switch"
+            style="@style/settings_switch_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/settings_switch_style" />
 
-    </LinearLayout>
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
 
     <!-- Share app -->
     <LinearLayout style="@style/setting_minor_layout">

@@ -17,7 +17,7 @@
 
     <style name="setting_minor_layout" parent="settings_layout_color">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">58dp</item>
         <item name="android:layout_marginStart">@dimen/settings_margin_start</item>
         <item name="android:layout_marginEnd">14dp</item>
         <item name="android:orientation">horizontal</item>
