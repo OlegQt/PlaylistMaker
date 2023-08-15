@@ -10,9 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.gson.Gson
 import com.playlistmaker.R
-import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
 import com.playlistmaker.databinding.FragmentSearchBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.logic.SearchTrackAdapter
@@ -40,7 +38,7 @@ class SearchFragment : Fragment() {
     // Функция для перехода на экран плеера
     private fun startPlayerActivity(musicTrackToPlay: MusicTrack) {
         val intentPlayerActivity = Intent(requireContext(), ActivityPlayer::class.java)
-        intentPlayerActivity.putExtra("track", musicTrackToPlay)
+        intentPlayerActivity.putExtra(MusicTrack.TRACK_KEY, musicTrackToPlay)
         startActivity(intentPlayerActivity)
     }
 

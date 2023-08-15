@@ -3,7 +3,6 @@ package com.playlistmaker.presentation.ui.activities
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -87,7 +86,6 @@ class ActivityPlayer : AppCompatActivity() {
             .show()
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
@@ -123,7 +121,13 @@ class ActivityPlayer : AppCompatActivity() {
         vm.getPlayingTime.observe(this) { binding.playerPlayTime.text = it.toTimeMmSs() }
 
         // Извлекаем музыкальный трек из intent и делаем текущим
-        val track = intent?.getSerializableExtra("track", MusicTrack::class.java)
+        // Проверка на версию
+        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent?.getParcelableExtra(MusicTrack.TRACK_KEY,MusicTrack::class.java)
+        } else {
+            intent?.getParcelableExtra(MusicTrack.TRACK_KEY) as MusicTrack?
+        }
+
         if (track != null) vm.loadCurrentMusicTrack(track)
 
         setUiBehaviour() // Вешаем слушателей на элементы UI
