@@ -8,4 +8,7 @@ import retrofit2.http.Query
 interface ItunesMediaSearchApi {
     @GET("/search?entity=song")
     fun searchMusic(@Query("term") text: String): Call<CompoundSearchResponse>
+
+    @GET("/search?entity=song")
+    suspend fun searchMusicCoroutines(@Query("term") text: String): CompoundSearchResponse
 }

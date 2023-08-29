@@ -1,7 +1,7 @@
 package com.playlistmaker.data.repository
 
-import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.google.gson.Gson
 import com.playlistmaker.data.dto.CompoundSearchResponse
 import com.playlistmaker.data.mapper.MusicTrackMapper
@@ -11,8 +11,8 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.util.Resource
-import org.koin.core.parameter.parametersOf
-import org.koin.java.KoinJavaComponent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 private const val SEARCH_HISTORY = "key_for_search_history"
 
@@ -21,7 +21,37 @@ class MusicRepositoryImpl(
     private val sharedPreferences: SharedPreferences,
     private val gSon: Gson
 ) : MusicRepository {
-        override fun searchMusic(searchParams: SearchRequest): Resource<ArrayList<MusicTrack>> {
+    override fun searchMusicViaCoroutines(searchParams: SearchRequest): Flow<Resource<ArrayList<MusicTrack>>> {
+        return flow {
+            val searchResponse = networkClient.doSuspendRequest(searchParams)
+            when (searchResponse.resultCode) {
+                -1 -> emit(Resource.Error(ErrorList.NETWORK_TROUBLES))
+                200 -> {
+                    // When server code is OK
+                    // Transform response to our class
+                    val resultMusicList: ArrayList<MusicTrack> = ArrayList()
+                    (searchResponse as CompoundSearchResponse).results.forEach {
+                        // При поиске Sting в 49 позиции в releaseData находится null
+                        // Поэтому работаем через tryCatch
+                        try {
+                            resultMusicList.add(MusicTrackMapper().mapFromDto(it))
+                        }
+                        catch (e: Throwable){
+                            Log.e("LOG_TAG",e.message.toString())
+                        }
+                    }
+
+
+                    // Check if found trackList isEmpty
+                    if (resultMusicList.isEmpty()) emit(Resource.Error(ErrorList.NOTHING_FOUND))
+                    else emit(Resource.Success(resultMusicList))
+                }
+                else-> emit(Resource.Error(ErrorList.UNKNOWN_ERROR))
+            }
+        }
+    }
+
+    override fun searchMusic(searchParams: SearchRequest): Resource<ArrayList<MusicTrack>> {
         val response = networkClient.doRequest(searchParams)
         return when (response.resultCode) {
             -1 -> Resource.Error(ErrorList.NETWORK_TROUBLES)
