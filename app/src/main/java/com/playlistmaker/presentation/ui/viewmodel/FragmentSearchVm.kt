@@ -16,6 +16,7 @@ import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.util.Resource
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
@@ -31,6 +32,8 @@ class FragmentSearchVm(
     private val mainHandler = android.os.Handler(Looper.getMainLooper())
     private var musicTrackIsClickable = true
     private var musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
+
+    private var searchTextEditDebounce: Job? = null
 
     // LiveData block
     private var searchScreenState = MutableLiveData<ActivitySearchState>()
@@ -157,10 +160,13 @@ class FragmentSearchVm(
             searchScreenState.postValue(ActivitySearchState.Loading(null))
 
             // Перезагружаем поиск с задержкой в 2сек
-            mainHandler.removeCallbacksAndMessages(null)
-            mainHandler.postDelayed({ searchMusic(strSearch) }, SEARCH_DELAY_MLS)
+            searchTextEditDebounce?.cancel()
+            searchTextEditDebounce = viewModelScope.launch {
+                delay(SEARCH_DELAY_MLS)
+                searchMusic(strSearch)
+            }
         } else {
-            mainHandler.removeCallbacksAndMessages(null)
+            searchTextEditDebounce?.cancel()
             loadMusicHistorySearch()
         }
     }
