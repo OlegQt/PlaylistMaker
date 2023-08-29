@@ -17,7 +17,7 @@
 
     <style name="setting_minor_layout" parent="settings_layout_color">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">58dp</item>
         <item name="android:layout_marginStart">@dimen/settings_margin_start</item>
         <item name="android:layout_marginEnd">14dp</item>
         <item name="android:orientation">horizontal</item>
@@ -29,7 +29,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:layout_marginStart">28dp</item>
+
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">26sp</item>
@@ -97,6 +97,10 @@
         <item name="tabInlineLabel">true</item>
     </style>
 
+    <style name="settings_switch_style">
+        <item name="thumbTint">@color/Text_Grey</item>
+        <item name="trackTint">@color/Yp_Light_Grey</item>
+    </style>
 
 
 </resources>

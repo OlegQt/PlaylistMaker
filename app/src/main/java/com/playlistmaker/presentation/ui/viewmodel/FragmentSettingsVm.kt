@@ -4,9 +4,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import com.playlistmaker.domain.models.Theme
 import com.playlistmaker.domain.usecase.SettingsController
-import org.koin.java.KoinJavaComponent.getKoin
 
-class ActivitySettingsVm(
+class FragmentSettingsVm(
     private val settingsController: SettingsController
 ) : ViewModel() {
     val isNightMode = settingsController.loadMode().themeCode == 1

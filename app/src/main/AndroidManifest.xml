@@ -15,41 +15,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.YandexPracticumPlaylistMaker"
         tools:targetApi="31">
+
         <activity
             android:name=".presentation.ui.activities.ActivityPlayer"
             android:exported="false">
+
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
-            android:name=".presentation.ui.activities.ActivityMedia"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".presentation.ui.activities.ActivitySearch"
-            android:exported="false"
-            android:theme="@style/Theme.YandexPracticumPlaylistMaker">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".presentation.ui.activities.ActivitySettings"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+
         <activity
             android:name=".presentation.ui.activities.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -57,6 +38,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
     </application>
 
 </manifest>

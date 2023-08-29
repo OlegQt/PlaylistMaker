@@ -1,5 +1,6 @@
 package com.playlistmaker.presentation.ui.activities
 
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +18,7 @@ import java.util.Locale
 
 class ActivityPlayer : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
-    private val vm:PlayerVm by viewModel()
+    private val vm: PlayerVm by viewModel()
 
     private fun setUiBehaviour() {
         binding.playerBtnBack.setOnClickListener { finish() }
@@ -119,7 +120,15 @@ class ActivityPlayer : AppCompatActivity() {
 
         vm.getPlayingTime.observe(this) { binding.playerPlayTime.text = it.toTimeMmSs() }
 
-        vm.loadCurrentMusicTrack()
+        // Извлекаем музыкальный трек из intent и делаем текущим
+        // Проверка на версию
+        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent?.getParcelableExtra(MusicTrack.TRACK_KEY,MusicTrack::class.java)
+        } else {
+            intent?.getParcelableExtra(MusicTrack.TRACK_KEY) as MusicTrack?
+        }
+
+        if (track != null) vm.loadCurrentMusicTrack(track)
 
         setUiBehaviour() // Вешаем слушателей на элементы UI
 

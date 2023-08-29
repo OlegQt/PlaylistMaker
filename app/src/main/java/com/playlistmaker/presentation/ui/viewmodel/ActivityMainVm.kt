@@ -5,7 +5,7 @@ import com.playlistmaker.presentation.SingleLiveEvent
 
 
 class ActivityMainVm():ViewModel() {
-    val screen = SingleLiveEvent<String>()
+    private val screen = SingleLiveEvent<String>()
 
     fun loadAnotherActivity(screenName: String){
         screen.value = screenName

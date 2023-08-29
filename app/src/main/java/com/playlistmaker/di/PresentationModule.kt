@@ -1,22 +1,17 @@
 package com.playlistmaker.di
 
-import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
-import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
-import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
-import com.playlistmaker.domain.usecase.SearchMusicUseCase
-import com.playlistmaker.presentation.ui.fragments.viewmodels.FragmentFavouriteTracksVm
-import com.playlistmaker.presentation.ui.fragments.viewmodels.FragmentPlayListsVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
 import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
-import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
-import com.playlistmaker.presentation.ui.viewmodel.ActivitySettingsVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentSearchVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentSettingsVm
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import org.koin.java.KoinJavaComponent
 
 val presentationModule = module {
-    viewModel<ActivitySearchVm> {
-        ActivitySearchVm(
+    viewModel<FragmentSearchVm> {
+        FragmentSearchVm(
             historySafeUseCase = get(),
             loadHistoryUseCase = get(),
             deleteHistoryUseCase = get(),
@@ -25,13 +20,9 @@ val presentationModule = module {
         )
     }
     viewModel<ActivityMainVm> { ActivityMainVm() }
-    viewModel<PlayerVm> {
-        PlayerVm(
-            loadLastPlayingTrackUseCase = get()
-        )
-    }
-    viewModel<ActivitySettingsVm> {
-        ActivitySettingsVm(settingsController = get())
+    viewModel<PlayerVm> { PlayerVm() }
+    viewModel<FragmentSettingsVm> {
+        FragmentSettingsVm(settingsController = get())
     }
     viewModel { FragmentFavouriteTracksVm() }
     viewModel { FragmentPlayListsVm() }

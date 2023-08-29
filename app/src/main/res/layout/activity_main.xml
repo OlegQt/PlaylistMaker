@@ -1,57 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSecondary"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/padding_left_right"
-    android:paddingTop="14dp"
-    android:paddingBottom="12dp">
+>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/root_placeholder"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:navGraph="@navigation/navigation_graph"
+        app:defaultNavHost="true"
 
-    <TextView
-        android:layout_width="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/root_navigation_bar"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/root_navigation_bar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_size_high" />
+        app:menu="@menu/root_menu"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/search"
-        style="@style/btn_main_screen"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="40dp"
-        android:layout_weight="1"
-        android:text="@string/search"
-        app:icon="@drawable/ic_vector"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/icon_padding_in_button"
-        app:iconTint="@color/black" />
-
-    <Button
-        android:id="@+id/media"
-        style="@style/btn_main_screen"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="@string/media_library"
-        app:icon="@drawable/ic_media"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/icon_padding_in_button"
-        app:iconTint="@color/black" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/settings"
-        style="@style/btn_main_screen"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
-        android:layout_weight="1"
-        android:text="@string/options"
-        app:icon="@drawable/ic_options"
-        app:iconGravity="textStart"
-        app:iconPadding="@dimen/icon_padding_in_button"
-        app:iconTint="@color/black" />
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

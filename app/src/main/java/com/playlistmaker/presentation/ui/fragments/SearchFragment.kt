@@ -1,24 +1,28 @@
-package com.playlistmaker.presentation.ui.activities
+package com.playlistmaker.presentation.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
-import com.playlistmaker.databinding.ActivitySearchBinding
+import com.playlistmaker.databinding.FragmentSearchBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.presentation.models.ActivitySearchState
-import com.playlistmaker.presentation.ui.viewmodel.ActivitySearchVm
+import com.playlistmaker.presentation.ui.activities.ActivityPlayer
+import com.playlistmaker.presentation.ui.viewmodel.FragmentSearchVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ActivitySearch : AppCompatActivity() {
-    private lateinit var binding: ActivitySearchBinding
-    private val vm: ActivitySearchVm by viewModel()
+class SearchFragment : Fragment() {
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
+    private val vm: FragmentSearchVm by viewModel()
 
     // KOIN viewModel
 
@@ -32,8 +36,10 @@ class ActivitySearch : AppCompatActivity() {
     private val musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
 
     // Функция для перехода на экран плеера
-    private fun startPlayerActivity() {
-        startActivity(Intent(this, ActivityPlayer::class.java))
+    private fun startPlayerActivity(musicTrackToPlay: MusicTrack) {
+        val intentPlayerActivity = Intent(requireContext(), ActivityPlayer::class.java)
+        intentPlayerActivity.putExtra(MusicTrack.TRACK_KEY, musicTrackToPlay)
+        startActivity(intentPlayerActivity)
     }
 
     private fun clsButtonVisibility() {
@@ -112,17 +118,23 @@ class ActivitySearch : AppCompatActivity() {
     // Блок переопределённых функций
     ////////////////////////////////////////////////////////
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-        vm.getSearchScreenState.observe(this) { this.render(it) }
 
-        vm.getStartPlayerCommand.observe(this) { startPlayerActivity() }
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-        vm.getErrorMsg().observe(this) {
-            MaterialAlertDialogBuilder(this)
+        vm.getSearchScreenState.observe(viewLifecycleOwner) { this.render(it) }
+
+        vm.getStartPlayerCommand.observe(viewLifecycleOwner) {
+            startPlayerActivity(it)
+        }
+
+        vm.getErrorMsg().observe(viewLifecycleOwner) {
+            MaterialAlertDialogBuilder(requireActivity())
                 .setMessage(it)
                 .setTitle("Dialog")
                 .setNeutralButton("OK", null)
@@ -140,9 +152,6 @@ class ActivitySearch : AppCompatActivity() {
             LinearLayoutManager(binding.searchRecycleView.context)
 
         musicSearchHistoryAdapter = SearchTrackAdapter(musicSearchHistoryList) {
-            //vm.saveCurrentPlayingTrack(musicSearchHistoryList[it])
-            //this.startPlayerActivity()
-
             vm.onHistoryTrackListClick(musicSearchHistoryList[it])
         }
         binding.historySearchRecycleView.adapter = musicSearchHistoryAdapter
@@ -162,22 +171,15 @@ class ActivitySearch : AppCompatActivity() {
         binding.btnClearHistory.setOnClickListener { vm.deleteMusicHistory() }
         binding.btnReload.setOnClickListener { vm.searchLineTyping(binding.txtSearch.toString()) }
         binding.clsSearch.setOnClickListener { binding.txtSearch.text.clear() }
-        binding.btnBack.setOnClickListener { finish() }
         binding.txtSearch.setText("")
 
-
+        return binding.root
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("searchTxt", binding.txtSearch.text.toString())
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        this.binding.txtSearch.setText(savedInstanceState.getString("searchTxt").toString())
-    }
-
 
     private fun render(state: ActivitySearchState) {
         when (state) {

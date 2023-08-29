@@ -6,44 +6,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".presentation.ui.activities.ActivitySettings">
+    tools:context=".presentation.ui.fragments.SettingsFragment">
 
     <!-- Settings back to Menu-->
     <LinearLayout
         style="@style/settings_layout_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="14dp"
         android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/backToMainActivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="@string/options"
-            android:src="@drawable/back_to_main_screen"
-            app:tint="?attr/colorOnPrimary" />
 
         <TextView
             style="@style/settings_text_back"
             android:text="@string/options" />
+
     </LinearLayout>
 
     <!-- Dark theme -->
-    <LinearLayout style="@style/setting_minor_layout">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_marginTop="@dimen/night_theme_margin_top"
+        android:paddingStart="@dimen/padding_left_right"
+        android:paddingEnd="@dimen/search_stub_btn_hor_pad">
 
         <TextView
+            android:id="@+id/theme_lbl"
             style="@style/settings_minor_txt"
-            android:text="@string/night_theme" />
+            android:layout_width="wrap_content"
+            android:text="@string/night_theme"
+
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"/>
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/night_theme_switch"
+            style="@style/settings_switch_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
-    </LinearLayout>
+
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
 
     <!-- Share app -->
     <LinearLayout style="@style/setting_minor_layout">
@@ -86,7 +93,6 @@
             style="@style/settings_img"
             android:contentDescription="@string/user_agreement"
             android:src="@drawable/agreement" />
-
 
 
     </LinearLayout>
