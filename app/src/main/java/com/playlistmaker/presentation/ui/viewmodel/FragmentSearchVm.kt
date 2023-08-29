@@ -4,6 +4,7 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
@@ -15,6 +16,8 @@ import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.util.Resource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
 
 class FragmentSearchVm(
@@ -70,19 +73,31 @@ class FragmentSearchVm(
         }
     }
 
-    fun musicTrackOnClick(trackClicked: MusicTrack) {
-        if (musicTrackIsClickable) {
-            // Добавляем нажатый трек в историю просмотра треков и
-            // сохраняем нажатый трек, как играющий
-            // и запускаем плеер
-            addMusicTrackToHistorySearch(musicTrackToSafe = trackClicked)
-            //saveCurrentPlayingTrack(track = trackClicked)
-            this.startPlayerApp.postValue(trackClicked)
-
+    private fun clickDebounce(): Boolean {
+        return if (musicTrackIsClickable) {
             // Блокируем доступ к нажатиям на треки на время
-            mainHandler.postDelayed({ musicTrackIsClickable = true }, CLICK_DELAY_MLS)
             musicTrackIsClickable = false
-        } else errorMessage.value = "Double click detected"
+
+            // Запускаем отложенное действие по разрешению нажатий
+            viewModelScope.launch {
+                delay(CLICK_DELAY_MLS)
+                musicTrackIsClickable = true
+            }
+            true
+        } else {
+            errorMessage.value = "Double click detected"
+            false
+        }
+    }
+
+    fun musicTrackOnClick(trackClicked: MusicTrack) {
+        if (clickDebounce()) {
+            // Добавляем нажатый трек в историю просмотра треков
+            // и запускаем плеер
+
+            addMusicTrackToHistorySearch(musicTrackToSafe = trackClicked)
+            this.startPlayerApp.postValue(trackClicked)
+        }
 
     }
 

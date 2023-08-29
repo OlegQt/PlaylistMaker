@@ -40,7 +40,7 @@ class PlayerVm() :
 
     // Запускается при переходе на экран плеера
     // допускается перемещение в блок init
-    fun loadCurrentMusicTrack(trackToPlay:MusicTrack) {
+    fun loadCurrentMusicTrack(trackToPlay: MusicTrack) {
         this.currentPlayingMusTrack.postValue(trackToPlay)
     }
 
@@ -52,6 +52,13 @@ class PlayerVm() :
 
     private fun startTimer() {
         handler.post { updatePlayingTime() }
+        /*
+          timerJob = viewModelScope.launch {
+            while (mediaPlayer.isPlaying) {
+                delay(300L)
+                playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition()))
+            }
+        */
     }
 
     // Запускается в observer на getCurrentMusTrack
