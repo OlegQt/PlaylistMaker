@@ -5,6 +5,7 @@ import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
 import com.playlistmaker.util.Resource
+import kotlinx.coroutines.flow.Flow
 import java.lang.Exception
 
 class SearchMusicUseCase(private val musicRepo: MusicRepository) {
@@ -20,6 +21,10 @@ class SearchMusicUseCase(private val musicRepo: MusicRepository) {
             }
         }, "searchMusic")
         searchThread.start()
+    }
+
+    fun executeSearchViaCoroutines(searchParams: SearchRequest):Flow<Resource<ArrayList<MusicTrack>>>{
+        return musicRepo.searchMusicViaCoroutines(searchParams)
     }
 
     fun interface MusicConsumer {

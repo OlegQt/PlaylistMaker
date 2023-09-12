@@ -109,6 +109,8 @@ class ActivityPlayer : AppCompatActivity() {
 
                 PlayerState.STATE_PLAYING -> {
                     changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
+                    // Старт coroutine ответственной за обновление времени проигрывания трека
+                    vm.trackDurationProvider()
                 }
 
                 else -> {

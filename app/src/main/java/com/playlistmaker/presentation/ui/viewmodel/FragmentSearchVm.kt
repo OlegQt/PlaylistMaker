@@ -1,9 +1,12 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.playlistmaker.appstart.App
 import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
@@ -15,6 +18,11 @@ import com.playlistmaker.domain.usecase.SearchMusicUseCase
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.util.Resource
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.getKoin
 
 class FragmentSearchVm(
@@ -28,6 +36,8 @@ class FragmentSearchVm(
     private val mainHandler = android.os.Handler(Looper.getMainLooper())
     private var musicTrackIsClickable = true
     private var musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
+
+    private var searchTextEditDebounce: Job? = null
 
     // LiveData block
     private var searchScreenState = MutableLiveData<ActivitySearchState>()
@@ -46,9 +56,17 @@ class FragmentSearchVm(
     private fun searchMusic(songName: String) {
         val musRequest = SearchRequest.MusicSearchRequest(searchParam = songName)
 
-        // Используем UseCase DOMAIN слоя
-        searchUseCase.executeSearch(musRequest) { foundMusic ->
-            mainHandler.post { analiseMusicSearchResponse(foundMusic) }
+        // Уловитель ошибок
+        val errorCoroutine = CoroutineExceptionHandler { coroutineContext, throwable ->
+            // Показываем ошибку пользователю
+            errorMessage.postValue(throwable.message)
+        }
+
+        // Запуск поиска музыкальных треков
+        viewModelScope.launch(errorCoroutine) {
+            searchUseCase.executeSearchViaCoroutines(musRequest).collect{
+                analiseMusicSearchResponse(it)
+            }
         }
     }
 
@@ -70,19 +88,31 @@ class FragmentSearchVm(
         }
     }
 
-    fun musicTrackOnClick(trackClicked: MusicTrack) {
-        if (musicTrackIsClickable) {
-            // Добавляем нажатый трек в историю просмотра треков и
-            // сохраняем нажатый трек, как играющий
-            // и запускаем плеер
-            addMusicTrackToHistorySearch(musicTrackToSafe = trackClicked)
-            //saveCurrentPlayingTrack(track = trackClicked)
-            this.startPlayerApp.postValue(trackClicked)
-
+    private fun clickDebounce(): Boolean {
+        return if (musicTrackIsClickable) {
             // Блокируем доступ к нажатиям на треки на время
-            mainHandler.postDelayed({ musicTrackIsClickable = true }, CLICK_DELAY_MLS)
             musicTrackIsClickable = false
-        } else errorMessage.value = "Double click detected"
+
+            // Запускаем отложенное действие по разрешению нажатий
+            viewModelScope.launch {
+                delay(CLICK_DELAY_MLS)
+                musicTrackIsClickable = true
+            }
+            true
+        } else {
+            errorMessage.value = "Double click detected"
+            false
+        }
+    }
+
+    fun musicTrackOnClick(trackClicked: MusicTrack) {
+        if (clickDebounce()) {
+            // Добавляем нажатый трек в историю просмотра треков
+            // и запускаем плеер
+
+            addMusicTrackToHistorySearch(musicTrackToSafe = trackClicked)
+            this.startPlayerApp.postValue(trackClicked)
+        }
 
     }
 
@@ -142,10 +172,13 @@ class FragmentSearchVm(
             searchScreenState.postValue(ActivitySearchState.Loading(null))
 
             // Перезагружаем поиск с задержкой в 2сек
-            mainHandler.removeCallbacksAndMessages(null)
-            mainHandler.postDelayed({ searchMusic(strSearch) }, SEARCH_DELAY_MLS)
+            searchTextEditDebounce?.cancel()
+            searchTextEditDebounce = viewModelScope.launch {
+                delay(SEARCH_DELAY_MLS)
+                searchMusic(strSearch)
+            }
         } else {
-            mainHandler.removeCallbacksAndMessages(null)
+            searchTextEditDebounce?.cancel()
             loadMusicHistorySearch()
         }
     }
@@ -172,5 +205,7 @@ class FragmentSearchVm(
         const val SEARCH_DELAY_MLS = 2000L
         const val CLICK_DELAY_MLS = 300L
         const val REORDER_HISTORY_MLS = 1000L
+
+        const val LOG_TAG = "LOG_TAG"
     }
 }

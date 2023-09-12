@@ -55,7 +55,7 @@ val dataModule = module {
     // Репозиторий загрузки и сохранения настроек приложения
     single<SettingsRepository> { SettingsRepositoryImpl(sharedPreferences = get()) }
 
-    single { RetrofitNetworkClient(mediaApi = get()) }
+    single { RetrofitNetworkClient(mediaApi = get(),get()) }
 
 
 }

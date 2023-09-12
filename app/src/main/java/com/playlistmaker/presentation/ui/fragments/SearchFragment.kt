@@ -142,7 +142,7 @@ class SearchFragment : Fragment() {
         }
 
 
-        // Инициализация адаптера с описанием слушателя
+        // Инициализация адаптера с описанием слушателя для списка найденных треков
         musicAdapter =
             SearchTrackAdapter(musicList) {
                 vm.musicTrackOnClick(musicList[it])
@@ -151,6 +151,7 @@ class SearchFragment : Fragment() {
         binding.searchRecycleView.layoutManager =
             LinearLayoutManager(binding.searchRecycleView.context)
 
+        // Инициализация адаптера с описанием слушателя для списка истории треков
         musicSearchHistoryAdapter = SearchTrackAdapter(musicSearchHistoryList) {
             vm.onHistoryTrackListClick(musicSearchHistoryList[it])
         }

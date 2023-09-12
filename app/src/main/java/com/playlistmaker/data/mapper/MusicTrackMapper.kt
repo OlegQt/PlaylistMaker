@@ -27,7 +27,7 @@ class MusicTrackMapper {
             artworkUrl100 = musicTrackDto.artworkUrl100,
             trackId =musicTrackDto.trackId,
             collectionName = musicTrackDto.collectionName,
-            releaseDate = musicTrackDto.releaseDate,
+            releaseDate = musicTrackDto.releaseDate ?: "0",
             primaryGenreName = musicTrackDto.primaryGenreName,
             country = musicTrackDto.country,
             previewUrl = musicTrackDto.previewUrl
