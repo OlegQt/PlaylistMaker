@@ -7,6 +7,7 @@ import com.playlistmaker.data.db.MusicDB
 import com.playlistmaker.data.mapper.MusicTrackMapper
 import com.playlistmaker.data.network.ItunesMediaSearchApi
 import com.playlistmaker.data.network.RetrofitNetworkClient
+import com.playlistmaker.data.repository.FavouriteMusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.data.repository.SettingsRepositoryImpl
@@ -54,6 +55,9 @@ val dataModule = module {
             gSon = get()
         )
     }
+
+    // Репозиторий для работы с избранными треками через SQLite (Room)
+    single { FavouriteMusicRepositoryImpl(db = get(), mapper = get()) }
 
     // Репозиторий загрузки и сохранения настроек приложения
     single<SettingsRepository> { SettingsRepositoryImpl(sharedPreferences = get()) }
