@@ -1,7 +1,10 @@
 package com.playlistmaker.di
 
 import android.content.Context
+import androidx.room.Room
 import com.google.gson.Gson
+import com.playlistmaker.data.db.MusicDB
+import com.playlistmaker.data.mapper.MusicTrackMapper
 import com.playlistmaker.data.network.ItunesMediaSearchApi
 import com.playlistmaker.data.network.RetrofitNetworkClient
 import com.playlistmaker.data.repository.MusicRepositoryImpl
@@ -57,5 +60,8 @@ val dataModule = module {
 
     single { RetrofitNetworkClient(mediaApi = get(),get()) }
 
+    single { Room.databaseBuilder(androidContext(), MusicDB::class.java,"MusicSQLite").build() }
+
+    factory<MusicTrackMapper> {MusicTrackMapper() }
 
 }
