@@ -63,7 +63,7 @@ dependencies {
     // Room
     implementation("androidx.room:room-runtime:2.5.2") // библиотека Room
     implementation("androidx.room:room-ktx:2.5.2")
-    kapt("androidx.room:room-compiler:2.5.1") // Kotlin-codeGenerator
+    kapt("androidx.room:room-compiler:2.5.2") // Kotlin-codeGenerator
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
