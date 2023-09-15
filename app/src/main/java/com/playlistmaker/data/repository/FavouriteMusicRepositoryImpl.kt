@@ -18,4 +18,8 @@ class FavouriteMusicRepositoryImpl(
             emit(tracks)
         }
     }
+
+    override fun saveMusicTrackToFavourites(musicTrack: MusicTrack) {
+        db.musicDao().addTrackToFavourite(mapper.mapToDao(musicTrack))
+    }
 }

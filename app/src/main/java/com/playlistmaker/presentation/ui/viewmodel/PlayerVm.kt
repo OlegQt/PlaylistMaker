@@ -7,17 +7,20 @@ import androidx.lifecycle.viewModelScope
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
+import com.playlistmaker.domain.usecase.AddMusicTrackToFavouritesUseCase
+import com.playlistmaker.domain.usecase.LoadFavouriteTracksUseCase
 import com.playlistmaker.domain.usecase.MusicPlayerController
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
 
 const val TRACK_DURATION_UPDATE_MILLIS = 300L
 
-class PlayerVm() :
-    ViewModel() {
+class PlayerVm(
+    private val addToFavoriteUseCase: AddMusicTrackToFavouritesUseCase,
+    private val loadFavouriteUseCase:LoadFavouriteTracksUseCase
+) : ViewModel() {
     //Job переменные для coroutines
     private var musicTracDurationUpdate: Job? = null
 
@@ -30,10 +33,14 @@ class PlayerVm() :
     // Текущий загруженный трек
     private val currentPlayingMusTrack = MutableLiveData<MusicTrack>()
 
+    // Error message
+    private val _errorMsg = MutableLiveData<String>()
+
     // Геттеры для lifeData
     val getPlayerState = playerState as LiveData<PlayerState>
     val getCurrentMusTrack = this.currentPlayingMusTrack as LiveData<MusicTrack>
     val getPlayingTime = this.playingTime as LiveData<Long>
+    val errorMsg = this._errorMsg as LiveData<String>
 
     // Создаем instance музыкального плеера через KOIN, в конструктор передаем объект типа
     // функционального интерфейса -> При изменении состояния плеера меняем текущее состояние activity
@@ -58,7 +65,7 @@ class PlayerVm() :
 
     fun trackDurationProvider() {
         musicTracDurationUpdate = viewModelScope.launch {
-            while (playerState.value ==PlayerState.STATE_PLAYING) {
+            while (playerState.value == PlayerState.STATE_PLAYING) {
                 delay(TRACK_DURATION_UPDATE_MILLIS)
                 updatePlayingTime()
             }
@@ -96,5 +103,33 @@ class PlayerVm() :
         musicalPlayer.turnOffPlayer()
         musicTracDurationUpdate?.cancel()
         musicTracDurationUpdate = null
+    }
+
+    fun addTrackToFavourite() {
+        // Добавляем трек в базу сразу при старте плеера временно
+        val errorHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            _errorMsg.value = throwable.message
+        }
+        viewModelScope.launch(errorHandler + Dispatchers.IO) {
+            if (currentPlayingMusTrack.value != null) {
+                addToFavoriteUseCase.execute(currentPlayingMusTrack.value!!)
+            }
+        }
+    }
+
+    fun showFavTracks(){
+        val errorHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            _errorMsg.value = throwable.message
+        }
+        viewModelScope.launch {
+            val result = loadFavouriteUseCase.execute()
+            result.collect(){
+                val strBld = StringBuilder()
+                it.forEach {
+                    strBld.append("${it.trackName} \n")
+                }
+                _errorMsg.postValue(strBld.toString())
+            }
+        }
     }
 }

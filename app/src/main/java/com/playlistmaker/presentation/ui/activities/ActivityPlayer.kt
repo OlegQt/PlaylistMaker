@@ -26,6 +26,12 @@ class ActivityPlayer : AppCompatActivity() {
         binding.playerBtnPlay.setOnClickListener {
             vm.pushPlayPauseButton()
         }
+
+        binding.addToFavBtn.setOnClickListener{
+            vm.addTrackToFavourite()
+        }
+
+        binding.temporalBtn.setOnClickListener { vm.showFavTracks() }
     }
 
     private fun showTrackInfo(track: MusicTrack): Boolean {
@@ -121,6 +127,8 @@ class ActivityPlayer : AppCompatActivity() {
         }
 
         vm.getPlayingTime.observe(this) { binding.playerPlayTime.text = it.toTimeMmSs() }
+
+        vm.errorMsg.observe(this){showAlertDialog(msg = it)}
 
         // Извлекаем музыкальный трек из intent и делаем текущим
         // Проверка на версию

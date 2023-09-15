@@ -5,4 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface FavouriteMusicRepository {
     fun loadFavouriteTracks():Flow<List<MusicTrack>>
+
+    fun saveMusicTrackToFavourites(musicTrack: MusicTrack)
 }

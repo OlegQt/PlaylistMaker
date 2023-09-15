@@ -11,6 +11,7 @@ import com.playlistmaker.data.repository.FavouriteMusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.data.repository.SettingsRepositoryImpl
+import com.playlistmaker.domain.db.FavouriteMusicRepository
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.domain.repository.MusicTrackRepository
 import com.playlistmaker.domain.repository.SettingsRepository
@@ -61,6 +62,8 @@ val dataModule = module {
 
     // Репозиторий загрузки и сохранения настроек приложения
     single<SettingsRepository> { SettingsRepositoryImpl(sharedPreferences = get()) }
+
+    single<FavouriteMusicRepository> { FavouriteMusicRepositoryImpl(db = get(),mapper = get()) }
 
     single { RetrofitNetworkClient(mediaApi = get(),get()) }
 

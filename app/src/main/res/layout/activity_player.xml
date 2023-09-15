@@ -84,6 +84,7 @@
 
 
     <ImageButton
+        android:id="@+id/temporal_btn"
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:layout_marginTop="16dp"
@@ -94,6 +95,7 @@
         app:layout_constraintTop_toTopOf="@id/player_btn_play" />
 
     <ImageButton
+        android:id="@+id/add_to_fav_btn"
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:layout_marginTop="16dp"

@@ -2,14 +2,7 @@ package com.playlistmaker.di
 
 import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.domain.models.OnPlayerStateListener
-import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
-import com.playlistmaker.domain.usecase.LoadLastPlayingMusicTrackUseCase
-import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
-import com.playlistmaker.domain.usecase.MusicPlayerController
-import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
-import com.playlistmaker.domain.usecase.SafeMusicSearchHistoryUseCase
-import com.playlistmaker.domain.usecase.SearchMusicUseCase
-import com.playlistmaker.domain.usecase.SettingsController
+import com.playlistmaker.domain.usecase.*
 import org.koin.core.scope.get
 import org.koin.dsl.module
 
@@ -39,4 +32,10 @@ val domainModule = module {
 
     // UseCase для загрузки контроллера настроек приложения
     factory { SettingsController(settingsRepository = get()) }
+
+    // UseCase для добавления треков в базу данных избранных треков
+    factory { AddMusicTrackToFavouritesUseCase(favouriteTracksRepository = get()) }
+
+    // UseCase для загрузки треков из базы данных избранных треков
+    factory { LoadFavouriteTracksUseCase(favouriteTracksRepo = get()) }
 }
