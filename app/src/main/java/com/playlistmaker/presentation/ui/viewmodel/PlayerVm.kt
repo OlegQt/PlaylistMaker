@@ -7,11 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
-import com.playlistmaker.domain.usecase.AddMusicTrackToFavouritesUseCase
-import com.playlistmaker.domain.usecase.LoadFavouriteTracksUseCase
+import com.playlistmaker.domain.usecase.dbfavourite.AddMusicTrackToFavouritesUseCase
+import com.playlistmaker.domain.usecase.dbfavourite.LoadFavouriteTracksUseCase
 import com.playlistmaker.domain.usecase.MusicPlayerController
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
 
@@ -19,7 +18,7 @@ const val TRACK_DURATION_UPDATE_MILLIS = 300L
 
 class PlayerVm(
     private val addToFavoriteUseCase: AddMusicTrackToFavouritesUseCase,
-    private val loadFavouriteUseCase:LoadFavouriteTracksUseCase
+    private val loadFavouriteUseCase: LoadFavouriteTracksUseCase
 ) : ViewModel() {
     //Job переменные для coroutines
     private var musicTracDurationUpdate: Job? = null
@@ -126,7 +125,7 @@ class PlayerVm(
             result.collect(){
                 val strBld = StringBuilder()
                 it.forEach {
-                    strBld.append("${it.trackName} \n")
+                    strBld.append("${it.trackName}   ${it.trackId} \n")
                 }
                 _errorMsg.postValue(strBld.toString())
             }

@@ -1,41 +1,33 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.playlistmaker.appstart.App
 import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
-import com.playlistmaker.domain.usecase.DeleteMusicSearchHistoryUseCase
-import com.playlistmaker.domain.usecase.LoadMusicSearchHistoryUseCase
-import com.playlistmaker.domain.usecase.SafeCurrentPlayingTrackUseCase
-import com.playlistmaker.domain.usecase.SafeMusicSearchHistoryUseCase
-import com.playlistmaker.domain.usecase.SearchMusicUseCase
+import com.playlistmaker.domain.usecase.*
+import com.playlistmaker.domain.usecase.dbfavourite.LoadFavouriteTracksIdsUseCase
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.util.Resource
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import org.koin.java.KoinJavaComponent.getKoin
+import kotlinx.coroutines.*
 
 class FragmentSearchVm(
     private val historySafeUseCase: SafeMusicSearchHistoryUseCase,
     private val loadHistoryUseCase: LoadMusicSearchHistoryUseCase,
     private val deleteHistoryUseCase: DeleteMusicSearchHistoryUseCase,
     private val safePlayingTrackUseCase: SafeCurrentPlayingTrackUseCase,
-    private val searchUseCase: SearchMusicUseCase = getKoin().get()
+    private val searchUseCase: SearchMusicUseCase,
+    private val loadFavouriteTracksIds: LoadFavouriteTracksIdsUseCase
 
 ) : ViewModel() {
     private val mainHandler = android.os.Handler(Looper.getMainLooper())
     private var musicTrackIsClickable = true
     private var musicSearchHistoryList: ArrayList<MusicTrack> = ArrayList()
+    private var favouriteTracksIdsList = mutableListOf<Long>()
 
     private var searchTextEditDebounce: Job? = null
 
@@ -51,6 +43,7 @@ class FragmentSearchVm(
 
     init {
         searchScreenState.value = ActivitySearchState.InitialState(null)
+        this.loadFavouriteTracksIdList()
     }
 
     private fun searchMusic(songName: String) {
@@ -64,7 +57,7 @@ class FragmentSearchVm(
 
         // Запуск поиска музыкальных треков
         viewModelScope.launch(errorCoroutine) {
-            searchUseCase.executeSearchViaCoroutines(musRequest).collect{
+            searchUseCase.executeSearchViaCoroutines(musRequest).collect {
                 analiseMusicSearchResponse(it)
             }
         }
@@ -111,7 +104,11 @@ class FragmentSearchVm(
             // и запускаем плеер
 
             addMusicTrackToHistorySearch(musicTrackToSafe = trackClicked)
-            this.startPlayerApp.postValue(trackClicked)
+
+            // Проверка наличия данного трека в базе избранных треков
+            // Если трек уже есть в базе, изменить значение isFavourite на true
+            this.startPlayerApp.postValue(trackClicked.apply {
+                isFavourite = trackIsFavourite(this) })
         }
 
     }
@@ -199,6 +196,26 @@ class FragmentSearchVm(
             )
         } else searchScreenState.postValue(ActivitySearchState.InitialState(null))
 
+    }
+
+    fun loadFavouriteTracksIdList() {
+        // Загружаем в глобальную переменную список, состоящий из идентификаторов (ID)
+        // Всех треков, находящихся в базе данных избранных треков
+
+        viewModelScope.launch(Dispatchers.IO) {
+            loadFavouriteTracksIds.execute().collect() { it ->
+                favouriteTracksIdsList.clear()
+                favouriteTracksIdsList.addAll(it)
+            }
+            withContext(Dispatchers.Main) { errorMessage.value = favouriteTracksIdsList.toString() }
+        }
+    }
+
+    private fun trackIsFavourite(someMusicTrack: MusicTrack):Boolean{
+
+        // Сверяет id трека со списком id избранных треков
+        // Возвращает true если трек уже добавлен в избранное и false в обратном случае
+        return favouriteTracksIdsList.contains(someMusicTrack.trackId)
     }
 
     companion object {

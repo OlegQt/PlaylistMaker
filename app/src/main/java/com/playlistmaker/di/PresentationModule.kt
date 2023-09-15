@@ -11,7 +11,8 @@ val presentationModule = module {
             loadHistoryUseCase = get(),
             deleteHistoryUseCase = get(),
             safePlayingTrackUseCase = get(),
-            searchUseCase = get()
+            searchUseCase = get(),
+            loadFavouriteTracksIds = get()
         )
     }
     viewModel<ActivityMainVm> { ActivityMainVm() }

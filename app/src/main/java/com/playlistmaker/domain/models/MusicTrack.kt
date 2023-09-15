@@ -13,7 +13,8 @@ data class MusicTrack(
     val releaseDate: String,
     val primaryGenreName: String,
     val country: String,
-    val previewUrl: String
+    val previewUrl: String,
+    var isFavourite:Boolean
 ):Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -25,7 +26,8 @@ data class MusicTrack(
         parcel.readString()?: "",
         parcel.readString()?: "",
         parcel.readString()?: "",
-        parcel.readString()?: ""
+        parcel.readString()?: "",
+        parcel.readByte() != 0.toByte()
     ) {
     }
 
@@ -40,6 +42,7 @@ data class MusicTrack(
         parcel.writeString(primaryGenreName)
         parcel.writeString(country)
         parcel.writeString(previewUrl)
+        parcel.writeByte(if (isFavourite) 1 else 0)
     }
 
     override fun describeContents(): Int {
@@ -56,5 +59,4 @@ data class MusicTrack(
             return arrayOfNulls(size)
         }
     }
-
 }

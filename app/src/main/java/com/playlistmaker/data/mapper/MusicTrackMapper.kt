@@ -31,7 +31,8 @@ class MusicTrackMapper {
             releaseDate = musicTrackDto.releaseDate ?: "0",
             primaryGenreName = musicTrackDto.primaryGenreName,
             country = musicTrackDto.country,
-            previewUrl = musicTrackDto.previewUrl
+            previewUrl = musicTrackDto.previewUrl,
+            isFavourite = false
         )
     }
 
@@ -59,7 +60,8 @@ class MusicTrackMapper {
             releaseDate = musicTrackEntity.releaseDate ?: "0",
             primaryGenreName = musicTrackEntity.primaryGenreName,
             country = musicTrackEntity.country,
-            previewUrl = musicTrackEntity.previewUrl
+            previewUrl = musicTrackEntity.previewUrl,
+            isFavourite = false
         )
     }
 }

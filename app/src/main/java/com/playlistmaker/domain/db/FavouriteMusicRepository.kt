@@ -7,4 +7,6 @@ interface FavouriteMusicRepository {
     fun loadFavouriteTracks():Flow<List<MusicTrack>>
 
     fun saveMusicTrackToFavourites(musicTrack: MusicTrack)
+
+    fun loadFavouriteTracksIds():Flow<List<Long>>
 }

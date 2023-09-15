@@ -43,7 +43,7 @@ class ActivityPlayer : AppCompatActivity() {
 
         // Подгружаем текстовые данные по треку
         with(binding) {
-            playerTrackName.text = track.trackName
+            playerTrackName.text = track.trackName + track.isFavourite.toString()
             playerArtistName.text = track.artistName
             PlayerLblAlbum.text = track.collectionName.toString()
             PlayerLblGenre.text = track.primaryGenreName

@@ -11,6 +11,12 @@ class FavouriteMusicRepositoryImpl(
     private val db: MusicDB,
     private val mapper: MusicTrackMapper
 ) : FavouriteMusicRepository {
+
+    // Функция загружает id всех треков, находящихся в базе данных
+    override fun loadFavouriteTracksIds(): Flow<List<Long>> =
+        flow { emit(db.musicDao().getAllTracksId()) }
+
+    // Функция загружает все треки, находящиеся в базе данных
     override fun loadFavouriteTracks(): Flow<List<MusicTrack>> {
         return flow<List<MusicTrack>> {
             val favouriteTracks = db.musicDao().readAllMusicFromDb()
@@ -19,6 +25,7 @@ class FavouriteMusicRepositoryImpl(
         }
     }
 
+    // Добавляет трек в базу данных
     override fun saveMusicTrackToFavourites(musicTrack: MusicTrack) {
         db.musicDao().addTrackToFavourite(mapper.mapToDao(musicTrack))
     }
