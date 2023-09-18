@@ -1,5 +1,6 @@
 package com.playlistmaker.presentation.ui.fragments.medialibrary
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.presentation.models.FragmentFavouriteTracksState
+import com.playlistmaker.presentation.ui.activities.ActivityPlayer
 import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -21,7 +23,15 @@ class FavouriteTracksFragment : Fragment() {
 
     private val vm: FragmentFavouriteTracksVm by viewModel()
     private var favouriteTracksList = arrayListOf<MusicTrack>()
-    private val adapter = SearchTrackAdapter(favouriteTracksList) {}
+    private val adapter = SearchTrackAdapter(favouriteTracksList) {
+        startPlayerActivity(favouriteTracksList[it].apply { isFavourite=true })
+    }
+
+    private fun startPlayerActivity(musicTrackToPlay: MusicTrack) {
+        val intentPlayerActivity = Intent(requireContext(), ActivityPlayer::class.java)
+        intentPlayerActivity.putExtra(MusicTrack.TRACK_KEY, musicTrackToPlay)
+        startActivity(intentPlayerActivity)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

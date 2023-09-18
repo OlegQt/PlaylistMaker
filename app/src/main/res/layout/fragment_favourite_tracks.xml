@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/recycle_top_margin"
         android:visibility="gone"
+        android:layout_marginHorizontal="14dp"
         tools:listitem="@layout/track_item" />
 
     <!-- TODO: Stub layout below -->
