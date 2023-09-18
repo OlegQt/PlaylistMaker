@@ -23,13 +23,9 @@ class ActivityPlayer : AppCompatActivity() {
     private fun setUiBehaviour() {
         binding.playerBtnBack.setOnClickListener { finish() }
 
-        binding.playerBtnPlay.setOnClickListener {
-            vm.pushPlayPauseButton()
-        }
+        binding.playerBtnPlay.setOnClickListener { vm.pushPlayPauseButton() }
 
-        binding.addToFavBtn.setOnClickListener{
-            vm.addTrackToFavourite()
-        }
+        binding.addToFavBtn.setOnClickListener { vm.pushAddToFavourite() }
 
         binding.temporalBtn.setOnClickListener { vm.showFavTracks() }
     }
@@ -43,7 +39,7 @@ class ActivityPlayer : AppCompatActivity() {
 
         // Подгружаем текстовые данные по треку
         with(binding) {
-            playerTrackName.text = track.trackName + track.isFavourite.toString()
+            playerTrackName.text = track.trackName
             playerArtistName.text = track.artistName
             PlayerLblAlbum.text = track.collectionName.toString()
             PlayerLblGenre.text = track.primaryGenreName
@@ -51,6 +47,12 @@ class ActivityPlayer : AppCompatActivity() {
             PlayerLblFullDuration.text = track.trackTimeMillis.toTimeMmSs()
             PlayerLblYear.text = releaseYear
         }
+
+        // Определяем, есть ли трек в базе данных избранных треков и
+        // выбираем соответствующую иконку
+        if (track.isFavourite) {
+            binding.addToFavBtn.setImageResource(R.drawable.red_heart)
+        } else binding.addToFavBtn.setImageResource(R.drawable.like_track)
 
         // Изменили url картинки
         val artWorkHQ = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
@@ -99,7 +101,6 @@ class ActivityPlayer : AppCompatActivity() {
 
         vm.getCurrentMusTrack.observe(this) {
             this.showTrackInfo(it)
-            vm.preparePlayer(it.previewUrl)
         }
 
         vm.getPlayerState.observe(this) { state ->
@@ -128,12 +129,12 @@ class ActivityPlayer : AppCompatActivity() {
 
         vm.getPlayingTime.observe(this) { binding.playerPlayTime.text = it.toTimeMmSs() }
 
-        vm.errorMsg.observe(this){showAlertDialog(msg = it)}
+        vm.errorMsg.observe(this) { showAlertDialog(msg = it) }
 
         // Извлекаем музыкальный трек из intent и делаем текущим
         // Проверка на версию
         val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.getParcelableExtra(MusicTrack.TRACK_KEY,MusicTrack::class.java)
+            intent?.getParcelableExtra(MusicTrack.TRACK_KEY, MusicTrack::class.java)
         } else {
             intent?.getParcelableExtra(MusicTrack.TRACK_KEY) as MusicTrack?
         }
@@ -141,6 +142,7 @@ class ActivityPlayer : AppCompatActivity() {
         if (track != null) vm.loadCurrentMusicTrack(track)
 
         setUiBehaviour() // Вешаем слушателей на элементы UI
+
 
     }
 

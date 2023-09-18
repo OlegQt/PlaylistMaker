@@ -207,7 +207,8 @@ class FragmentSearchVm(
                 favouriteTracksIdsList.clear()
                 favouriteTracksIdsList.addAll(it)
             }
-            withContext(Dispatchers.Main) { errorMessage.value = favouriteTracksIdsList.toString() }
+            // Show message with trackList
+            // withContext(Dispatchers.Main) { errorMessage.value = favouriteTracksIdsList.toString() }
         }
     }
 

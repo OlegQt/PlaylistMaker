@@ -1,6 +1,7 @@
 package com.playlistmaker.data.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -10,7 +11,7 @@ import retrofit2.http.DELETE
 interface MusicDao {
     // Add new musicTrack to DB
     @Insert(entity = MusicTrackEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    fun addTrackToFavourite(musTrack:MusicTrackEntity)
+    suspend fun addTrackToFavourite(musTrack:MusicTrackEntity)
 
     // Read all track from DB
     @Query("SELECT * from FavouriteTracks ORDER BY track_name DESC")
@@ -21,13 +22,13 @@ interface MusicDao {
     suspend fun clearFavouriteTracks()
 
     // Delete single music track
-    @Query("DELETE from FavouriteTracks WHERE id =:trackId")
-    suspend fun deleteTrack(trackId:Long)
+    //@Query("DELETE from FavouriteTracks WHERE id =:trackId")
+    //suspend fun deleteTrack(trackId:Long)
 
     // Функция читает из базы список id из всех треков
     @Query("SELECT id from FavouriteTracks")
     suspend fun getAllTracksId():List<Long>
 
-    /*@DELETE
-    suspend fun simpleDelete(musicTrack: MusicTrackEntity)*/
+    @Delete(entity = MusicTrackEntity::class)
+    suspend fun deleteFavouriteTrack(musicTrack: MusicTrackEntity)
 }

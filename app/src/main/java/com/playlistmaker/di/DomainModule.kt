@@ -4,6 +4,7 @@ import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.usecase.*
 import com.playlistmaker.domain.usecase.dbfavourite.AddMusicTrackToFavouritesUseCase
+import com.playlistmaker.domain.usecase.dbfavourite.DeleteMusicTrackFromFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavourite.LoadFavouriteTracksIdsUseCase
 import com.playlistmaker.domain.usecase.dbfavourite.LoadFavouriteTracksUseCase
 import org.koin.dsl.module
@@ -39,7 +40,9 @@ val domainModule = module {
     factory { AddMusicTrackToFavouritesUseCase(favouriteTracksRepository = get()) }
 
     // UseCase для загрузки треков из базы данных избранных треков
-    factory { LoadFavouriteTracksUseCase(favouriteTracksRepo = get())}
+    factory { LoadFavouriteTracksUseCase(favouriteTracksRepo = get()) }
 
-    factory { LoadFavouriteTracksIdsUseCase(favouriteTracksRepo = get())}
+    factory { LoadFavouriteTracksIdsUseCase(favouriteTracksRepo = get()) }
+
+    factory { DeleteMusicTrackFromFavouritesUseCase(favouriteTracksRepo = get()) }
 }

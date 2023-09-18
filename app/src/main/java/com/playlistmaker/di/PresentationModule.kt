@@ -20,7 +20,8 @@ val presentationModule = module {
     viewModel<PlayerVm> {
         PlayerVm(
             addToFavoriteUseCase = get(),
-            loadFavouriteUseCase = get()
+            loadFavouriteUseCase = get(),
+            deleteFavouriteUseCase = get()
         )
     }
 

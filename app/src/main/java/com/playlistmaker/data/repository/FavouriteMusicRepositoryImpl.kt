@@ -16,6 +16,10 @@ class FavouriteMusicRepositoryImpl(
     override fun loadFavouriteTracksIds(): Flow<List<Long>> =
         flow { emit(db.musicDao().getAllTracksId()) }
 
+    override suspend fun deleteTrackFromFavourite(musicTrack: MusicTrack) {
+        db.musicDao().deleteFavouriteTrack(mapper.mapToDao(musicTrack))
+    }
+
     // Функция загружает все треки, находящиеся в базе данных
     override fun loadFavouriteTracks(): Flow<List<MusicTrack>> {
         return flow<List<MusicTrack>> {
@@ -26,7 +30,7 @@ class FavouriteMusicRepositoryImpl(
     }
 
     // Добавляет трек в базу данных
-    override fun saveMusicTrackToFavourites(musicTrack: MusicTrack) {
+    override suspend fun saveMusicTrackToFavourites(musicTrack: MusicTrack) {
         db.musicDao().addTrackToFavourite(mapper.mapToDao(musicTrack))
     }
 }
