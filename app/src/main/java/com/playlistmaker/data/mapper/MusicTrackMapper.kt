@@ -46,7 +46,8 @@ class MusicTrackMapper {
         releaseDate = musicTrack.releaseDate,
         primaryGenreName = musicTrack.primaryGenreName,
         country = musicTrack.country,
-        previewUrl = musicTrack.previewUrl
+        previewUrl = musicTrack.previewUrl,
+        timeInset = System.currentTimeMillis()
     )
 
     fun mapFromDao(musicTrackEntity: MusicTrackEntity): MusicTrack {

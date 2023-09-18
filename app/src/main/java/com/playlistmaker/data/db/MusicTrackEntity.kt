@@ -17,5 +17,7 @@ data class MusicTrackEntity(
         val releaseDate: String,
         val primaryGenreName: String,
         val country: String,
-        val previewUrl: String
+        val previewUrl: String,
+        @ColumnInfo(name = "insert_time")
+        val timeInset:Long
 )

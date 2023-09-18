@@ -28,6 +28,8 @@ val presentationModule = module {
     viewModel<FragmentSettingsVm> {
         FragmentSettingsVm(settingsController = get())
     }
-    viewModel { FragmentFavouriteTracksVm() }
+    viewModel { FragmentFavouriteTracksVm(
+        loadFavouriteTracks = get ()
+    ) }
     viewModel { FragmentPlayListsVm() }
 }

@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
-import com.playlistmaker.databinding.FragmentMedialibraryBinding
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.presentation.models.FragmentFavouriteTracksState
 import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -19,12 +21,15 @@ class FavouriteTracksFragment : Fragment() {
 
     private val vm: FragmentFavouriteTracksVm by viewModel()
     private var favouriteTracksList = arrayListOf<MusicTrack>()
+    private val adapter = SearchTrackAdapter(favouriteTracksList) {}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentFavouriteTracksBinding.inflate(inflater, container, false)
+
+
 
         vm.getFragmentState().observe(viewLifecycleOwner) {
             when (it) {
@@ -37,7 +42,11 @@ class FavouriteTracksFragment : Fragment() {
                     binding.stubLayout.visibility = View.GONE
                     binding.favouriteTracksRecycler.visibility = View.VISIBLE
                     // TODO: скопировать треки во внутренний список и обновить адаптер recycler
-                    // TODO: Don't forget to check if arrayList is empty
+                    favouriteTracksList.clear()
+                    favouriteTracksList.addAll(it.tracksList)
+                    adapter.notifyDataSetChanged()
+
+
                 }
             }
         }
@@ -47,14 +56,19 @@ class FavouriteTracksFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //TODO: Извлечение параметров для view элементов ниже
-        //binding.txtStubMainError.text=arguments?.getString(PARAM_TITLE)
-
+        binding.favouriteTracksRecycler.adapter = adapter
+        binding.favouriteTracksRecycler.layoutManager =
+            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.loadFavouriteTracks()
     }
 
     companion object {

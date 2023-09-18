@@ -14,7 +14,7 @@ interface MusicDao {
     suspend fun addTrackToFavourite(musTrack:MusicTrackEntity)
 
     // Read all track from DB
-    @Query("SELECT * from FavouriteTracks ORDER BY track_name DESC")
+    @Query("SELECT * from FavouriteTracks ORDER BY insert_time DESC")
     suspend fun readAllMusicFromDb():List<MusicTrackEntity>
 
     // Delete all tracks
