@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(version = 1, entities = [MusicTrackEntity::class])
-abstract  class MusicDB:RoomDatabase() {
+abstract class MusicDB : RoomDatabase() {
     // Возвращает интерфейс для работы с сущностями таблицы FavouriteTracks
-    abstract fun musicDao():MusicDao
+    abstract fun musicDao(): MusicDao
 }

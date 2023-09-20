@@ -55,8 +55,6 @@ class FavouriteTracksFragment : Fragment() {
                     favouriteTracksList.clear()
                     favouriteTracksList.addAll(it.tracksList)
                     adapter.notifyDataSetChanged()
-
-
                 }
             }
         }

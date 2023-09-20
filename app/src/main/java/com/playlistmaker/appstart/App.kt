@@ -6,7 +6,8 @@ import com.playlistmaker.di.dataModule
 import com.playlistmaker.di.domainModule
 import com.playlistmaker.di.presentationModule
 import com.playlistmaker.domain.models.Theme
-import com.playlistmaker.domain.usecase.SettingsController
+import com.playlistmaker.domain.usecase.apppreferences.SettingsController
+import com.playlistmaker.domain.usecase.apppreferences.SettingsControllerImpl
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.logger.AndroidLogger
@@ -26,7 +27,7 @@ class App : Application() {
         }
 
         // Загружаем сохраненную тему
-        val settingsController:SettingsController  = getKoin().get()
+        val settingsController: SettingsController = getKoin().get()
         applyTheme(settingsController.loadMode())
     }
 

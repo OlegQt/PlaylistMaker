@@ -4,26 +4,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.PrimaryKey
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
-import com.playlistmaker.domain.usecase.dbfavourite.AddMusicTrackToFavouritesUseCase
-import com.playlistmaker.domain.usecase.dbfavourite.LoadFavouriteTracksUseCase
-import com.playlistmaker.domain.usecase.MusicPlayerController
-import com.playlistmaker.domain.usecase.dbfavourite.DeleteMusicTrackFromFavouritesUseCase
+import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
+import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTrackToFavouritesUseCase
+import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.DeleteMusicTrackFromFavouritesUseCase
+import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksUseCase
 import kotlinx.coroutines.*
 import org.koin.core.parameter.parametersOf
 import org.koin.java.KoinJavaComponent.getKoin
-import java.security.PrivateKey
-import kotlin.coroutines.CoroutineContext
 
 const val TRACK_DURATION_UPDATE_MILLIS = 300L
 
 class PlayerVm(
     private val addToFavoriteUseCase: AddMusicTrackToFavouritesUseCase,
     private val loadFavouriteUseCase: LoadFavouriteTracksUseCase,
-    private val deleteFavouriteUseCase:DeleteMusicTrackFromFavouritesUseCase
+    private val deleteFavouriteUseCase: DeleteMusicTrackFromFavouritesUseCase
 ) : ViewModel() {
     //Job переменные для coroutines
     private var musicTracDurationUpdate: Job? = null
@@ -95,6 +92,7 @@ class PlayerVm(
         currentPlayingMusTrack.value = currentPlayingMusTrack.value?.apply {
             isFavourite = !isFavourite
         }
+        currentPlayingMusTrack.value?.copy(isFavourite = !currentPlayingMusTrack.value?.isFavourite!!)
     }
 
     fun pushPlayPauseButton() {

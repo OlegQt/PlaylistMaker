@@ -3,7 +3,8 @@ package com.playlistmaker.presentation.ui.viewmodel
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import com.playlistmaker.domain.models.Theme
-import com.playlistmaker.domain.usecase.SettingsController
+import com.playlistmaker.domain.usecase.apppreferences.SettingsController
+import com.playlistmaker.domain.usecase.apppreferences.SettingsControllerImpl
 
 class FragmentSettingsVm(
     private val settingsController: SettingsController

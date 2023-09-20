@@ -11,23 +11,19 @@ import retrofit2.http.DELETE
 interface MusicDao {
     // Add new musicTrack to DB
     @Insert(entity = MusicTrackEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addTrackToFavourite(musTrack:MusicTrackEntity)
+    suspend fun addTrackToFavourite(musTrack: MusicTrackEntity)
 
     // Read all track from DB
     @Query("SELECT * from FavouriteTracks ORDER BY insert_time DESC")
-    suspend fun readAllMusicFromDb():List<MusicTrackEntity>
+    suspend fun readAllMusicFromDb(): List<MusicTrackEntity>
 
     // Delete all tracks
     @Query("DELETE from FavouriteTracks")
     suspend fun clearFavouriteTracks()
 
-    // Delete single music track
-    //@Query("DELETE from FavouriteTracks WHERE id =:trackId")
-    //suspend fun deleteTrack(trackId:Long)
-
     // Функция читает из базы список id из всех треков
     @Query("SELECT id from FavouriteTracks")
-    suspend fun getAllTracksId():List<Long>
+    suspend fun getAllTracksId(): List<Long>
 
     @Delete(entity = MusicTrackEntity::class)
     suspend fun deleteFavouriteTrack(musicTrack: MusicTrackEntity)

@@ -8,18 +8,24 @@ import androidx.lifecycle.viewModelScope
 import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.SearchRequest
-import com.playlistmaker.domain.usecase.*
-import com.playlistmaker.domain.usecase.dbfavourite.LoadFavouriteTracksIdsUseCase
+import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksIdsUseCase
+import com.playlistmaker.domain.usecase.searchhistory.interfaces.DeleteMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.searchhistory.interfaces.LoadMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.searchhistory.interfaces.SafeMusicSearchHistoryUseCase
+import com.playlistmaker.domain.usecase.searchmusic.SearchMusicUseCase
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.presentation.models.ActivitySearchState
 import com.playlistmaker.util.Resource
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class FragmentSearchVm(
     private val historySafeUseCase: SafeMusicSearchHistoryUseCase,
     private val loadHistoryUseCase: LoadMusicSearchHistoryUseCase,
     private val deleteHistoryUseCase: DeleteMusicSearchHistoryUseCase,
-    private val safePlayingTrackUseCase: SafeCurrentPlayingTrackUseCase,
     private val searchUseCase: SearchMusicUseCase,
     private val loadFavouriteTracksIds: LoadFavouriteTracksIdsUseCase
 
@@ -150,10 +156,6 @@ class FragmentSearchVm(
 
     private fun safeMusicHistorySearch(musicList: ArrayList<MusicTrack>) {
         historySafeUseCase.execute(musicList)
-    }
-
-    private fun saveCurrentPlayingTrack(track: MusicTrack) {
-        this.safePlayingTrackUseCase.execute(track)
     }
 
     fun deleteMusicHistory() {

@@ -10,7 +10,6 @@ val presentationModule = module {
             historySafeUseCase = get(),
             loadHistoryUseCase = get(),
             deleteHistoryUseCase = get(),
-            safePlayingTrackUseCase = get(),
             searchUseCase = get(),
             loadFavouriteTracksIds = get()
         )

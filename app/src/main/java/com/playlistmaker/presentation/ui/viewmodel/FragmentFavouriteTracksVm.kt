@@ -4,13 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.domain.usecase.dbfavourite.LoadFavouriteTracksIdsUseCase
-import com.playlistmaker.domain.usecase.dbfavourite.LoadFavouriteTracksUseCase
-import com.playlistmaker.presentation.SingleLiveEvent
+import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksUseCase
 import com.playlistmaker.presentation.models.FragmentFavouriteTracksState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
