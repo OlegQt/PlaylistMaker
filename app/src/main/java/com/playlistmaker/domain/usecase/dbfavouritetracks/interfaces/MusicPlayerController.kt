@@ -1,4 +1,4 @@
-package com.playlistmaker.domain.usecase
+package com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces
 
 interface MusicPlayerController {
     fun preparePlayer(musTrackUrl:String)

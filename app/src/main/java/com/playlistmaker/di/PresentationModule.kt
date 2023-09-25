@@ -1,8 +1,8 @@
 package com.playlistmaker.di
 
+import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
-import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentSearchVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentSettingsVm
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
@@ -15,15 +15,23 @@ val presentationModule = module {
             historySafeUseCase = get(),
             loadHistoryUseCase = get(),
             deleteHistoryUseCase = get(),
-            safePlayingTrackUseCase = get(),
-            searchUseCase = get()
+            searchUseCase = get(),
+            loadFavouriteTracksIds = get()
         )
     }
     viewModel<ActivityMainVm> { ActivityMainVm() }
-    viewModel<PlayerVm> { PlayerVm() }
-    viewModel<FragmentSettingsVm> {
-        FragmentSettingsVm(settingsController = get())
+
+    viewModel<PlayerVm> {
+        PlayerVm(
+            addToFavoriteUseCase = get(),
+            loadFavouriteUseCase = get(),
+            deleteFavouriteUseCase = get()
+        )
     }
-    viewModel { FragmentFavouriteTracksVm() }
+
+    viewModel<FragmentSettingsVm> { FragmentSettingsVm(settingsController = get()) }
+
+    viewModel { FragmentFavouriteTracksVm(loadFavouriteTracks = get()) }
+
     viewModel { FragmentPlayListsVm() }
 }

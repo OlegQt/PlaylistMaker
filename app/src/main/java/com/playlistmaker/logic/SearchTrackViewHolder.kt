@@ -10,6 +10,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
 import com.playlistmaker.domain.models.MusicTrack
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class SearchTrackViewHolder(
     private val item: View,
@@ -32,12 +34,14 @@ class SearchTrackViewHolder(
         }
     }
 
+    private fun getFullDurationFromLong(duration: Long): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(duration)
+    }
 
     fun bind(musTrack: MusicTrack) {
         txtTrackName.text = musTrack.trackName
         txtArtistName.text = musTrack.artistName
-        //txtTrackTime.text = musTrack.getStringTime()
-
+        txtTrackTime.text = getFullDurationFromLong(musTrack.trackTimeMillis)
 
         val dens = Resources.getSystem().displayMetrics.density
         val picCornerRad = 4 * dens

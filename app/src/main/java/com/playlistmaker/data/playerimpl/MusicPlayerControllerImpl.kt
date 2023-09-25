@@ -2,7 +2,7 @@ package com.playlistmaker.data.playerimpl
 import android.media.MediaPlayer
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
-import com.playlistmaker.domain.usecase.MusicPlayerController
+import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
 
 class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
     MusicPlayerController {

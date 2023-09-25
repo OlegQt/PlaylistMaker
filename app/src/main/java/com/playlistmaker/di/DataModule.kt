@@ -1,12 +1,17 @@
 package com.playlistmaker.di
 
 import android.content.Context
+import androidx.room.Room
 import com.google.gson.Gson
+import com.playlistmaker.data.db.MusicDB
+import com.playlistmaker.data.mapper.MusicTrackMapper
 import com.playlistmaker.data.network.ItunesMediaSearchApi
 import com.playlistmaker.data.network.RetrofitNetworkClient
+import com.playlistmaker.data.repository.FavouriteMusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
 import com.playlistmaker.data.repository.SettingsRepositoryImpl
+import com.playlistmaker.domain.db.FavouriteMusicRepository
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.domain.repository.MusicTrackRepository
 import com.playlistmaker.domain.repository.SettingsRepository
@@ -52,10 +57,18 @@ val dataModule = module {
         )
     }
 
+    // Репозиторий для работы с избранными треками через SQLite (Room)
+    single { FavouriteMusicRepositoryImpl(db = get(), mapper = get()) }
+
     // Репозиторий загрузки и сохранения настроек приложения
     single<SettingsRepository> { SettingsRepositoryImpl(sharedPreferences = get()) }
 
+    single<FavouriteMusicRepository> { FavouriteMusicRepositoryImpl(db = get(),mapper = get()) }
+
     single { RetrofitNetworkClient(mediaApi = get(),get()) }
 
+    single { Room.databaseBuilder(androidContext(), MusicDB::class.java,"MusicSQLite").build() }
+
+    factory<MusicTrackMapper> {MusicTrackMapper() }
 
 }

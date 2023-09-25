@@ -1,4 +1,4 @@
-package com.playlistmaker.domain.usecase
+package com.playlistmaker.domain.usecase.searchmusic
 
 import com.playlistmaker.domain.models.ErrorList
 import com.playlistmaker.domain.repository.MusicRepository
@@ -8,9 +8,9 @@ import com.playlistmaker.util.Resource
 import kotlinx.coroutines.flow.Flow
 import java.lang.Exception
 
-class SearchMusicUseCase(private val musicRepo: MusicRepository) {
+class SearchMusicUseCaseImpl(private val musicRepo: MusicRepository):SearchMusicUseCase {
 
-    fun executeSearch(searchParams: SearchRequest,consumer: MusicConsumer) {
+    override fun executeSearch(searchParams: SearchRequest, consumer: MusicConsumer) {
          val searchThread = Thread({
             try {
                 val foundMusic = musicRepo.searchMusic(searchParams)
@@ -23,11 +23,7 @@ class SearchMusicUseCase(private val musicRepo: MusicRepository) {
         searchThread.start()
     }
 
-    fun executeSearchViaCoroutines(searchParams: SearchRequest):Flow<Resource<ArrayList<MusicTrack>>>{
+    override fun executeSearchViaCoroutines(searchParams: SearchRequest):Flow<Resource<ArrayList<MusicTrack>>>{
         return musicRepo.searchMusicViaCoroutines(searchParams)
-    }
-
-    fun interface MusicConsumer {
-        fun consume(foundMovies: Resource<ArrayList<MusicTrack>>)
     }
 }

@@ -182,6 +182,11 @@ class SearchFragment : Fragment() {
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        vm.loadFavouriteTracksIdList()
+    }
+
     private fun render(state: ActivitySearchState) {
         when (state) {
             is ActivitySearchState.NothingFound -> stateNothingFound()
