@@ -33,8 +33,9 @@
 
     <FrameLayout
         android:id="@+id/layout_add_photo"
-        android:layout_width="312dp"
-        android:layout_height="312dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="26dp"
@@ -48,6 +49,8 @@
             android:id="@+id/img_add_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+
             android:layout_gravity="center_vertical|center_horizontal"
             android:src="@drawable/add_photo" />
 
@@ -64,6 +67,9 @@
 
         <EditText
             android:id="@+id/txt_playlist_name"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:inputType="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -95,6 +101,16 @@
         android:text="Создать"
 
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="check"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_create_playlist"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
