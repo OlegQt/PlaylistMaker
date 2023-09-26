@@ -10,12 +10,12 @@
         android:name="com.playlistmaker.presentation.ui.fragments.MediaLibraryFragment"
         android:label="fragment_medialibrary"
         tools:layout="@layout/fragment_medialibrary">
-        <action android:id="@+id/action_navigate_to_settings"
-            app:enterAnim="@anim/slide_in_from_right"
-            app:exitAnim="@anim/slide_out_to_left"
-            app:destination="@id/settingsFragment"
-           />
-
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -30,4 +30,8 @@
         tools:layout="@layout/fragment_settings">
 
     </fragment>
+    <fragment
+        android:id="@+id/newPlaylistFragment"
+        android:name="com.playlistmaker.presentation.ui.fragments.NewPlaylistFragment"
+        android:label="NewPlaylistFragment" />
 </navigation>

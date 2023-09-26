@@ -22,6 +22,9 @@ class MainActivity : AppCompatActivity(), AlertMessaging {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
         binding.rootNavigationBar.setupWithNavController(navController = navHostFragment.navController)
+
+        //val navControl = navHostFragment.navController
+        //navControl.navigate(R.id.action_mediaLibraryFragment_to_newPlaylistFragment)
     }
 
     override fun showAlertDialog(alertMessage: String) {

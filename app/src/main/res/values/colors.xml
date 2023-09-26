@@ -10,5 +10,8 @@
     <color name="Yp_Light_Grey">#E6E8EB</color>
     <color name="Text_Grey">#AEAFB4</color>
 
+    <color name="Text_Red">#FF0000</color>
+
+
 
 </resources>

@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
+import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
 import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.presentation.models.AlertMessaging
@@ -47,7 +49,12 @@ class PlayListsFragment : Fragment() {
 
         //Временная заглушка для кнопки обновления плейлистов
         binding.btnReload.setOnClickListener {
-            (requireActivity() as AlertMessaging).showAlertDialog("Temporal stub message")
+            //(requireActivity() as AlertMessaging).showAlertDialog("Temporal stub message")
+            val navigator = requireActivity().supportFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
+            val navController = navigator.navController
+            navController.navigate(R.id.action_mediaLibraryFragment_to_newPlaylistFragment)
+
+
         }
     }
 
