@@ -1,8 +1,10 @@
 package com.playlistmaker.presentation.ui.activities
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -13,6 +15,7 @@ import com.playlistmaker.presentation.ui.fragments.SearchFragment
 
 class MainActivity : AppCompatActivity(), AlertMessaging {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navController:NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -23,8 +26,21 @@ class MainActivity : AppCompatActivity(), AlertMessaging {
             supportFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
         binding.rootNavigationBar.setupWithNavController(navController = navHostFragment.navController)
 
-        //val navControl = navHostFragment.navController
-        //navControl.navigate(R.id.action_mediaLibraryFragment_to_newPlaylistFragment)
+        navController = navHostFragment.navController
+
+
+        // Настройка скрытия навигационной панели при отображении определенных фрагментов
+        navController.addOnDestinationChangedListener{_,destination,_ ->
+            when(destination.id){
+                R.id.newPlaylistFragment -> binding.rootNavigationBar.visibility = View.GONE
+                else ->binding.rootNavigationBar.visibility = View.VISIBLE
+            }
+
+        }
+    }
+
+    fun navigateBack(){
+        navController.navigateUp()
     }
 
     override fun showAlertDialog(alertMessage: String) {

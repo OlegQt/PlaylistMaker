@@ -11,7 +11,7 @@
 
     <!-- back to Menu-->
     <ImageView
-        android:id="@+id/playlist_btn_back"
+        android:id="@+id/btn_back"
         style="@style/settings_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         android:layout_marginStart="24dp"
         android:text="Новый плейлист"
 
-        app:layout_constraintStart_toEndOf="@id/playlist_btn_back"
+        app:layout_constraintStart_toEndOf="@id/btn_back"
         app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -42,7 +42,7 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/playlist_btn_back">
+        app:layout_constraintTop_toBottomOf="@id/btn_back">
 
         <ImageView
             android:id="@+id/img_add_photo"
