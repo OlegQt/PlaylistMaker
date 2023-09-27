@@ -6,13 +6,15 @@ import com.playlistmaker.domain.usecase.apppreferences.SettingsController
 import com.playlistmaker.domain.usecase.apppreferences.SettingsControllerImpl
 import com.playlistmaker.domain.usecase.dbfavouritetracks.AddMusicTrackToFavouritesUseCaseImpl
 import com.playlistmaker.domain.usecase.dbfavouritetracks.DeleteMusicTrackFromFavouritesUseCaseImpl
-import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTrackToFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.LoadFavouriteTracksIdsUseCaseImpl
 import com.playlistmaker.domain.usecase.dbfavouritetracks.LoadFavouriteTracksUseCaseImpl
+import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTrackToFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.DeleteMusicTrackFromFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksIdsUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
+import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
+import com.playlistmaker.domain.usecase.dbplaylist.PlayListControllerImpl
 import com.playlistmaker.domain.usecase.searchhistory.DeleteMusicSearchHistoryUseCaseImpl
 import com.playlistmaker.domain.usecase.searchhistory.LoadMusicSearchHistoryUseCaseImpl
 import com.playlistmaker.domain.usecase.searchhistory.SafeMusicSearchHistoryUseCaseImpl
@@ -45,7 +47,11 @@ val domainModule = module {
     factory<SettingsController> { SettingsControllerImpl(settingsRepository = get()) }
 
     // UseCase для добавления трека в базу данных избранных треков
-    factory<AddMusicTrackToFavouritesUseCase> { AddMusicTrackToFavouritesUseCaseImpl(favouriteTracksRepository = get())}
+    factory<AddMusicTrackToFavouritesUseCase> {
+        AddMusicTrackToFavouritesUseCaseImpl(
+            favouriteTracksRepository = get()
+        )
+    }
 
     // UseCase для загрузки треков из базы данных избранных треков
     factory<LoadFavouriteTracksUseCase> { LoadFavouriteTracksUseCaseImpl(favouriteTracksRepo = get()) }
@@ -54,7 +60,13 @@ val domainModule = module {
     factory<LoadFavouriteTracksIdsUseCase> { LoadFavouriteTracksIdsUseCaseImpl(favouriteTracksRepo = get()) }
 
     // UseCase для удаления трека из базы данных избранных треков
-    factory<DeleteMusicTrackFromFavouritesUseCase> { DeleteMusicTrackFromFavouritesUseCaseImpl(favouriteTracksRepo = get()) }
+    factory<DeleteMusicTrackFromFavouritesUseCase> {
+        DeleteMusicTrackFromFavouritesUseCaseImpl(
+            favouriteTracksRepo = get()
+        )
+    }
+
+    factory<PlayListController> { PlayListControllerImpl(playListRepository = get()) }
 
 
 }

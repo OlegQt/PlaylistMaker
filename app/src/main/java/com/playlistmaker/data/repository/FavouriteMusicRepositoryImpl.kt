@@ -1,6 +1,6 @@
 package com.playlistmaker.data.repository
 
-import com.playlistmaker.data.db.MusicDB
+import com.playlistmaker.data.db.favourite.MusicDB
 import com.playlistmaker.data.mapper.MusicTrackMapper
 import com.playlistmaker.domain.db.FavouriteMusicRepository
 import com.playlistmaker.domain.models.MusicTrack

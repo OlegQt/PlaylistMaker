@@ -1,4 +1,4 @@
-package com.playlistmaker.data.db
+package com.playlistmaker.data.db.favourite
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

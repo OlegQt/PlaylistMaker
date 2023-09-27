@@ -1,6 +1,6 @@
 package com.playlistmaker.data.mapper
 
-import com.playlistmaker.data.db.MusicTrackEntity
+import com.playlistmaker.data.db.favourite.MusicTrackEntity
 import com.playlistmaker.data.dto.MusicTrackDto
 import com.playlistmaker.domain.models.MusicTrack
 

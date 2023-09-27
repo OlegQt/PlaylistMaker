@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
@@ -35,8 +34,10 @@ class NewPlaylistFragment : Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
 
-    //
-    private var picture: ActivityResultLauncher<PickVisualMediaRequest>? = null
+    private var pickImageContent =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let { vm.handlePickedImage(it) }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,13 +46,15 @@ class NewPlaylistFragment : Fragment() {
     ): View? {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
 
-        // Перехватываем нажатие назад
-        requireActivity().onBackPressedDispatcher.addCallback(onBackPressedCallback = object :
-            OnBackPressedCallback(enabled = true) {
-            override fun handleOnBackPressed() {
-                exitWithDialog()
-            }
-        })
+        vm.selectedImage.observe(viewLifecycleOwner) { setImageAsCover(it) }
+
+        vm.errorMsg.observe(viewLifecycleOwner){
+            Snackbar.make(binding.button,it,Snackbar.LENGTH_INDEFINITE).setAction("OK") { }.show()
+        }
+
+        vm.exitTrigger.observe(viewLifecycleOwner){
+            exit()
+        }
 
         vm.btnCreateEnable.observe(viewLifecycleOwner) {
             binding.btnCreatePlaylist.isEnabled = it
@@ -64,17 +67,16 @@ class NewPlaylistFragment : Fragment() {
 
     private fun exitWithDialog() {
         if (vm.nothingChanged()) {
-            (requireActivity() as MainActivity).navigateBack()
-
+            exit()
         } else {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Завершить создание плейлиста?")
                 .setMessage("Все несохраненные данные будут потеряны")
-                .setNegativeButton("Отмена" ) { _, _ ->}
+                .setNegativeButton("Отмена") { _, _ -> }
                 .setPositiveButton("Завершить") { _, _ ->
                     // сохраняем изменения и выходим
-                    saveNewPlaylist()
-                    (requireActivity() as MainActivity).navigateBack()
+                    saveImageToPrivateStorage(vm.selectedImage.value)
+                    vm.savePlayListToDB()
                 }.show().apply {
                     getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(
                         resources.getColor(
@@ -90,21 +92,6 @@ class NewPlaylistFragment : Fragment() {
                     )
                 }
         }
-
-    }
-
-    private fun saveNewPlaylist() {
-        vm.playListCoverUri?.let {
-            vm.playListCover = saveImageToPrivateStorage(it)
-        }
-
-
-
-        Snackbar.make(binding.button, "${vm.playListCover} \n ${vm.playListName} \n ${vm.playListDescription}", Snackbar.LENGTH_INDEFINITE)
-            .setTextMaxLines(20)
-            .setAction("OK") {}
-            .show()
-
 
     }
 
@@ -127,7 +114,8 @@ class NewPlaylistFragment : Fragment() {
             .into(binding.imgAddPhoto)
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri):File {
+    private fun saveImageToPrivateStorage(uri: Uri?) {
+        if(uri==null) return
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath = File(
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
@@ -139,6 +127,7 @@ class NewPlaylistFragment : Fragment() {
             filePath.mkdirs()
         }
 
+        val name = vm.playListName
         //создаём экземпляр класса File, который указывает на файл внутри каталога
         val file = File(filePath, "${vm.playListName}_cover.jpg")
 
@@ -150,7 +139,8 @@ class NewPlaylistFragment : Fragment() {
         BitmapFactory.decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
 
-        return file
+        // Сохраняем путь к новому файлу обложки внутри нашей модели плейлиста
+        vm.updatePlayListCoverLocation(file)
     }
 
     private fun directoryCheck() {
@@ -185,17 +175,20 @@ class NewPlaylistFragment : Fragment() {
         binding.txtPlaylistName.doAfterTextChanged {
             vm.changePlayListName(it.toString())
         }
+
         binding.txtPlaylistDescription.doAfterTextChanged {
-            vm.playListDescription = it.toString()
+            vm.changeDescription(newDescription = it.toString())
         }
 
         binding.btnBack.setOnClickListener { exitWithDialog() }
 
         binding.layoutAddPhoto.setOnClickListener {
             if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())) {
-                picture?.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                pickImageContent.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
         }
+
+        binding.btnCreatePlaylist.setOnClickListener { vm.savePlayListToDB() }
 
         binding.button.setOnClickListener { directoryCheck() }
 
@@ -211,15 +204,18 @@ class NewPlaylistFragment : Fragment() {
             true
         }
 
-        picture = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                vm.playListCoverUri = uri
-                setImageAsCover(uri)
-            } else {
-                Snackbar.make(binding.root, "No media selected", Snackbar.LENGTH_LONG).show()
+        // Перехватываем нажатие назад
+        requireActivity().onBackPressedDispatcher.addCallback(onBackPressedCallback = object :
+            OnBackPressedCallback(enabled = true) {
+            override fun handleOnBackPressed() {
+                exitWithDialog()
             }
-        }
+        })
 
+    }
+
+    private fun exit() {
+        (requireActivity() as MainActivity).navigateBack()
     }
 
     override fun onDestroy() {

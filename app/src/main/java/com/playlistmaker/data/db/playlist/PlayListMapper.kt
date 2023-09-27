@@ -14,7 +14,7 @@ class PlayListMapper {
         )
     }
 
-    fun convertToDao(playList: PlayList):PlayListEntity{
+    fun convertToDao(playList: PlayList): PlayListEntity {
         return PlayListEntity(
             playList.id,
             playList.name,

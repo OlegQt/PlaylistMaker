@@ -7,6 +7,7 @@ import com.playlistmaker.presentation.ui.viewmodel.FragmentSearchVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentSettingsVm
 import com.playlistmaker.presentation.ui.viewmodel.PlayListVm
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -37,5 +38,5 @@ val presentationModule = module {
 
     viewModel { FragmentPlayListsVm() }
 
-    viewModel { PlayListVm() }
+    viewModel { PlayListVm(playListController = get()) }
 }
