@@ -74,7 +74,7 @@ class NewPlaylistFragment : Fragment() {
                 .setPositiveButton("Завершить") { _, _ ->
                     // сохраняем изменения и выходим
                     saveNewPlaylist()
-                    //(requireActivity() as MainActivity).navigateBack()
+                    (requireActivity() as MainActivity).navigateBack()
                 }.show().apply {
                     getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(
                         resources.getColor(

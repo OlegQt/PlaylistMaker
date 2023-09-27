@@ -58,11 +58,15 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlinedTextFieldA"
-        style="@style/CustomTextInputLayout"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:hint="string"
+
+        android:hint="Название*"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
+
         app:layout_constraintTop_toBottomOf="@id/layout_add_photo">
 
         <EditText
@@ -77,11 +81,13 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlinedTextFieldB"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+
         android:hint="string"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
 
         app:layout_constraintTop_toBottomOf="@id/outlinedTextFieldA">
 
