@@ -1,15 +1,10 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import com.playlistmaker.data.db.playlist.PlayListDB
-import com.playlistmaker.data.db.playlist.PlayListMapper
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import com.playlistmaker.presentation.SingleLiveEvent
@@ -34,7 +29,7 @@ class PlayListVm(
     val exitTrigger = SingleLiveEvent<Boolean>()
 
     private var newPlayList = PlayList()
-    val playListName:String get() = newPlayList.name
+    val playListName: String get() = newPlayList.name
 
 
     init {
@@ -64,7 +59,7 @@ class PlayListVm(
         newPlayList.description = newDescription
     }
 
-    fun updatePlayListCoverLocation(file:File){
+    fun updatePlayListCoverLocation(file: File) {
         newPlayList.cover = file.toString()
     }
 
@@ -75,21 +70,20 @@ class PlayListVm(
             _errorMsg.value = throwable.message
         }
         // Запускаю сохранение в другом потоке
-        viewModelScope.launch(errorHandler+Dispatchers.IO) {
+        viewModelScope.launch(errorHandler + Dispatchers.IO) {
             playListController.savePlaylist(newPlayList)
             _errorMsg.postValue("Плейлист $playListName создан")
             exitTrigger.postValue(true)
         }
     }
 
-    fun load(){
-        // Добавляем трек в базу сразу при старте плеера временно
+    private fun load() {
         val errorHandler = CoroutineExceptionHandler { _, throwable ->
             _errorMsg.value = throwable.message
         }
         // Запускаю сохранение в другом потоке
-        viewModelScope.launch(errorHandler+Dispatchers.IO) {
-            playListController.loadAllPlayLists().collect{
+        viewModelScope.launch(errorHandler + Dispatchers.IO) {
+            playListController.loadAllPlayLists().collect {
                 val k = it
 
             }

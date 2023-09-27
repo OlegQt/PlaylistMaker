@@ -36,7 +36,7 @@ val presentationModule = module {
 
     viewModel { FragmentFavouriteTracksVm(loadFavouriteTracks = get()) }
 
-    viewModel { FragmentPlayListsVm() }
+    viewModel { FragmentPlayListsVm(playListController = get()) }
 
     viewModel { PlayListVm(playListController = get()) }
 }

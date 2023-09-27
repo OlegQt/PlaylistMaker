@@ -48,11 +48,11 @@ class NewPlaylistFragment : Fragment() {
 
         vm.selectedImage.observe(viewLifecycleOwner) { setImageAsCover(it) }
 
-        vm.errorMsg.observe(viewLifecycleOwner){
-            Snackbar.make(binding.button,it,Snackbar.LENGTH_INDEFINITE).setAction("OK") { }.show()
+        vm.errorMsg.observe(viewLifecycleOwner) {
+            Snackbar.make(binding.button, it, Snackbar.LENGTH_INDEFINITE).setAction("OK") { }.show()
         }
 
-        vm.exitTrigger.observe(viewLifecycleOwner){
+        vm.exitTrigger.observe(viewLifecycleOwner) {
             exit()
         }
 
@@ -115,7 +115,7 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun saveImageToPrivateStorage(uri: Uri?) {
-        if(uri==null) return
+        if (uri == null) return
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath = File(
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
@@ -188,7 +188,10 @@ class NewPlaylistFragment : Fragment() {
             }
         }
 
-        binding.btnCreatePlaylist.setOnClickListener { vm.savePlayListToDB() }
+        binding.btnCreatePlaylist.setOnClickListener {
+            saveImageToPrivateStorage(vm.selectedImage.value)
+            vm.savePlayListToDB()
+        }
 
         binding.button.setOnClickListener { directoryCheck() }
 
