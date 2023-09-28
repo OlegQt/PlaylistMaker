@@ -1,6 +1,7 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -61,6 +62,17 @@ class PlayListVm(
 
     fun updatePlayListCoverLocation(file: File) {
         newPlayList.cover = file.toString()
+    }
+
+    fun clearDB(){
+        viewModelScope.launch {
+            playListController.loadAllPlayLists().collect{
+                for (element in it){
+                    Log.e("LOG","${element.cover}")
+                }
+            }
+            playListController.clearBD()
+        }
     }
 
 

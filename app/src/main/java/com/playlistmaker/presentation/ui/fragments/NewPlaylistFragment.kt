@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +50,7 @@ class NewPlaylistFragment : Fragment() {
         vm.selectedImage.observe(viewLifecycleOwner) { setImageAsCover(it) }
 
         vm.errorMsg.observe(viewLifecycleOwner) {
-            Snackbar.make(binding.button, it, Snackbar.LENGTH_INDEFINITE).setAction("OK") { }.show()
+            Snackbar.make(binding.root, it, Snackbar.LENGTH_INDEFINITE).setAction("OK") { }.show()
         }
 
         vm.exitTrigger.observe(viewLifecycleOwner) {
@@ -150,24 +151,12 @@ class NewPlaylistFragment : Fragment() {
         )
 
         if (filePath.exists()) {
-            val fileList = filePath.list()
-            val strBld = StringBuilder().apply {
-                for (file in fileList) {
-                    append("${file.toString()} \n")
-                }
+            for(file in filePath.listFiles()){
+                Log.e("LOG","$file")
             }
-            Snackbar.make(binding.button, strBld.toString(), Snackbar.LENGTH_INDEFINITE)
-                .setTextMaxLines(20)
-                .setAction("OK") {}
-                .show()
-        } else {
-            Snackbar.make(binding.button, "No such directory", Snackbar.LENGTH_INDEFINITE)
-                .setTextMaxLines(20)
-                .setAction("OK") {}
-                .show()
         }
-
-
+        Log.e("LOG","___________________________________")
+        vm.clearDB()
     }
 
     private fun setBehaviour() {
@@ -193,19 +182,9 @@ class NewPlaylistFragment : Fragment() {
             vm.savePlayListToDB()
         }
 
-        binding.button.setOnClickListener { directoryCheck() }
+        binding.checkBase.setOnClickListener { directoryCheck() }
 
-        binding.button.setOnLongClickListener {
-            val filePath = File(
-                requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                PLAYLIST_COVER
-            )
-            val fileList = filePath.listFiles()
-            for (el in fileList) {
-                el.delete()
-            }
-            true
-        }
+        binding.deleteBase.setOnClickListener { vm.clearDB() }
 
         // Перехватываем нажатие назад
         requireActivity().onBackPressedDispatcher.addCallback(onBackPressedCallback = object :
@@ -223,7 +202,14 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.e("LOG_TAG", "DESTROY PLAYLIST")
+        parentFragmentManager.setFragmentResult(FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY,Bundle())
+
         _binding = null
+    }
+
+    companion object{
+        const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY ="NEW_PLAYLIST_DESTROY"
     }
 
 

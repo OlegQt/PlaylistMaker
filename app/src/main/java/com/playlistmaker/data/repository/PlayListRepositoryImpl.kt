@@ -15,9 +15,13 @@ class PlayListRepositoryImpl(
         db.playListDao().addNewPlayList(playList = mapper.convertToDao(playListToSave))
     }
 
-    override fun loadAllPlayLists(): Flow<List<PlayList>> {
+    override suspend fun loadAllPlayLists(): Flow<List<PlayList>> {
         return flow {
             emit(db.playListDao().getAllPlayLists().map { mapper.convertFromDao(it) })
         }
+    }
+
+    override suspend fun clearDB() {
+        db.playListDao().deleteAllPlaylists()
     }
 }

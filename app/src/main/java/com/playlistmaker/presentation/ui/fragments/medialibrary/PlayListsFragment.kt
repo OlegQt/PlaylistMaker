@@ -1,14 +1,19 @@
 package com.playlistmaker.presentation.ui.fragments.medialibrary
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentResultListener
+import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
@@ -16,6 +21,7 @@ import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.logic.PlayListAdapter
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
+import com.playlistmaker.presentation.ui.fragments.NewPlaylistFragment
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -64,8 +70,9 @@ class PlayListsFragment : Fragment() {
             }
         }
 
-        vm.errorMsg.observe(viewLifecycleOwner){
-            Snackbar.make(binding.stubLayout,it,Snackbar.LENGTH_INDEFINITE).setAction("OK") {}.show()
+        vm.errorMsg.observe(viewLifecycleOwner) {
+            Snackbar.make(binding.stubLayout, it, Snackbar.LENGTH_INDEFINITE).setAction("OK") {}
+                .show()
         }
 
         return binding.root
@@ -74,24 +81,27 @@ class PlayListsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        vm.loadPlaylists()
+        parentFragmentManager.setFragmentResultListener(NewPlaylistFragment.FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY,viewLifecycleOwner
+        ) { requestKey, result ->
+            //TODO("Not yet implemented")
+            Log.e("LOG_TAG", "reload fragment")
+            vm.loadPlaylists()
+        }
 
-        //Временная заглушка для кнопки обновления плейлистов
         binding.btnNewPlaylist.setOnClickListener {
-            val navigator =
-                requireActivity().supportFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
+            val navigator = parentFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
             val navController = navigator.navController
             navController.navigate(R.id.action_mediaLibraryFragment_to_newPlaylistFragment)
-
         }
 
         binding.favouriteTracksRecycler.adapter = playlistAdapter
-        binding.favouriteTracksRecycler.layoutManager = LinearLayoutManager(requireContext())
+        //binding.favouriteTracksRecycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.favouriteTracksRecycler.layoutManager = GridLayoutManager(requireContext(),2)
     }
 
     override fun onResume() {
         super.onResume()
-
+        Log.e("LOG_TAG", "Resume playlists")
     }
 
     override fun onDestroyView() {

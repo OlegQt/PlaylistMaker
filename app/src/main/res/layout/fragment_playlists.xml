@@ -35,11 +35,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favourite_tracks_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/recycle_top_margin"
-        android:visibility="gone"
+        android:paddingHorizontal="16dp"
+        android:visibility="visible"
         tools:listitem="@layout/playlist_item"
 
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_new_playlist"
         />
 

@@ -6,5 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface PlayListRepository {
     suspend fun savePlaylist(playListToSave: PlayList)
 
-    fun loadAllPlayLists(): Flow<List<PlayList>>
+    suspend fun loadAllPlayLists(): Flow<List<PlayList>>
+
+    suspend fun clearDB()
 }

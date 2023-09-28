@@ -9,5 +9,8 @@ class PlayListControllerImpl(private val playListRepository:PlayListRepository):
         playListRepository.savePlaylist(playListToSave = playList)
     }
 
-    override fun loadAllPlayLists(): Flow<List<PlayList>> = playListRepository.loadAllPlayLists()
+    override suspend fun loadAllPlayLists(): Flow<List<PlayList>> = playListRepository.loadAllPlayLists()
+    override suspend fun clearBD() {
+        playListRepository.clearDB()
+    }
 }

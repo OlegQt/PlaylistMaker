@@ -40,7 +40,8 @@ class MainActivity : AppCompatActivity(), AlertMessaging {
     }
 
     fun navigateBack(){
-        navController.navigateUp()
+        //navController.navigateUp()
+        navController.popBackStack()
     }
 
     override fun showAlertDialog(alertMessage: String) {

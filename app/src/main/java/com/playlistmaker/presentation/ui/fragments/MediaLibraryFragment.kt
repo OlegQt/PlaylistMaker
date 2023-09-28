@@ -1,6 +1,7 @@
 package com.playlistmaker.presentation.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,7 @@ class MediaLibraryFragment : Fragment() ,AlertMessaging{
     private val binding get() = _binding!!
 
     private lateinit var mediator: TabLayoutMediator
+    private lateinit var adapter:MediaPager
 
     // Хранение фрагментов внутри коллекции fragmentMap
     private val fragmentMap = mutableMapOf<String, Fragment>()
@@ -45,15 +47,29 @@ class MediaLibraryFragment : Fragment() ,AlertMessaging{
             binding.mediaStorageTab.addTab(binding.mediaStorageTab.newTab().setText(it))
         }
 
+        tabLayoutConnection()
+
+        return binding.root
+    }
+
+    private fun tabLayoutConnection(){
         // Инициализация адаптера для
-        binding.mediaStorageFragmentPlaceholder.adapter = MediaPager(requireActivity(),fragmentMap)
+        adapter = MediaPager(requireActivity(),fragmentMap)
+        binding.mediaStorageFragmentPlaceholder.adapter = adapter
         mediator = TabLayoutMediator(binding.mediaStorageTab,binding.mediaStorageFragmentPlaceholder){
-            tab,pos ->
+                tab,pos ->
             tab.text = fragmentMap.keys.elementAt(pos)
         }
         mediator.attach()
 
-        return binding.root
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("LOG_TAG", "resume mediaStorage")
+        //mediator.detach()
+
     }
 
     override fun onPause() {

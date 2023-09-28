@@ -109,12 +109,21 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/check_base"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="check"
 
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_create_playlist"
+        />
+    <Button
+        android:id="@+id/delete_base"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="delete"
+
+        app:layout_constraintStart_toEndOf="@id/check_base"
         app:layout_constraintBottom_toTopOf="@id/btn_create_playlist"
         />
 
