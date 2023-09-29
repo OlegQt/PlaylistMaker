@@ -25,7 +25,7 @@
         style="@style/settings_text_back"
         android:layout_marginTop="10dp"
         android:layout_marginStart="24dp"
-        android:text="Новый плейлист"
+        android:text="@string/new_playlist_article"
 
         app:layout_constraintStart_toEndOf="@id/btn_back"
         app:layout_constraintTop_toTopOf="parent" />
@@ -52,7 +52,8 @@
             android:scaleType="centerCrop"
 
             android:layout_gravity="center_vertical|center_horizontal"
-            android:src="@drawable/add_photo" />
+            android:src="@drawable/add_photo"
+            android:contentDescription="@string/playlist_cover_img" />
 
     </FrameLayout>
 
@@ -63,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
 
-        android:hint="Название*"
+        android:hint="@string/playlist_name"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
 
@@ -85,7 +86,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
 
-        android:hint="string"
+        android:hint="@string/playlist_description"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
 
@@ -103,27 +104,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-
-        android:text="Создать"
+        android:text="@string/playlist_button_create"
 
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button
-        android:id="@+id/check_base"
+        android:id="@+id/btn_check_base"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="check"
+        android:text="@string/playlist_button_check_folder"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btn_create_playlist"
-        />
-    <Button
-        android:id="@+id/delete_base"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="delete"
-
-        app:layout_constraintStart_toEndOf="@id/check_base"
         app:layout_constraintBottom_toTopOf="@id/btn_create_playlist"
         />
 

@@ -5,7 +5,7 @@ import com.playlistmaker.data.db.playlist.PlayListMapper
 import com.playlistmaker.domain.db.PlayListRepository
 import com.playlistmaker.domain.models.PlayList
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class PlayListRepositoryImpl(
     private val db: PlayListDB,
@@ -16,9 +16,9 @@ class PlayListRepositoryImpl(
     }
 
     override suspend fun loadAllPlayLists(): Flow<List<PlayList>> {
-        return flow {
-            emit(db.playListDao().getAllPlayLists().map { mapper.convertFromDao(it) })
-        }
+        return db.playListDao().getAllPlayLists()
+            .map { it.map { entity -> mapper.convertFromDao(entity) } }
+
     }
 
     override suspend fun clearDB() {

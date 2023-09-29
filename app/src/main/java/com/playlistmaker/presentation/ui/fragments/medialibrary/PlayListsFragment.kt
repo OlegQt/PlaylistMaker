@@ -1,20 +1,16 @@
 package com.playlistmaker.presentation.ui.fragments.medialibrary
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentResultListener
-import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentPlaylistsBinding
@@ -50,9 +46,7 @@ class PlayListsFragment : Fragment() {
                 // TODO: Don't forget to check if map is empty
                 playListFromDB.clear()
                 playListFromDB.addAll(newState.playLists)
-                playlistAdapter.notifyDataSetChanged()
-
-
+                playlistAdapter.notifyItemRangeChanged(0,playListFromDB.size)
             }
         }
     }
@@ -81,7 +75,8 @@ class PlayListsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        parentFragmentManager.setFragmentResultListener(NewPlaylistFragment.FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY,viewLifecycleOwner
+        parentFragmentManager.setFragmentResultListener(
+            NewPlaylistFragment.FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY, viewLifecycleOwner
         ) { requestKey, result ->
             //TODO("Not yet implemented")
             Log.e("LOG_TAG", "reload fragment")
@@ -89,14 +84,17 @@ class PlayListsFragment : Fragment() {
         }
 
         binding.btnNewPlaylist.setOnClickListener {
-            val navigator = parentFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
+            val navigator =
+                parentFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
             val navController = navigator.navController
             navController.navigate(R.id.action_mediaLibraryFragment_to_newPlaylistFragment)
         }
 
+        binding.btnClearDb.setOnClickListener { vm.clearPlayListBD() }
+
         binding.favouriteTracksRecycler.adapter = playlistAdapter
         //binding.favouriteTracksRecycler.layoutManager = LinearLayoutManager(requireContext())
-        binding.favouriteTracksRecycler.layoutManager = GridLayoutManager(requireContext(),2)
+        binding.favouriteTracksRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
     }
 
     override fun onResume() {

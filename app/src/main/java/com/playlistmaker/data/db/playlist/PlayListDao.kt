@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.playlistmaker.data.db.favourite.MusicTrackEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlayListDao {
@@ -16,7 +16,7 @@ interface PlayListDao {
 
     // Read all DB content
     @Query("SELECT * from PlayListDB ORDER BY playlist_name DESC")
-    suspend fun getAllPlayLists(): List<PlayListEntity>
+    fun getAllPlayLists(): Flow<List<PlayListEntity>>
 
 
     @Delete

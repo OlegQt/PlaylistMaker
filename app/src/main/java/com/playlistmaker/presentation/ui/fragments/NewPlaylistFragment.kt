@@ -21,7 +21,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.playlistmaker.presentation.ui.activities.MainActivity
-import com.playlistmaker.presentation.ui.viewmodel.PlayListVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -30,7 +30,7 @@ const val PLAYLIST_COVER = "PLAYLIST_COVERS"
 
 class NewPlaylistFragment : Fragment() {
 
-    private val vm: PlayListVm by viewModel()
+    private val vm: FragmentNewPlayListVm by viewModel()
 
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
@@ -44,13 +44,13 @@ class NewPlaylistFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
 
         vm.selectedImage.observe(viewLifecycleOwner) { setImageAsCover(it) }
 
         vm.errorMsg.observe(viewLifecycleOwner) {
-            Snackbar.make(binding.root, it, Snackbar.LENGTH_INDEFINITE).setAction("OK") { }.show()
+            Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
         }
 
         vm.exitTrigger.observe(viewLifecycleOwner) {
@@ -100,11 +100,11 @@ class NewPlaylistFragment : Fragment() {
         // Изменяем layout картинки
         with(binding.imgAddPhoto) {
             // Установите параметры ширины и высоты на wrap_content
-            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
 
             // Обновите ImageView, чтобы применить изменения
-            requestLayout();
+            requestLayout()
         }
 
         // Загружаем изображение
@@ -128,7 +128,6 @@ class NewPlaylistFragment : Fragment() {
             filePath.mkdirs()
         }
 
-        val name = vm.playListName
         //создаём экземпляр класса File, который указывает на файл внутри каталога
         val file = File(filePath, "${vm.playListName}_cover.jpg")
 
@@ -145,18 +144,22 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun directoryCheck() {
+        // Функция считывает все обложки, сохраненные внутри каталога приложения
         val filePath = File(
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
             PLAYLIST_COVER
         )
 
         if (filePath.exists()) {
-            for(file in filePath.listFiles()){
-                Log.e("LOG","$file")
+            val logString =StringBuilder()
+            filePath.listFiles()?.forEachIndexed{ index, element ->
+                logString.append("($index)-$element\n")
             }
+            Snackbar.make(binding.imgAddPhoto, logString.toString(), Snackbar.LENGTH_INDEFINITE)
+                .setTextMaxLines(20)
+                .setAction("OK"){}
+                .show()
         }
-        Log.e("LOG","___________________________________")
-        vm.clearDB()
     }
 
     private fun setBehaviour() {
@@ -182,9 +185,7 @@ class NewPlaylistFragment : Fragment() {
             vm.savePlayListToDB()
         }
 
-        binding.checkBase.setOnClickListener { directoryCheck() }
-
-        binding.deleteBase.setOnClickListener { vm.clearDB() }
+        binding.btnCheckBase.setOnClickListener { directoryCheck() }
 
         // Перехватываем нажатие назад
         requireActivity().onBackPressedDispatcher.addCallback(onBackPressedCallback = object :
@@ -211,6 +212,5 @@ class NewPlaylistFragment : Fragment() {
     companion object{
         const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY ="NEW_PLAYLIST_DESTROY"
     }
-
 
 }

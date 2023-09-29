@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.playlistmaker.data.db.playlist.PlayListDB
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -16,12 +15,13 @@ import kotlinx.coroutines.withContext
 
 class FragmentPlayListsVm(
     private val playListController: PlayListController
-):ViewModel() {
+) : ViewModel() {
 
     // LiveData для состояния экрана фрагмента
     // FragmentPlaylistsState.NothingFound - Показывать заглушку
     // FragmentPlaylistsState.Content - Показывать плейлисты
-    private val _playlistState = MutableStateFlow<FragmentPlaylistsState>( FragmentPlaylistsState.NothingFound(null))
+    private val _playlistState =
+        MutableStateFlow<FragmentPlaylistsState>(FragmentPlaylistsState.NothingFound(null))
     val playlistState = _playlistState as StateFlow<FragmentPlaylistsState>
 
     // LiveData для отображения ошибок
@@ -37,15 +37,23 @@ class FragmentPlayListsVm(
         val errorHandler = CoroutineExceptionHandler { _, throwable ->
             _errorMsg.value = throwable.message
         }
-        // Запускаю сохранение в другом потоке
+
+        // Запуск отслеживания состояния базы данных плейлистов
         viewModelScope.launch(errorHandler + Dispatchers.IO) {
             playListController.loadAllPlayLists().collect {
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     // Если не пустой список, то грузим
-                    if(it.isNotEmpty()) _playlistState.emit(FragmentPlaylistsState.Content(it))
+                    if (it.isNotEmpty()) _playlistState.emit(FragmentPlaylistsState.Content(it))
+                    else _playlistState.emit(FragmentPlaylistsState.NothingFound(null))
                 }
             }
         }
+    }
 
+    fun clearPlayListBD() {
+        viewModelScope.launch {
+            playListController.clearBD()
+            _errorMsg.postValue("DB deleted successfully")
+        }
     }
 }
