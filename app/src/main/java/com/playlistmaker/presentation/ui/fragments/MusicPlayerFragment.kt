@@ -14,6 +14,7 @@ import com.playlistmaker.databinding.ActivityPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.models.AlertMessaging
+import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -78,7 +79,7 @@ class MusicPlayerFragment : Fragment() {
 
         vm.currentMusTrack.observe(viewLifecycleOwner) { this.showTrackInfo(it) }
 
-        vm.errorMsg.observe(viewLifecycleOwner){showSnackBar(it)}
+        vm.errorMsg.observe(viewLifecycleOwner) { showSnackBar(it) }
 
         return binding.root
     }
@@ -90,10 +91,11 @@ class MusicPlayerFragment : Fragment() {
 
         binding.addToFavBtn.setOnClickListener { vm.pushAddToFavButton() }
 
-        binding.addToFavBtn.setOnLongClickListener{vm.showFavTracks()}
+        binding.addToFavBtn.setOnLongClickListener { vm.showFavTracks() }
 
-        binding.temporalBtn.setOnClickListener { vm.showFavTracks() }
-
+        binding.temporalBtn.setOnClickListener {
+            (requireActivity() as ActivityPlayerB).navigateToNewPlaylist()
+        }
     }
 
     private fun changeBtnPlayPause(state: ButtonState) {
@@ -114,7 +116,7 @@ class MusicPlayerFragment : Fragment() {
         with(binding) {
             playerTrackName.text = track.trackName
             playerArtistName.text = track.artistName
-            PlayerLblAlbum.text = track.collectionName.toString()
+            PlayerLblAlbum.text = track.collectionName
             PlayerLblGenre.text = track.primaryGenreName
             PlayerLblCountry.text = track.country
             PlayerLblFullDuration.text = track.trackTimeMillis.toTimeMmSs()
@@ -148,12 +150,8 @@ class MusicPlayerFragment : Fragment() {
 
     }
 
-    private fun showSnackBar(message:String){
+    private fun showSnackBar(message: String) {
         (requireActivity() as AlertMessaging).showSnackBar(messageToShow = message)
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onPause() {
@@ -163,7 +161,7 @@ class MusicPlayerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //vm.turnOffPlayer()
+        vm.turnOffPlayer()
         _binding = null
     }
 

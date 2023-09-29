@@ -20,6 +20,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.playlistmaker.presentation.models.AlertMessaging
+import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.activities.MainActivity
 import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -46,6 +48,13 @@ class NewPlaylistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
+
+        if (requireActivity() is MainActivity) {
+            (requireActivity() as AlertMessaging).showSnackBar("MainActivity")
+        } else if (requireActivity() is ActivityPlayerB) {
+
+            (requireActivity() as AlertMessaging).showSnackBar("Activity Player")
+        }
 
         vm.selectedImage.observe(viewLifecycleOwner) { setImageAsCover(it) }
 
@@ -151,13 +160,13 @@ class NewPlaylistFragment : Fragment() {
         )
 
         if (filePath.exists()) {
-            val logString =StringBuilder()
-            filePath.listFiles()?.forEachIndexed{ index, element ->
+            val logString = StringBuilder()
+            filePath.listFiles()?.forEachIndexed { index, element ->
                 logString.append("($index)-$element\n")
             }
             Snackbar.make(binding.imgAddPhoto, logString.toString(), Snackbar.LENGTH_INDEFINITE)
                 .setTextMaxLines(20)
-                .setAction("OK"){}
+                .setAction("OK") {}
                 .show()
         }
     }
@@ -204,13 +213,13 @@ class NewPlaylistFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         Log.e("LOG_TAG", "DESTROY PLAYLIST")
-        parentFragmentManager.setFragmentResult(FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY,Bundle())
+        parentFragmentManager.setFragmentResult(FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY, Bundle())
 
         _binding = null
     }
 
-    companion object{
-        const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY ="NEW_PLAYLIST_DESTROY"
+    companion object {
+        const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY = "NEW_PLAYLIST_DESTROY"
     }
 
 }
