@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
@@ -15,20 +14,18 @@ import com.playlistmaker.databinding.ActivityPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.models.AlertMessaging
-import com.playlistmaker.presentation.ui.activities.ActivityPlayer
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 private const val ARG_TRACK = "MUSIC_TRACK"
 
 class MusicPlayerFragment : Fragment() {
-
-
     private var _binding: ActivityPlayerBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var vm: FragmentMusicPlayerVm
+    private val vm: FragmentMusicPlayerVm by viewModel()
 
     private var musicTrack = MusicTrack()
 
@@ -39,15 +36,15 @@ class MusicPlayerFragment : Fragment() {
     ): View {
         _binding = ActivityPlayerBinding.inflate(layoutInflater)
 
-        vm = ViewModelProvider(this)[FragmentMusicPlayerVm::class.java]
-
         // Снимаем аргументы переданные через activity
         arguments?.let { content ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val param: MusicTrack? = content.getParcelable(ARG_TRACK, MusicTrack::class.java)
                 param?.let {
                     musicTrack = it
-                    showTrackInfo(musicTrack)
+
+                    // Подгружаем musicTrack into viewModel
+                    vm.loadCurrentMusicTrack(trackToPlay = musicTrack)
                 }
             }
         }
@@ -62,20 +59,26 @@ class MusicPlayerFragment : Fragment() {
         vm.playerState.observe(viewLifecycleOwner) {
             when (it) {
                 PlayerState.STATE_PLAYING -> {
-                    changeBtnPlayPause(ActivityPlayer.ButtonState.BUTTON_PAUSE)
+                    changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
                     vm.startTrackPlayingTimer()
                 }
+
                 PlayerState.STATE_PAUSED -> {
-                    changeBtnPlayPause(ActivityPlayer.ButtonState.BUTTON_PLAY)
+                    changeBtnPlayPause(ButtonState.BUTTON_PLAY)
                 }
-                PlayerState.STATE_COMPLETE ->{
-                    changeBtnPlayPause(ActivityPlayer.ButtonState.BUTTON_PLAY)
+
+                PlayerState.STATE_COMPLETE -> {
+                    changeBtnPlayPause(ButtonState.BUTTON_PLAY)
                 }
 
                 else -> {}
             }
 
         }
+
+        vm.currentMusTrack.observe(viewLifecycleOwner) { this.showTrackInfo(it) }
+
+        vm.errorMsg.observe(viewLifecycleOwner){showSnackBar(it)}
 
         return binding.root
     }
@@ -85,13 +88,18 @@ class MusicPlayerFragment : Fragment() {
 
         binding.playerBtnPlay.setOnClickListener { vm.pushPlayPauseButton() }
 
+        binding.addToFavBtn.setOnClickListener { vm.pushAddToFavButton() }
+
+        binding.addToFavBtn.setOnLongClickListener{vm.showFavTracks()}
+
+        binding.temporalBtn.setOnClickListener { vm.showFavTracks() }
+
     }
 
-    private fun changeBtnPlayPause(state: ActivityPlayer.ButtonState) {
-        if (state == ActivityPlayer.ButtonState.BUTTON_PLAY) {
-            binding.playerBtnPlay.setImageResource(R.drawable.play_track)
-        } else {
-            binding.playerBtnPlay.setImageResource(R.drawable.playerpause)
+    private fun changeBtnPlayPause(state: ButtonState) {
+        when (state) {
+            ButtonState.BUTTON_PLAY -> binding.playerBtnPlay.setImageResource(R.drawable.play_track)
+            ButtonState.BUTTON_PAUSE -> binding.playerBtnPlay.setImageResource(R.drawable.playerpause)
         }
     }
 
@@ -140,16 +148,22 @@ class MusicPlayerFragment : Fragment() {
 
     }
 
+    private fun showSnackBar(message:String){
+        (requireActivity() as AlertMessaging).showSnackBar(messageToShow = message)
+    }
+
     override fun onResume() {
         super.onResume()
     }
 
     override fun onPause() {
         super.onPause()
+        vm.playPauseMusic(isPlaying = false)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        //vm.turnOffPlayer()
         _binding = null
     }
 
@@ -167,5 +181,9 @@ class MusicPlayerFragment : Fragment() {
         }
     }
 
+    enum class ButtonState {
+        BUTTON_PLAY,
+        BUTTON_PAUSE
+    }
 }
 

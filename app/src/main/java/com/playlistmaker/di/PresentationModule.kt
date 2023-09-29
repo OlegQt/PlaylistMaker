@@ -1,6 +1,5 @@
 package com.playlistmaker.di
 
-import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
@@ -41,5 +40,12 @@ val presentationModule = module {
 
     viewModel { FragmentNewPlayListVm(playListController = get()) }
 
-    viewModel { FragmentMusicPlayerVm(addToFavoriteUseCase = get()) }
+    viewModel {
+        FragmentMusicPlayerVm(
+            musicalPlayer = get(),
+            addToFavoriteUseCase = get(),
+            loadFavouriteUseCase = get(),
+            deleteFavouriteUseCase = get()
+        )
+    }
 }
