@@ -1,11 +1,13 @@
 package com.playlistmaker.di
 
+import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentSearchVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentSettingsVm
-import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -31,11 +33,13 @@ val presentationModule = module {
         )
     }
 
-    viewModel<FragmentSettingsVm> { FragmentSettingsVm(settingsController = get()) }
+    viewModel { FragmentSettingsVm(settingsController = get()) }
 
     viewModel { FragmentFavouriteTracksVm(loadFavouriteTracks = get()) }
 
     viewModel { FragmentPlayListsVm(playListController = get()) }
 
     viewModel { FragmentNewPlayListVm(playListController = get()) }
+
+    viewModel { FragmentMusicPlayerVm(addToFavoriteUseCase = get()) }
 }

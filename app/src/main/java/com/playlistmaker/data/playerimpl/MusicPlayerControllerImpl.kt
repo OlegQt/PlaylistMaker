@@ -3,14 +3,15 @@ import android.media.MediaPlayer
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
+import kotlinx.coroutines.flow.Flow
 
-class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
+class MusicPlayerControllerImpl() :
     MusicPlayerController {
 
     private val mediaPlayer: MediaPlayer = MediaPlayer()
     private var currentState = PlayerState.STATE_DEFAULT
 
-
+    private lateinit var listener: OnPlayerStateListener
 
     init {
         mediaPlayer.setOnPreparedListener {
@@ -23,6 +24,11 @@ class MusicPlayerControllerImpl(private val listener: OnPlayerStateListener) :
             it.seekTo(0)
             listener.playerStateChanged(PlayerState.STATE_COMPLETE)
         }
+    }
+
+    // THIS FUN SHOULD BE FIRST
+    override fun setMusicPlayerStateListener(actualListener: OnPlayerStateListener){
+        listener = actualListener
     }
 
 

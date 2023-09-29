@@ -9,6 +9,7 @@ import com.playlistmaker.data.db.playlist.PlayListMapper
 import com.playlistmaker.data.mapper.MusicTrackMapper
 import com.playlistmaker.data.network.ItunesMediaSearchApi
 import com.playlistmaker.data.network.RetrofitNetworkClient
+import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
 import com.playlistmaker.data.repository.FavouriteMusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicRepositoryImpl
 import com.playlistmaker.data.repository.MusicTrackRepositoryImpl
@@ -19,6 +20,7 @@ import com.playlistmaker.domain.db.PlayListRepository
 import com.playlistmaker.domain.repository.MusicRepository
 import com.playlistmaker.domain.repository.MusicTrackRepository
 import com.playlistmaker.domain.repository.SettingsRepository
+import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -80,4 +82,6 @@ val dataModule = module {
     single { Room.databaseBuilder(androidContext(),PlayListDB::class.java,"PlayListDb").build() }
 
     factory { PlayListMapper() }
+
+
 }

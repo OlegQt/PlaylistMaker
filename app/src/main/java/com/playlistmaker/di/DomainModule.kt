@@ -39,9 +39,11 @@ val domainModule = module {
     factory<DeleteMusicSearchHistoryUseCase> { DeleteMusicSearchHistoryUseCaseImpl(musicRepository = get()) }
 
     // UseCase для загрузки контроллера проигрыванием музыки
-    factory<MusicPlayerController> { (externalListener: OnPlayerStateListener) ->
+/*    factory<MusicPlayerController> { (externalListener: OnPlayerStateListener) ->
         MusicPlayerControllerImpl(listener = externalListener)
-    }
+    }*/
+
+    factory <MusicPlayerController> { MusicPlayerControllerImpl() }
 
     // UseCase для загрузки контроллера настроек приложения
     factory<SettingsController> { SettingsControllerImpl(settingsRepository = get()) }
@@ -67,6 +69,5 @@ val domainModule = module {
     }
 
     factory<PlayListController> { PlayListControllerImpl(playListRepository = get()) }
-
 
 }
