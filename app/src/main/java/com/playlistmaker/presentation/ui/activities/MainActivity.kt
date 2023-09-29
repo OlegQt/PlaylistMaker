@@ -3,19 +3,18 @@ package com.playlistmaker.presentation.ui.activities
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
 import com.playlistmaker.databinding.ActivityMainBinding
 import com.playlistmaker.presentation.models.AlertMessaging
-import com.playlistmaker.presentation.ui.fragments.SearchFragment
 
 class MainActivity : AppCompatActivity(), AlertMessaging {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navController:NavController
+    private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,18 +29,17 @@ class MainActivity : AppCompatActivity(), AlertMessaging {
 
 
         // Настройка скрытия навигационной панели при отображении определенных фрагментов
-        navController.addOnDestinationChangedListener{_,destination,_ ->
-            when(destination.id){
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
                 R.id.newPlaylistFragment -> binding.rootNavigationBar.visibility = View.GONE
-                else ->binding.rootNavigationBar.visibility = View.VISIBLE
+                else -> binding.rootNavigationBar.visibility = View.VISIBLE
             }
 
         }
     }
 
-    fun navigateBack(){
-        //navController.navigateUp()
-        navController.popBackStack()
+    fun navigateBack() {
+        navController.navigateUp()
     }
 
     override fun showAlertDialog(alertMessage: String) {
@@ -50,5 +48,9 @@ class MainActivity : AppCompatActivity(), AlertMessaging {
             .setTitle("Dialog")
             .setNeutralButton("OK", null)
             .show()
+    }
+
+    override fun showSnackBar(messageToShow: String) {
+        Snackbar.make(binding.rootNavigationBar, messageToShow, Snackbar.LENGTH_LONG).show()
     }
 }

@@ -11,14 +11,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.logic.PlayListAdapter
+import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.fragments.NewPlaylistFragment
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -46,7 +47,7 @@ class PlayListsFragment : Fragment() {
                 // TODO: Don't forget to check if map is empty
                 playListFromDB.clear()
                 playListFromDB.addAll(newState.playLists)
-                playlistAdapter.notifyItemRangeChanged(0,playListFromDB.size)
+                playlistAdapter.notifyItemRangeChanged(0, playListFromDB.size)
             }
         }
     }
@@ -58,15 +59,18 @@ class PlayListsFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
 
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+        lifecycleScope.launch(CoroutineExceptionHandler { _, throwable ->
+            (requireActivity() as AlertMessaging).showSnackBar(throwable.message.toString())
+            // Вызов показа SnackBar or Toast напрямую приводит к крашу, в случае смены темы приложения
+        }) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.playlistState.collect { setScreenState(it) }
             }
         }
 
         vm.errorMsg.observe(viewLifecycleOwner) {
-            Snackbar.make(binding.stubLayout, it, Snackbar.LENGTH_INDEFINITE).setAction("OK") {}
-                .show()
+            (requireActivity() as AlertMessaging).showSnackBar(it)
+            //Snackbar.make(binding.root, it, Snackbar.LENGTH_INDEFINITE).setAction("OK") {}                .show()
         }
 
         return binding.root
