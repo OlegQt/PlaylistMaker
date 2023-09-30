@@ -3,6 +3,7 @@ package com.playlistmaker.presentation.ui.fragments
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +59,7 @@ class MusicPlayerFragment : Fragment() {
         }
 
         vm.playerState.observe(viewLifecycleOwner) {
+            Log.e("LOG","MusicState $it")
             when (it) {
                 PlayerState.STATE_PLAYING -> {
                     changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
@@ -66,15 +68,16 @@ class MusicPlayerFragment : Fragment() {
 
                 PlayerState.STATE_PAUSED -> {
                     changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+                    vm.stopTrackPlayingTimer()
                 }
 
                 PlayerState.STATE_COMPLETE -> {
+                    // Проигрывание трека завершилось
                     changeBtnPlayPause(ButtonState.BUTTON_PLAY)
                 }
 
                 else -> {}
             }
-
         }
 
         vm.currentMusTrack.observe(viewLifecycleOwner) { this.showTrackInfo(it) }
@@ -94,6 +97,7 @@ class MusicPlayerFragment : Fragment() {
         binding.addToFavBtn.setOnLongClickListener { vm.showFavTracks() }
 
         binding.temporalBtn.setOnClickListener {
+            //vm.playPauseMusic(isPlaying = false)
             (requireActivity() as ActivityPlayerB).navigateToNewPlaylist()
         }
     }
@@ -156,6 +160,7 @@ class MusicPlayerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        Log.e("LOG","Player Fragment Pause")
         vm.playPauseMusic(isPlaying = false)
     }
 
@@ -163,6 +168,13 @@ class MusicPlayerFragment : Fragment() {
         super.onDestroyView()
         vm.turnOffPlayer()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        Log.e("LOG","Player Fragment onResume")
+        Log.e("LOG","${musicTrack.trackName} onResume")
     }
 
     private fun Long.toTimeMmSs(): String {

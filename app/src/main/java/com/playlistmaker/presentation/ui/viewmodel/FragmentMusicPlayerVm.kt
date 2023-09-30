@@ -1,5 +1,6 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -45,6 +46,10 @@ class FragmentMusicPlayerVm(
         }
     }
 
+    fun preparePlayer(trackToPlay: MusicTrack){
+        musicalPlayer.preparePlayer(musTrackUrl = trackToPlay.previewUrl)
+    }
+
     fun loadCurrentMusicTrack(trackToPlay: MusicTrack) {
         musicalPlayer.setMusicPlayerStateListener { _playerState.postValue(it) }
         musicalPlayer.preparePlayer(musTrackUrl = trackToPlay.previewUrl)
@@ -52,10 +57,13 @@ class FragmentMusicPlayerVm(
     }
 
     fun pushPlayPauseButton() {
+        Log.e("LOG","PUSH BUTTON PLAY ${_playerState.value}")
         when (_playerState.value) {
             PlayerState.STATE_PLAYING -> playPauseMusic(false)
             PlayerState.STATE_PAUSED -> playPauseMusic(true)
             PlayerState.STATE_PREPARED -> playPauseMusic(true)
+            PlayerState.STATE_COMPLETE -> playPauseMusic(true)
+
             else -> {}
         }
     }
@@ -64,6 +72,10 @@ class FragmentMusicPlayerVm(
         if (isPlaying) musicalPlayer.playMusic()
         else musicalPlayer.pauseMusic()
 
+    }
+
+    fun stopTrackPlayingTimer(){
+        trackPlayingTimerListener?.cancel()
     }
 
     fun startTrackPlayingTimer() {

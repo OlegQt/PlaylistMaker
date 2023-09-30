@@ -203,7 +203,8 @@ class NewPlaylistFragment : Fragment() {
         when (requireActivity()) {
             is MainActivity -> (requireActivity() as MainActivity).navigateBack()
             is ActivityPlayerB -> {
-                if (isAdded) (requireActivity() as ActivityPlayerB).navigateBack()
+                parentFragmentManager.popBackStack()
+                //if (isAdded) (requireActivity() as ActivityPlayerB).navigateBack()
             }
         }
     }

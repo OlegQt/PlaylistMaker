@@ -1,5 +1,6 @@
 package com.playlistmaker.data.playerimpl
 import android.media.MediaPlayer
+import android.util.Log
 import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
@@ -31,18 +32,24 @@ class MusicPlayerControllerImpl() :
         listener = actualListener
     }
 
-
     override fun preparePlayer(musTrackUrl:String) {
         try {
             mediaPlayer.setDataSource(musTrackUrl)
             mediaPlayer.prepareAsync()
         } catch (t: Throwable) {
+            Log.e("LOG","player message ${t.message.toString()}")
             // The base class for all errors and exceptions
         }
     }
 
     override fun playMusic() {
-        mediaPlayer.start()
+        try {
+            mediaPlayer.start()
+        }
+        catch (t:Throwable){
+            Log.e("LOG","START PLAYER THROWABLE ${t.message}")
+        }
+
         listener.playerStateChanged(PlayerState.STATE_PLAYING)
     }
 
@@ -54,6 +61,7 @@ class MusicPlayerControllerImpl() :
     override fun turnOffPlayer() {
         mediaPlayer.stop()
         mediaPlayer.release()
+        Log.e("LOG","mediaPlayer.stop()")
         currentState = PlayerState.STATE_DEFAULT
     }
 

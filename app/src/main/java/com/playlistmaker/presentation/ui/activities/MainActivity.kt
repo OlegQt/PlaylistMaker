@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity(), AlertMessaging {
                 R.id.newPlaylistFragment -> binding.rootNavigationBar.visibility = View.GONE
                 else -> binding.rootNavigationBar.visibility = View.VISIBLE
             }
-
         }
     }
 

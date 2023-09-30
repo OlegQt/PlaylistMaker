@@ -13,6 +13,7 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.logic.SearchTrackAdapter
 import com.playlistmaker.presentation.models.FragmentFavouriteTracksState
 import com.playlistmaker.presentation.ui.activities.ActivityPlayer
+import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -24,11 +25,11 @@ class FavouriteTracksFragment : Fragment() {
     private val vm: FragmentFavouriteTracksVm by viewModel()
     private var favouriteTracksList = arrayListOf<MusicTrack>()
     private val adapter = SearchTrackAdapter(favouriteTracksList) {
-        startPlayerActivity(favouriteTracksList[it].apply { isFavourite=true })
+        startPlayerActivity(favouriteTracksList[it].apply { isFavourite = true })
     }
 
     private fun startPlayerActivity(musicTrackToPlay: MusicTrack) {
-        val intentPlayerActivity = Intent(requireContext(), ActivityPlayer::class.java)
+        val intentPlayerActivity = Intent(requireContext(), ActivityPlayerB::class.java)
         intentPlayerActivity.putExtra(MusicTrack.TRACK_KEY, musicTrackToPlay)
         startActivity(intentPlayerActivity)
     }
@@ -36,7 +37,7 @@ class FavouriteTracksFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentFavouriteTracksBinding.inflate(inflater, container, false)
 
 
@@ -87,5 +88,4 @@ class FavouriteTracksFragment : Fragment() {
             arguments = Bundle().apply { putString(PARAM_TITLE, strParam) }
         }
     }
-
 }

@@ -12,6 +12,7 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.fragments.MusicPlayerFragment
 import com.playlistmaker.presentation.ui.fragments.NewPlaylistFragment
+import com.playlistmaker.presentation.ui.fragments.TemporalFragment
 
 class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
     private lateinit var binding: ActivityPlayerBBinding
@@ -57,6 +58,7 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
     fun navigateToNewPlaylist() {
         supportFragmentManager.commit {
             replace(binding.fragmentHolder.id, NewPlaylistFragment())
+            //replace(binding.fragmentHolder.id, TemporalFragment())
             addToBackStack(null)
         }
     }
