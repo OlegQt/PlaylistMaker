@@ -25,6 +25,12 @@ class MusicPlayerControllerImpl() :
             it.seekTo(0)
             listener.playerStateChanged(PlayerState.STATE_COMPLETE)
         }
+
+        mediaPlayer.setOnErrorListener { mp, what, extra ->
+            // Обработка ошибки
+            Log.e("LOG", "MediaPlayer Error: what=$what, extra=$extra")
+            return@setOnErrorListener true // Возвращайте true, чтобы указать, что вы обработали ошибку
+        }
     }
 
     // THIS FUN SHOULD BE FIRST
@@ -33,24 +39,32 @@ class MusicPlayerControllerImpl() :
     }
 
     override fun preparePlayer(musTrackUrl:String) {
+        Log.e("LOG","PLAYER CONTROLLER IMPL PREPARE \nURL = $musTrackUrl")
         try {
             mediaPlayer.setDataSource(musTrackUrl)
             mediaPlayer.prepareAsync()
         } catch (t: Throwable) {
-            Log.e("LOG","player message ${t.message.toString()}")
-            // The base class for all errors and exceptions
+            Log.e("LOG","preparePlayer Throwable ${t.printStackTrace()}")
+            listener.playerStateChanged(PlayerState.STATE_NEED_RESET)
+        }
+        catch (e:Exception){
+            Log.e("LOG","preparePlayer Exception ${e.message}")
         }
     }
 
     override fun playMusic() {
+        Log.e("LOG","Функция проигрывания внутри контроллера")
         try {
             mediaPlayer.start()
+            listener.playerStateChanged(PlayerState.STATE_PLAYING)
         }
         catch (t:Throwable){
-            Log.e("LOG","START PLAYER THROWABLE ${t.message}")
+            Log.e("LOG","START PLAYER THROWABLE ${t.printStackTrace()}")
         }
-
-        listener.playerStateChanged(PlayerState.STATE_PLAYING)
+        catch (e: IllegalStateException) {
+            // Обработка ошибки
+            Log.e("LOG", "IllegalStateException: ${e.printStackTrace()}")
+        }
     }
 
     override fun pauseMusic() {
@@ -66,5 +80,10 @@ class MusicPlayerControllerImpl() :
     }
 
     override fun getCurrentPos(): Int = mediaPlayer.currentPosition
+    override fun resetPlayer() {
+        // Resets the MediaPlayer to its uninitialized state.
+        // After calling this method, you will have to initialize it again by setting the data source and calling prepare().
+        mediaPlayer.reset()
+    }
 
 }

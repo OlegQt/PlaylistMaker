@@ -46,10 +46,6 @@ class FragmentMusicPlayerVm(
         }
     }
 
-    fun preparePlayer(trackToPlay: MusicTrack){
-        musicalPlayer.preparePlayer(musTrackUrl = trackToPlay.previewUrl)
-    }
-
     fun loadCurrentMusicTrack(trackToPlay: MusicTrack) {
         musicalPlayer.setMusicPlayerStateListener { _playerState.postValue(it) }
         musicalPlayer.preparePlayer(musTrackUrl = trackToPlay.previewUrl)
@@ -63,19 +59,22 @@ class FragmentMusicPlayerVm(
             PlayerState.STATE_PAUSED -> playPauseMusic(true)
             PlayerState.STATE_PREPARED -> playPauseMusic(true)
             PlayerState.STATE_COMPLETE -> playPauseMusic(true)
-
+            PlayerState.STATE_DEFAULT ->{}
             else -> {}
         }
     }
 
     fun playPauseMusic(isPlaying: Boolean) {
-        if (isPlaying) musicalPlayer.playMusic()
-        else musicalPlayer.pauseMusic()
-
+            if (isPlaying) musicalPlayer.playMusic()
+            else musicalPlayer.pauseMusic()
     }
 
     fun stopTrackPlayingTimer(){
         trackPlayingTimerListener?.cancel()
+    }
+
+    fun resetPlayer(){
+        musicalPlayer.resetPlayer()
     }
 
     fun startTrackPlayingTimer() {

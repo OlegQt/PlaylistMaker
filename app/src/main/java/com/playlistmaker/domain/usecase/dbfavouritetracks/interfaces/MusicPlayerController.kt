@@ -10,4 +10,5 @@ interface MusicPlayerController {
     fun pauseMusic()
     fun turnOffPlayer()
     fun getCurrentPos():Int
+    fun resetPlayer()
 }

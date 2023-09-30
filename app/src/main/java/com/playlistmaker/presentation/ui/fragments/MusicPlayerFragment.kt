@@ -38,15 +38,14 @@ class MusicPlayerFragment : Fragment() {
     ): View {
         _binding = ActivityPlayerBinding.inflate(layoutInflater)
 
+        Log.e("LOG","Повторный заход в чтение аргументов в onCreateView PlayerFragment")
         // Снимаем аргументы переданные через activity
         arguments?.let { content ->
             var param:MusicTrack?=null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 param = content.getParcelable(ARG_TRACK, MusicTrack::class.java)
             }
-            else{
 
-            }
             param?.let {
                 musicTrack = it
                 // Подгружаем musicTrack into viewModel
@@ -55,7 +54,7 @@ class MusicPlayerFragment : Fragment() {
         }
 
         // Подгружаем musicTrack into viewModel
-        vm.loadCurrentMusicTrack(trackToPlay = musicTrack)
+        //vm.loadCurrentMusicTrack(trackToPlay = musicTrack)
 
         vm.playingTime.observe(viewLifecycleOwner) {
             binding.playerPlayTime.text = it.toTimeMmSs()
@@ -79,6 +78,10 @@ class MusicPlayerFragment : Fragment() {
                     changeBtnPlayPause(ButtonState.BUTTON_PLAY)
                 }
 
+                PlayerState.STATE_NEED_RESET ->{
+                    // Состояние неизвестной ошибки
+                }
+
                 else -> {}
             }
         }
@@ -100,7 +103,7 @@ class MusicPlayerFragment : Fragment() {
         binding.addToFavBtn.setOnLongClickListener { vm.showFavTracks() }
 
         binding.temporalBtn.setOnClickListener {
-            //vm.playPauseMusic(isPlaying = false)
+            vm.turnOffPlayer()
             (requireActivity() as ActivityPlayerB).navigateToNewPlaylist()
         }
     }
@@ -175,9 +178,7 @@ class MusicPlayerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
         Log.e("LOG","Player Fragment onResume")
-        Log.e("LOG","${musicTrack.trackName} onResume")
     }
 
     private fun Long.toTimeMmSs(): String {
