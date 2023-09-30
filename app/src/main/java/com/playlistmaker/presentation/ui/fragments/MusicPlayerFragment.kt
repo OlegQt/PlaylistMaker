@@ -3,7 +3,6 @@ package com.playlistmaker.presentation.ui.fragments
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,10 +37,9 @@ class MusicPlayerFragment : Fragment() {
     ): View {
         _binding = ActivityPlayerBinding.inflate(layoutInflater)
 
-        Log.e("LOG","Повторный заход в чтение аргументов в onCreateView PlayerFragment")
         // Снимаем аргументы переданные через activity
         arguments?.let { content ->
-            var param:MusicTrack?=null
+            var param: MusicTrack? = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 param = content.getParcelable(ARG_TRACK, MusicTrack::class.java)
             }
@@ -61,7 +59,6 @@ class MusicPlayerFragment : Fragment() {
         }
 
         vm.playerState.observe(viewLifecycleOwner) {
-            Log.e("LOG","MusicState $it")
             when (it) {
                 PlayerState.STATE_PLAYING -> {
                     changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
@@ -76,10 +73,6 @@ class MusicPlayerFragment : Fragment() {
                 PlayerState.STATE_COMPLETE -> {
                     // Проигрывание трека завершилось
                     changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-                }
-
-                PlayerState.STATE_NEED_RESET ->{
-                    // Состояние неизвестной ошибки
                 }
 
                 else -> {}
@@ -103,8 +96,9 @@ class MusicPlayerFragment : Fragment() {
         binding.addToFavBtn.setOnLongClickListener { vm.showFavTracks() }
 
         binding.temporalBtn.setOnClickListener {
-            //vm.turnOffPlayer()
-            (requireActivity() as ActivityPlayerB).navigateToNewPlaylist()
+            //(requireActivity() as ActivityPlayerB).navigateToNewPlaylist()
+            (requireActivity() as ActivityPlayerB).openBottomSheet()
+            vm.showPlaylists()
         }
     }
 
@@ -166,7 +160,6 @@ class MusicPlayerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        Log.e("LOG","Player Fragment Pause")
         vm.playPauseMusic(isPlaying = false)
     }
 
@@ -174,11 +167,6 @@ class MusicPlayerFragment : Fragment() {
         super.onDestroyView()
         vm.turnOffPlayer()
         _binding = null
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.e("LOG","Player Fragment onResume")
     }
 
     private fun Long.toTimeMmSs(): String {

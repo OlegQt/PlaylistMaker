@@ -35,10 +35,8 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
 
             supportFragmentManager.addOnBackStackChangedListener {
                 if (supportFragmentManager.backStackEntryCount == 0) {
-                    showSnackBar("A fragment")
                 }
                 if (supportFragmentManager.backStackEntryCount == 1) {
-                    showSnackBar("B fragment")
                 }
             }
         }
@@ -58,7 +56,6 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
     fun navigateToNewPlaylist() {
         supportFragmentManager.commit {
             replace(binding.fragmentHolder.id, NewPlaylistFragment())
-            //replace(binding.fragmentHolder.id, TemporalFragment())
             addToBackStack(null)
         }
     }
@@ -67,10 +64,12 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
         supportFragmentManager.popBackStack()
     }
 
+    fun openBottomSheet(){
+        binding.standardBottomSheet.visibility=View.VISIBLE
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        Log.e("LOG","Destroy ActivityPlayer")
-
     }
 
     override fun showAlertDialog(alertMessage: String) {

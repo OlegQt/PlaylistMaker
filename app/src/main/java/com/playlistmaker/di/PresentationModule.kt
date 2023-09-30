@@ -45,7 +45,8 @@ val presentationModule = module {
             musicalPlayer = get(),
             addToFavoriteUseCase = get(),
             loadFavouriteUseCase = get(),
-            deleteFavouriteUseCase = get()
+            deleteFavouriteUseCase = get(),
+            playListController = get()
         )
     }
 }

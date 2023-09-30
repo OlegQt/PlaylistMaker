@@ -11,10 +11,12 @@ import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTra
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.DeleteMusicTrackFromFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
+import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 const val TRACK_DURATION_UPDATE_mills = 300L
@@ -23,7 +25,8 @@ class FragmentMusicPlayerVm(
     private val musicalPlayer: MusicPlayerController,
     private val addToFavoriteUseCase: AddMusicTrackToFavouritesUseCase,
     private val loadFavouriteUseCase: LoadFavouriteTracksUseCase,
-    private val deleteFavouriteUseCase: DeleteMusicTrackFromFavouritesUseCase
+    private val deleteFavouriteUseCase: DeleteMusicTrackFromFavouritesUseCase,
+    private val playListController: PlayListController
 ) : ViewModel() {
     // Состояние плеера
     private var _playerState = MutableLiveData<PlayerState>()
@@ -37,6 +40,8 @@ class FragmentMusicPlayerVm(
 
     private val _currentPlayingMusTrack = MutableLiveData<MusicTrack>()
     val currentMusTrack = _currentPlayingMusTrack as LiveData<MusicTrack>
+
+    val _playlists = MutableLiveData<String>()
 
     private var trackPlayingTimerListener: Job? = null
 
@@ -141,6 +146,19 @@ class FragmentMusicPlayerVm(
             }
         }
         return true
+    }
+
+    fun showPlaylists(){
+        viewModelScope.launch {
+            playListController.loadAllPlayLists().collect{
+                val string = with(StringBuilder()){
+                    it.forEachIndexed { index, playList ->
+                        append("$index --- ${playList.name}  \n")
+                    }
+                }
+                _errorMsg.postValue(string.toString())
+            }
+        }
     }
 
 }

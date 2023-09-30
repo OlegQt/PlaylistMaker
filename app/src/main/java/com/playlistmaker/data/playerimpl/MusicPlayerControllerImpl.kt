@@ -10,28 +10,11 @@ class MusicPlayerControllerImpl() :
     MusicPlayerController {
 
     private val mediaPlayer: MediaPlayer = MediaPlayer()
-    private var currentState = PlayerState.STATE_DEFAULT
 
     private lateinit var listener: OnPlayerStateListener
 
-    init {
-        mediaPlayer.setOnPreparedListener {
-            listener.playerStateChanged(PlayerState.STATE_PREPARED)
-        }
+    private var isPrepared = false
 
-        mediaPlayer.setOnCompletionListener {
-            // Register a callback to be invoked when the end of a media source
-            // has been reached during playback.
-            it.seekTo(0)
-            listener.playerStateChanged(PlayerState.STATE_COMPLETE)
-        }
-
-        mediaPlayer.setOnErrorListener { mp, what, extra ->
-            // Обработка ошибки
-            Log.e("LOG", "MediaPlayer Error: what=$what, extra=$extra")
-            return@setOnErrorListener true // Возвращайте true, чтобы указать, что вы обработали ошибку
-        }
-    }
 
     // THIS FUN SHOULD BE FIRST
     override fun setMusicPlayerStateListener(actualListener: OnPlayerStateListener){
@@ -39,31 +22,32 @@ class MusicPlayerControllerImpl() :
     }
 
     override fun preparePlayer(musTrackUrl:String) {
-        Log.e("LOG","PLAYER CONTROLLER IMPL PREPARE \nURL = $musTrackUrl")
-        try {
-            mediaPlayer.setDataSource(musTrackUrl)
-            mediaPlayer.prepareAsync()
-        } catch (t: Throwable) {
-            Log.e("LOG","preparePlayer Throwable ${t.printStackTrace()}")
-            listener.playerStateChanged(PlayerState.STATE_NEED_RESET)
+        mediaPlayer.apply {
+            setDataSource(musTrackUrl)
+            prepareAsync()
+
+            mediaPlayer.setOnPreparedListener {
+                isPrepared=true
+                listener.playerStateChanged(PlayerState.STATE_PREPARED)
+            }
+
+            mediaPlayer.setOnCompletionListener {
+                // Register a callback to be invoked when the end of a media source
+                // has been reached during playback.
+                it.seekTo(0)
+                listener.playerStateChanged(PlayerState.STATE_COMPLETE)
+            }
         }
-        catch (e:Exception){
-            Log.e("LOG","preparePlayer Exception ${e.message}")
-        }
+
     }
 
     override fun playMusic() {
-        Log.e("LOG","Функция проигрывания внутри контроллера")
         try {
             mediaPlayer.start()
             listener.playerStateChanged(PlayerState.STATE_PLAYING)
         }
         catch (t:Throwable){
             Log.e("LOG","START PLAYER THROWABLE ${t.printStackTrace()}")
-        }
-        catch (e: IllegalStateException) {
-            // Обработка ошибки
-            Log.e("LOG", "IllegalStateException: ${e.printStackTrace()}")
         }
     }
 
@@ -73,10 +57,8 @@ class MusicPlayerControllerImpl() :
     }
 
     override fun turnOffPlayer() {
-        mediaPlayer.stop()
-        mediaPlayer.release()
-        Log.e("LOG","mediaPlayer.stop()")
-        currentState = PlayerState.STATE_DEFAULT
+        mediaPlayer.reset()
+        isPrepared = false
     }
 
     override fun getCurrentPos(): Int = mediaPlayer.currentPosition
