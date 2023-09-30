@@ -40,14 +40,17 @@ class MusicPlayerFragment : Fragment() {
 
         // Снимаем аргументы переданные через activity
         arguments?.let { content ->
+            var param:MusicTrack?=null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val param: MusicTrack? = content.getParcelable(ARG_TRACK, MusicTrack::class.java)
-                param?.let {
-                    musicTrack = it
+                param = content.getParcelable(ARG_TRACK, MusicTrack::class.java)
+            }
+            else{
 
-                    // Подгружаем musicTrack into viewModel
-                    vm.loadCurrentMusicTrack(trackToPlay = musicTrack)
-                }
+            }
+            param?.let {
+                musicTrack = it
+                // Подгружаем musicTrack into viewModel
+                vm.loadCurrentMusicTrack(trackToPlay = musicTrack)
             }
         }
 
