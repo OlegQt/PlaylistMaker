@@ -103,7 +103,7 @@ class MusicPlayerFragment : Fragment() {
         binding.addToFavBtn.setOnLongClickListener { vm.showFavTracks() }
 
         binding.temporalBtn.setOnClickListener {
-            vm.turnOffPlayer()
+            //vm.turnOffPlayer()
             (requireActivity() as ActivityPlayerB).navigateToNewPlaylist()
         }
     }
