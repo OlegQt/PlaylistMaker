@@ -2,6 +2,7 @@ package com.playlistmaker.presentation.ui.activities
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
@@ -30,6 +31,15 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
             supportFragmentManager.commit {
                 add(binding.fragmentHolder.id, MusicPlayerFragment.newInstance(loadedMusicTrack))
             }
+
+            supportFragmentManager.addOnBackStackChangedListener {
+                if (supportFragmentManager.backStackEntryCount == 0) {
+                    showSnackBar("A fragment")
+                }
+                if (supportFragmentManager.backStackEntryCount == 1) {
+                    showSnackBar("B fragment")
+                }
+            }
         }
     }
 
@@ -52,10 +62,13 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
     }
 
     fun navigateBack() {
-        supportFragmentManager.commit {
-            replace(binding.fragmentHolder.id, MusicPlayerFragment.newInstance(loadedMusicTrack))
-            addToBackStack(null)
-        }
+        supportFragmentManager.popBackStack()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("LOG","Destroy ActivityPlayer")
+
     }
 
     override fun showAlertDialog(alertMessage: String) {

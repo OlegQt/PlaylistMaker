@@ -20,7 +20,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentNewPlaylistBinding
-import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.activities.MainActivity
 import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
@@ -49,12 +48,6 @@ class NewPlaylistFragment : Fragment() {
     ): View {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
 
-        if (requireActivity() is MainActivity) {
-            (requireActivity() as AlertMessaging).showSnackBar("MainActivity")
-        } else if (requireActivity() is ActivityPlayerB) {
-
-            (requireActivity() as AlertMessaging).showSnackBar("Activity Player")
-        }
 
         vm.selectedImage.observe(viewLifecycleOwner) { setImageAsCover(it) }
 
@@ -207,7 +200,12 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun exit() {
-        (requireActivity() as MainActivity).navigateBack()
+        when (requireActivity()) {
+            is MainActivity -> (requireActivity() as MainActivity).navigateBack()
+            is ActivityPlayerB -> {
+                if (isAdded) (requireActivity() as ActivityPlayerB).navigateBack()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -218,6 +216,10 @@ class NewPlaylistFragment : Fragment() {
         _binding = null
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        Log.e("LOG","onDetachedFromWindow NEW PLAYLIST")
+    }
     companion object {
         const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY = "NEW_PLAYLIST_DESTROY"
     }
