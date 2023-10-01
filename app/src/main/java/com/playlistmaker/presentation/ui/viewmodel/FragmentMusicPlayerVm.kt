@@ -5,7 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTrackToFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.DeleteMusicTrackFromFavouritesUseCase
@@ -137,7 +140,7 @@ class FragmentMusicPlayerVm(
         }
     }
 
-    fun showFavTracks(): Boolean {
+    fun showAllFavouriteTracks(): Boolean {
         val errorHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
             _errorMsg.value = throwable.message
         }
@@ -154,7 +157,21 @@ class FragmentMusicPlayerVm(
         return true
     }
 
-    fun updateListOfPlaylistFromDB() {
+    fun onPlayListClick(playList: PlayList){
+        if (playList.trackList.isNotEmpty()) {
+            val data = Gson().fromJson(playList.trackList, Array<Long>::class.java)
+            _errorMsg.postValue(data.first().toString())
+        }
+        else{
+            val newListJson = Gson().toJson(listOf(currentMusTrack.value?.trackId))
+            viewModelScope.launch {
+                playListController.updatePlayList(playList.copy(trackList = newListJson))
+            }
+        }
+
+    }
+
+    private fun updateListOfPlaylistFromDB() {
         viewModelScope.launch {
             playListController.loadAllPlayLists().collect {
                 _playlistState.value = FragmentPlaylistsState.Content(it)

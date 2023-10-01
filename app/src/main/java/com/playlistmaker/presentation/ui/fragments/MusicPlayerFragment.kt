@@ -44,7 +44,7 @@ class MusicPlayerFragment : Fragment() {
     private val playListFromDB = mutableListOf<PlayList>()
     private val adapterPlayList =
         PlayListAdapter(playListFromDB, PlayListAdapter.RecyclerType.SMALL,){
-            showSnackBar(it.toString())
+            onPlayListClick(playListFromDB[it])
         }
 
     override fun onCreateView(
@@ -137,7 +137,7 @@ class MusicPlayerFragment : Fragment() {
 
         binding.addToFavBtn.setOnClickListener { vm.pushAddToFavButton() }
 
-        binding.addToFavBtn.setOnLongClickListener { vm.showFavTracks() }
+        binding.addToFavBtn.setOnLongClickListener { vm.showAllFavouriteTracks() }
 
         binding.temporalBtn.setOnClickListener {
 
@@ -248,6 +248,10 @@ class MusicPlayerFragment : Fragment() {
 
     private fun Long.toTimeMmSs(): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(this)
+    }
+
+    private fun onPlayListClick(playListClicked: PlayList){
+        vm.onPlayListClick(playList = playListClicked)
     }
 
     companion object {

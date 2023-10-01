@@ -9,4 +9,6 @@ interface PlayListRepository {
     suspend fun loadAllPlayLists(): Flow<List<PlayList>>
 
     suspend fun clearDB()
+
+    suspend fun updatePlaylist(playList: PlayList)
 }

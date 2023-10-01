@@ -24,4 +24,8 @@ class PlayListRepositoryImpl(
     override suspend fun clearDB() {
         db.playListDao().deleteAllPlaylists()
     }
+
+    override suspend fun updatePlaylist(playList: PlayList) {
+        db.playListDao().updatePlaylist(mapper.convertToDao(playList))
+    }
 }

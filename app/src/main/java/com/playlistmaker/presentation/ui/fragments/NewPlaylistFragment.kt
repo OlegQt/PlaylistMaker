@@ -191,9 +191,9 @@ class NewPlaylistFragment : Fragment() {
 
         val backCallback = object : OnBackPressedCallback(enabled = true) {
             override fun handleOnBackPressed() {
-                //exitWithDialog()
-                (requireActivity() as ActivityPlayerB).showSnackBar("BACK")
-                exit()
+                exitWithDialog()
+                //(requireActivity() as ActivityPlayerB).showSnackBar("BACK")
+                //exit()
             }
         }
 

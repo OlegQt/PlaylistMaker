@@ -16,4 +16,8 @@ class PlayListControllerImpl(private val playListRepository: PlayListRepository)
     override suspend fun clearBD() {
         playListRepository.clearDB()
     }
+
+    override suspend fun updatePlayList(playListToUpdate: PlayList) {
+        playListRepository.updatePlaylist(playList = playListToUpdate)
+    }
 }

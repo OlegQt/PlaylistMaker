@@ -9,4 +9,6 @@ interface PlayListController {
     suspend fun loadAllPlayLists(): Flow<List<PlayList>>
 
     suspend fun  clearBD()
+
+    suspend fun updatePlayList(playListToUpdate: PlayList)
 }
