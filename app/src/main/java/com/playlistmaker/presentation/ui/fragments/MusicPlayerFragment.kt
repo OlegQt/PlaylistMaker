@@ -9,14 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
-import com.playlistmaker.databinding.ActivityPlayerBinding
+import com.playlistmaker.databinding.FragmentPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.models.PlayerState
+import com.playlistmaker.logic.PlayListAdapter
 import com.playlistmaker.presentation.models.AlertMessaging
+import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import kotlinx.coroutines.Dispatchers
@@ -28,19 +34,25 @@ import java.util.Locale
 private const val ARG_TRACK = "MUSIC_TRACK"
 
 class MusicPlayerFragment : Fragment() {
-    private var _binding: ActivityPlayerBinding? = null
+    private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
 
     private val vm: FragmentMusicPlayerVm by viewModel()
 
     private var musicTrack = MusicTrack()
 
+    private val playListFromDB = mutableListOf<PlayList>()
+    private val adapterPlayList =
+        PlayListAdapter(playListFromDB, PlayListAdapter.RecyclerType.SMALL,){
+            showSnackBar(it.toString())
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ActivityPlayerBinding.inflate(layoutInflater)
+        _binding = FragmentPlayerBinding.inflate(layoutInflater)
 
         // Снимаем аргументы переданные через activity
         arguments?.let { content ->
@@ -55,9 +67,6 @@ class MusicPlayerFragment : Fragment() {
                 vm.loadCurrentMusicTrack(trackToPlay = musicTrack)
             }
         }
-
-        // Подгружаем musicTrack into viewModel
-        //vm.loadCurrentMusicTrack(trackToPlay = musicTrack)
 
         vm.playingTime.observe(viewLifecycleOwner) {
             binding.playerPlayTime.text = it.toTimeMmSs()
@@ -93,6 +102,16 @@ class MusicPlayerFragment : Fragment() {
 
         vm.errorMsg.observe(viewLifecycleOwner) { showSnackBar(it) }
 
+
+        // Ниже подписываемся на обновление плейлистов из базы данных
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.playlistState.collect {
+                    updatePlayListFromDB(it)
+                }
+            }
+        }
+
         return binding.root
     }
 
@@ -121,13 +140,19 @@ class MusicPlayerFragment : Fragment() {
         binding.addToFavBtn.setOnLongClickListener { vm.showFavTracks() }
 
         binding.temporalBtn.setOnClickListener {
+
+        }
+
+        binding.btnNewPlaylist.setOnClickListener {
             parentFragmentManager.commit {
                 replace(R.id.fragment_holder, NewPlaylistFragment())
                 addToBackStack(null)
             }
         }
 
-
+        // Добавляем адаптер для просмотра списка плейлистов внутрь Recycler
+        binding.playlistsRecycler.adapter = this.adapterPlayList
+        binding.playlistsRecycler.layoutManager = LinearLayoutManager(this.requireContext())
     }
 
     private fun changeBtnPlayPause(state: ButtonState) {
@@ -184,6 +209,18 @@ class MusicPlayerFragment : Fragment() {
 
     private fun showSnackBar(message: String) {
         (requireActivity() as AlertMessaging).showSnackBar(messageToShow = message)
+    }
+
+    private fun updatePlayListFromDB(state: FragmentPlaylistsState) {
+        when (state) {
+            is FragmentPlaylistsState.Content -> {
+                this.playListFromDB.clear()
+                this.playListFromDB.addAll(state.playLists)
+                adapterPlayList.notifyItemRangeChanged(0, playListFromDB.size)
+            }
+
+            is FragmentPlaylistsState.NothingFound -> {}
+        }
     }
 
     override fun onPause() {

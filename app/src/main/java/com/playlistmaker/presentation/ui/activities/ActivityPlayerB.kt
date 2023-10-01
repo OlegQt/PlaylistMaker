@@ -21,7 +21,6 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
         binding = ActivityPlayerBBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.standardBottomSheet.visibility = View.GONE
 
         if (savedInstanceState == null) {
             loadedMusicTrack = extractMusicTrack()

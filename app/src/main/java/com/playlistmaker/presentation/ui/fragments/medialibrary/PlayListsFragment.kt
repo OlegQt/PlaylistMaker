@@ -31,7 +31,9 @@ class PlayListsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val playListFromDB = mutableListOf<PlayList>()
-    private val playlistAdapter = PlayListAdapter(playListFromDB)
+    private val playlistAdapter = PlayListAdapter(playListFromDB,PlayListAdapter.RecyclerType.LARGE,){
+        //(requireActivity() as AlertMessaging).showSnackBar(it.toString())
+    }
 
     private fun setScreenState(newState: FragmentPlaylistsState) {
         when (newState) {
@@ -39,7 +41,6 @@ class PlayListsFragment : Fragment() {
                 binding.favouriteTracksRecycler.visibility = View.GONE
                 binding.stubLayout.visibility = View.VISIBLE
             }
-
             is FragmentPlaylistsState.Content -> {
                 binding.favouriteTracksRecycler.visibility = View.VISIBLE
                 binding.stubLayout.visibility = View.GONE
@@ -70,7 +71,6 @@ class PlayListsFragment : Fragment() {
 
         vm.errorMsg.observe(viewLifecycleOwner) {
             (requireActivity() as AlertMessaging).showSnackBar(it)
-            //Snackbar.make(binding.root, it, Snackbar.LENGTH_INDEFINITE).setAction("OK") {}                .show()
         }
 
         return binding.root
@@ -78,14 +78,6 @@ class PlayListsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        parentFragmentManager.setFragmentResultListener(
-            NewPlaylistFragment.FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY, viewLifecycleOwner
-        ) { requestKey, result ->
-            //TODO("Not yet implemented")
-            Log.e("LOG_TAG", "reload fragment")
-            vm.loadPlaylists()
-        }
 
         binding.btnNewPlaylist.setOnClickListener {
             val navigator =
@@ -97,7 +89,6 @@ class PlayListsFragment : Fragment() {
         binding.btnClearDb.setOnClickListener { vm.clearPlayListBD() }
 
         binding.favouriteTracksRecycler.adapter = playlistAdapter
-        //binding.favouriteTracksRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.favouriteTracksRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
     }
 
