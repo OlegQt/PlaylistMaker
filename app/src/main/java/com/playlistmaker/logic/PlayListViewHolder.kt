@@ -19,7 +19,7 @@ abstract class PlayListVH(itemView:View):ViewHolder(itemView){
 class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(binding.root) {
     override fun bind(playList: PlayList) {
         binding.txtPlaylistName.text = playList.name
-        binding.txtAmount.text = "0 треков"
+        binding.txtAmount.text = "${playList.quantity} треков"
 
         Glide
             .with(binding.root)
@@ -38,7 +38,7 @@ class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(
 class PlayListViewHolderSmall(private val binding: PlaylistShortItemBinding) : PlayListVH(binding.root) {
     override fun bind(playList: PlayList) {
         binding.txtPlaylistName.text = playList.name
-        binding.txtAmount.text = "0 треков"
+        binding.txtAmount.text = "${playList.quantity} треков"
 
         Glide
             .with(binding.root)

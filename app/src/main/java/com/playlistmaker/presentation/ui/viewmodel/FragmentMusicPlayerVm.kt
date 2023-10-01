@@ -159,13 +159,26 @@ class FragmentMusicPlayerVm(
 
     fun onPlayListClick(playList: PlayList){
         if (playList.trackList.isNotEmpty()) {
-            val data = Gson().fromJson(playList.trackList, Array<Long>::class.java)
-            _errorMsg.postValue(data.first().toString())
+            val data: Array<Long> = Gson().fromJson(playList.trackList, Array<Long>::class.java)
+            if (!data.contains(currentMusTrack.value?.trackId)) {
+                val idCurrent = currentMusTrack.value?.trackId
+                idCurrent?.let {
+                    val newArray = data.plus(idCurrent.toLong())
+                    val newListJson = Gson().toJson(newArray)
+                    viewModelScope.launch {
+                        playListController.updatePlayList(playList.copy(trackList = newListJson, quantity = newArray.size))
+                    }
+                }
+            }
+            else{
+                _errorMsg.value="Трек уже есть ${currentMusTrack.value?.trackName}"
+            }
         }
         else{
-            val newListJson = Gson().toJson(listOf(currentMusTrack.value?.trackId))
+            val array = arrayOf(currentMusTrack.value?.trackId)
+            val newListJson = Gson().toJson(array)
             viewModelScope.launch {
-                playListController.updatePlayList(playList.copy(trackList = newListJson))
+                playListController.updatePlayList(playList.copy(trackList = newListJson, quantity = array.size))
             }
         }
 
