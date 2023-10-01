@@ -3,10 +3,13 @@ package com.playlistmaker.presentation.ui.fragments
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
@@ -16,6 +19,8 @@ import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -59,6 +64,7 @@ class MusicPlayerFragment : Fragment() {
         }
 
         vm.playerState.observe(viewLifecycleOwner) {
+            Log.e("LOG", "Пришел state от плеера $it")
             when (it) {
                 PlayerState.STATE_PLAYING -> {
                     changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
@@ -75,6 +81,10 @@ class MusicPlayerFragment : Fragment() {
                     changeBtnPlayPause(ButtonState.BUTTON_PLAY)
                 }
 
+                PlayerState.STATE_PREPARED -> {
+                    binding.playerBtnPlay.isEnabled = true
+                }
+
                 else -> {}
             }
         }
@@ -89,6 +99,21 @@ class MusicPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Кнопка будет недоступна до момента загрузки музыкального плеера
+        // Until STATE_PREPARED
+        binding.playerBtnPlay.isEnabled = false
+
+        binding.playerBtnBack.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                // Если не вызвать выключение плеера, то его выключение произойдет в методе
+                // onDestroy фрагмента, если к тому моменту activity уже закончит работу, возникнет ошибка
+                // Поэтому последовательно отключаем плеер и, после этого, закрываем activity
+                vm.turnOffPlayer()
+                (requireActivity() as ActivityPlayerB).exitPlayerActivity()
+            }
+
+        }
+
         binding.playerBtnPlay.setOnClickListener { vm.pushPlayPauseButton() }
 
         binding.addToFavBtn.setOnClickListener { vm.pushAddToFavButton() }
@@ -96,10 +121,13 @@ class MusicPlayerFragment : Fragment() {
         binding.addToFavBtn.setOnLongClickListener { vm.showFavTracks() }
 
         binding.temporalBtn.setOnClickListener {
-            //(requireActivity() as ActivityPlayerB).navigateToNewPlaylist()
-            (requireActivity() as ActivityPlayerB).openBottomSheet()
-            vm.showPlaylists()
+            parentFragmentManager.commit {
+                replace(R.id.fragment_holder, NewPlaylistFragment())
+                addToBackStack(null)
+            }
         }
+
+
     }
 
     private fun changeBtnPlayPause(state: ButtonState) {
@@ -160,11 +188,23 @@ class MusicPlayerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        vm.playPauseMusic(isPlaying = false)
+        Log.e(
+            "LOG",
+            "Fragment Player ушел в паузу в момент когда statePlayer = \n ${vm.playerState.value}"
+        )
+        // Если onPause вызвана временной паузой фрагмента, то останавливаем проигрывание музыки
+        // с проверкой, что плеер находится в состоянии проигрывания трека
+        if (vm.playerState.value == PlayerState.STATE_PLAYING) {
+            vm.playPauseMusic(isPlaying = false)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.e(
+            "LOG",
+            "Fragment Player Destroy в момент когда statePlayer = \n ${vm.playerState.value}"
+        )
         vm.turnOffPlayer()
         _binding = null
     }

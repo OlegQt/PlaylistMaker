@@ -11,8 +11,6 @@ import com.playlistmaker.databinding.ActivityPlayerBBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.fragments.MusicPlayerFragment
-import com.playlistmaker.presentation.ui.fragments.NewPlaylistFragment
-import com.playlistmaker.presentation.ui.fragments.TemporalFragment
 
 class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
     private lateinit var binding: ActivityPlayerBBinding
@@ -32,13 +30,6 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
             supportFragmentManager.commit {
                 add(binding.fragmentHolder.id, MusicPlayerFragment.newInstance(loadedMusicTrack))
             }
-
-            supportFragmentManager.addOnBackStackChangedListener {
-                if (supportFragmentManager.backStackEntryCount == 0) {
-                }
-                if (supportFragmentManager.backStackEntryCount == 1) {
-                }
-            }
         }
     }
 
@@ -53,23 +44,13 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
         return track
     }
 
-    fun navigateToNewPlaylist() {
-        supportFragmentManager.commit {
-            replace(binding.fragmentHolder.id, NewPlaylistFragment())
-            addToBackStack(null)
-        }
-    }
-
-    fun navigateBack() {
-        supportFragmentManager.popBackStack()
-    }
-
-    fun openBottomSheet(){
-        binding.standardBottomSheet.visibility=View.VISIBLE
+    fun exitPlayerActivity() {
+        finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.e("LOG", "onDestroy ActivityPlayer")
     }
 
     override fun showAlertDialog(alertMessage: String) {

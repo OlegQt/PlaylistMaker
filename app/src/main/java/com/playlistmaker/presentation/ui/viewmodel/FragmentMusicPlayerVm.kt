@@ -16,7 +16,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 const val TRACK_DURATION_UPDATE_mills = 300L
@@ -58,28 +57,23 @@ class FragmentMusicPlayerVm(
     }
 
     fun pushPlayPauseButton() {
-        Log.e("LOG","PUSH BUTTON PLAY ${_playerState.value}")
+        Log.e("LOG", "PUSH BUTTON PLAY ${_playerState.value}")
         when (_playerState.value) {
             PlayerState.STATE_PLAYING -> playPauseMusic(false)
             PlayerState.STATE_PAUSED -> playPauseMusic(true)
             PlayerState.STATE_PREPARED -> playPauseMusic(true)
             PlayerState.STATE_COMPLETE -> playPauseMusic(true)
-            PlayerState.STATE_DEFAULT ->{}
-            else -> {}
+            else -> _errorMsg.value="UncorrectedState"
         }
     }
 
     fun playPauseMusic(isPlaying: Boolean) {
-            if (isPlaying) musicalPlayer.playMusic()
-            else musicalPlayer.pauseMusic()
+        if (isPlaying) musicalPlayer.playMusic()
+        else musicalPlayer.pauseMusic()
     }
 
-    fun stopTrackPlayingTimer(){
+    fun stopTrackPlayingTimer() {
         trackPlayingTimerListener?.cancel()
-    }
-
-    fun resetPlayer(){
-        musicalPlayer.resetPlayer()
     }
 
     fun startTrackPlayingTimer() {
@@ -100,6 +94,10 @@ class FragmentMusicPlayerVm(
         trackPlayingTimerListener = null
 
         musicalPlayer.turnOffPlayer()
+
+        // В случае вызова функции onPause фрагмента при данном state действия с
+        // плеером не будут производиться
+        _playerState.value = PlayerState.STATE_DEFAULT
     }
 
     fun pushAddToFavButton() {
@@ -148,10 +146,10 @@ class FragmentMusicPlayerVm(
         return true
     }
 
-    fun showPlaylists(){
+    fun showPlaylists() {
         viewModelScope.launch {
-            playListController.loadAllPlayLists().collect{
-                val string = with(StringBuilder()){
+            playListController.loadAllPlayLists().collect {
+                val string = with(StringBuilder()) {
                     it.forEachIndexed { index, playList ->
                         append("$index --- ${playList.name}  \n")
                     }

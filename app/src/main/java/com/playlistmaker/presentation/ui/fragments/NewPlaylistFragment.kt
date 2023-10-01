@@ -189,23 +189,23 @@ class NewPlaylistFragment : Fragment() {
 
         binding.btnCheckBase.setOnClickListener { directoryCheck() }
 
-        // Перехватываем нажатие назад
-        requireActivity().onBackPressedDispatcher.addCallback(onBackPressedCallback = object :
-            OnBackPressedCallback(enabled = true) {
+        val backCallback = object : OnBackPressedCallback(enabled = true) {
             override fun handleOnBackPressed() {
-                exitWithDialog()
+                //exitWithDialog()
+                (requireActivity() as ActivityPlayerB).showSnackBar("BACK")
+                exit()
             }
-        })
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backCallback)
 
     }
 
     private fun exit() {
         when (requireActivity()) {
             is MainActivity -> (requireActivity() as MainActivity).navigateBack()
-            is ActivityPlayerB -> {
-                parentFragmentManager.popBackStack()
-                //if (isAdded) (requireActivity() as ActivityPlayerB).navigateBack()
-            }
+            is ActivityPlayerB -> parentFragmentManager.popBackStack()
+
         }
     }
 
@@ -219,8 +219,9 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        Log.e("LOG","onDetachedFromWindow NEW PLAYLIST")
+        Log.e("LOG", "onDetachedFromWindow NEW PLAYLIST")
     }
+
     companion object {
         const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY = "NEW_PLAYLIST_DESTROY"
     }
