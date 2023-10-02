@@ -1,6 +1,8 @@
 package com.playlistmaker.presentation.ui.fragments
 
+import android.Manifest
 import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -13,6 +15,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -20,6 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.activities.MainActivity
 import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
@@ -40,6 +44,17 @@ class NewPlaylistFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let { vm.handlePickedImage(it) }
         }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Разрешение получено, можно выбирать изображение
+            pickImageFromGallery()
+        } else {
+            (requireActivity() as AlertMessaging).showSnackBar("Разрешения нет")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -177,8 +192,10 @@ class NewPlaylistFragment : Fragment() {
         binding.btnBack.setOnClickListener { exitWithDialog() }
 
         binding.layoutAddPhoto.setOnClickListener {
-            if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())) {
-                pickImageContent.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            if (this.haveRequiredPermission()) pickImageFromGallery()
+            else {
+                // Запрашиваем разрешение, если оно не предоставлено
+                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
             }
         }
 
@@ -192,13 +209,24 @@ class NewPlaylistFragment : Fragment() {
         val backCallback = object : OnBackPressedCallback(enabled = true) {
             override fun handleOnBackPressed() {
                 exitWithDialog()
-                //(requireActivity() as ActivityPlayerB).showSnackBar("BACK")
-                //exit()
             }
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backCallback)
 
+    }
+
+    private fun haveRequiredPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun pickImageFromGallery() {
+        if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())) {
+            pickImageContent.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
     }
 
     private fun exit() {
@@ -224,6 +252,7 @@ class NewPlaylistFragment : Fragment() {
 
     companion object {
         const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY = "NEW_PLAYLIST_DESTROY"
+        private const val REQUEST_PERMISSION_CODE = 101
     }
 
 }
