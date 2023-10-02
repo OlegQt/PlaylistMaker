@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.models.PlayerState
@@ -74,7 +73,7 @@ class FragmentMusicPlayerVm(
             PlayerState.STATE_PAUSED -> playPauseMusic(true)
             PlayerState.STATE_PREPARED -> playPauseMusic(true)
             PlayerState.STATE_COMPLETE -> playPauseMusic(true)
-            else -> _errorMsg.value="UncorrectedState"
+            else -> _errorMsg.value = "UncorrectedState"
         }
     }
 
@@ -157,31 +156,67 @@ class FragmentMusicPlayerVm(
         return true
     }
 
-    fun onPlayListClick(playList: PlayList){
-        if (playList.trackList.isNotEmpty()) {
-            val data: Array<Long> = Gson().fromJson(playList.trackList, Array<Long>::class.java)
-            if (!data.contains(currentMusTrack.value?.trackId)) {
-                val idCurrent = currentMusTrack.value?.trackId
-                idCurrent?.let {
-                    val newArray = data.plus(idCurrent.toLong())
-                    val newListJson = Gson().toJson(newArray)
-                    viewModelScope.launch {
-                        playListController.updatePlayList(playList.copy(trackList = newListJson, quantity = newArray.size))
-                    }
+    fun onPlayListClick(clickedPlayList: PlayList) {
+        currentMusTrack.value?.let {
+            //Заходим на обновление плейлистов с проверкой трека на null
+            if (clickedPlayList.trackList.isEmpty()) {
+                addFirstTrackToPlaylist(trackToSave = it, toPlayList = clickedPlayList)
+                saveMusicTrackInTrackDB(musicTrack = it)
+            } else {
+                if (isTrackAlreadyInPlaylist(trackToFind = it, inPlayList = clickedPlayList)) {
+                    _errorMsg.value = "Трек уже добавлен в плейлист ${clickedPlayList.name}"
+                } else {
+                    addTrackToPlaylist(trackToSave = it, toPlayList = clickedPlayList)
+                    saveMusicTrackInTrackDB(musicTrack = it)
                 }
             }
-            else{
-                _errorMsg.value="Трек уже есть ${currentMusTrack.value?.trackName}"
-            }
         }
-        else{
-            val array = arrayOf(currentMusTrack.value?.trackId)
-            val newListJson = Gson().toJson(array)
-            viewModelScope.launch {
-                playListController.updatePlayList(playList.copy(trackList = newListJson, quantity = array.size))
-            }
-        }
+    }
 
+    private fun saveMusicTrackInTrackDB(musicTrack: MusicTrack) {
+        viewModelScope.launch {
+            playListController.safeMusicTrackToTrackListDB(musicTrackToSafe = musicTrack)
+        }
+    }
+
+    private fun addFirstTrackToPlaylist(trackToSave: MusicTrack, toPlayList: PlayList) {
+        val newJsonIdString = Gson().toJson(arrayOf(trackToSave.trackId))
+
+        viewModelScope.launch {
+            playListController.updatePlayList(
+                toPlayList.copy(
+                    trackList = newJsonIdString,
+                    quantity = 1
+                )
+            )
+            _errorMsg.value = "Добавлено в плейлист ${toPlayList.name}"
+        }
+    }
+
+    private fun addTrackToPlaylist(trackToSave: MusicTrack, toPlayList: PlayList) {
+        // Считываем id всех треков из строки в массив
+        val data: Array<Long> = Gson().fromJson(toPlayList.trackList, Array<Long>::class.java)
+
+        // Копируем в новый массив и добавляем id музыкального трека
+        val newArray = data.plus(trackToSave.trackId)
+
+        // Переводим снова в строку типа JSON
+        val newJsonIdString = Gson().toJson(newArray)
+
+        viewModelScope.launch {
+            playListController.updatePlayList(
+                toPlayList.copy(
+                    trackList = newJsonIdString,
+                    quantity = newArray.size
+                )
+            )
+            _errorMsg.value = "Добавлено в плейлист ${toPlayList.name}"
+        }
+    }
+
+    private fun isTrackAlreadyInPlaylist(trackToFind: MusicTrack, inPlayList: PlayList): Boolean {
+        val data: Array<Long> = Gson().fromJson(inPlayList.trackList, Array<Long>::class.java)
+        return data.contains(trackToFind.trackId)
     }
 
     private fun updateListOfPlaylistFromDB() {

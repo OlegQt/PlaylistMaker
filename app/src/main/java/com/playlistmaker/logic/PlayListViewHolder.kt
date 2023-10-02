@@ -1,6 +1,5 @@
 package com.playlistmaker.logic
 
-import android.text.Layout
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -15,11 +14,19 @@ import com.playlistmaker.domain.models.PlayList
 abstract class PlayListVH(itemView:View):ViewHolder(itemView){
     abstract fun bind(playList: PlayList)
     abstract fun getRootView():ViewGroup
+    fun getTrackEnding(number: Int): String {
+        return when {
+            number % 10 == 1 && number % 100 != 11 -> "$number трек"
+            number % 10 in (2..4) && (number % 100 < 10) -> "$number трека"
+            number % 10 in (2..4) && (number % 100 >20) -> "$number трека"
+            else -> "$number треков"
+        }
+    }
 }
 class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(binding.root) {
     override fun bind(playList: PlayList) {
         binding.txtPlaylistName.text = playList.name
-        binding.txtAmount.text = "${playList.quantity} треков"
+        binding.txtAmount.text = getTrackEnding(playList.quantity)
 
         Glide
             .with(binding.root)
@@ -30,6 +37,7 @@ class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(
             .transform(RoundedCorners(22)) //Params: roundingRadius – the corner radius (in device-specific pixels).
             .centerCrop()
             .into(binding.imgPlaylistCover)
+
     }
 
     override fun getRootView(): ViewGroup =binding.root
@@ -38,7 +46,7 @@ class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(
 class PlayListViewHolderSmall(private val binding: PlaylistShortItemBinding) : PlayListVH(binding.root) {
     override fun bind(playList: PlayList) {
         binding.txtPlaylistName.text = playList.name
-        binding.txtAmount.text = "${playList.quantity} треков"
+        binding.txtAmount.text = getTrackEnding(playList.quantity)
 
         Glide
             .with(binding.root)

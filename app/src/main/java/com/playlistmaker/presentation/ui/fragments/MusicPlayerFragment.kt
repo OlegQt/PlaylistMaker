@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -15,6 +16,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
@@ -41,9 +44,11 @@ class MusicPlayerFragment : Fragment() {
 
     private var musicTrack = MusicTrack()
 
+    private var bottomSheetBehavior:BottomSheetBehavior<LinearLayout>? = null
+
     private val playListFromDB = mutableListOf<PlayList>()
     private val adapterPlayList =
-        PlayListAdapter(playListFromDB, PlayListAdapter.RecyclerType.SMALL,){
+        PlayListAdapter(playListFromDB, PlayListAdapter.RecyclerType.SMALL) {
             onPlayListClick(playListFromDB[it])
         }
 
@@ -102,7 +107,6 @@ class MusicPlayerFragment : Fragment() {
 
         vm.errorMsg.observe(viewLifecycleOwner) { showSnackBar(it) }
 
-
         // Ниже подписываемся на обновление плейлистов из базы данных
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -139,8 +143,8 @@ class MusicPlayerFragment : Fragment() {
 
         binding.addToFavBtn.setOnLongClickListener { vm.showAllFavouriteTracks() }
 
-        binding.temporalBtn.setOnClickListener {
-
+        binding.btnAddToPlaylist.setOnClickListener {
+            bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         binding.btnNewPlaylist.setOnClickListener {
@@ -148,6 +152,27 @@ class MusicPlayerFragment : Fragment() {
                 replace(R.id.fragment_holder, NewPlaylistFragment())
                 addToBackStack(null)
             }
+        }
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.standardBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+            addBottomSheetCallback(object : BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            binding.overlay.visibility = View.GONE
+                        }
+
+                        else -> {
+                            binding.overlay.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                   binding.overlay.alpha = slideOffset
+                }
+            })
         }
 
         // Добавляем адаптер для просмотра списка плейлистов внутрь Recycler
@@ -250,8 +275,8 @@ class MusicPlayerFragment : Fragment() {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(this)
     }
 
-    private fun onPlayListClick(playListClicked: PlayList){
-        vm.onPlayListClick(playList = playListClicked)
+    private fun onPlayListClick(playListClicked: PlayList) {
+        vm.onPlayListClick(clickedPlayList = playListClicked)
     }
 
     companion object {

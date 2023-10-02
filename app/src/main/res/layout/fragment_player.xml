@@ -89,7 +89,7 @@
 
 
         <ImageButton
-            android:id="@+id/temporal_btn"
+            android:id="@+id/btn_add_to_playlist"
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:layout_marginTop="16dp"
@@ -228,6 +228,12 @@
             app:layout_constraintEnd_toStartOf="@id/right_guideline" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/standard_bottom_sheet"

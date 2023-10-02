@@ -27,7 +27,7 @@ class ActivityPlayer : AppCompatActivity() {
 
         binding.addToFavBtn.setOnClickListener { vm.pushAddToFavourite() }
 
-        binding.temporalBtn.setOnClickListener { vm.showFavTracks() }
+        binding.btnAddToPlaylist.setOnClickListener { vm.showFavTracks() }
     }
 
     private fun showTrackInfo(track: MusicTrack): Boolean {
@@ -41,7 +41,7 @@ class ActivityPlayer : AppCompatActivity() {
         with(binding) {
             playerTrackName.text = track.trackName
             playerArtistName.text = track.artistName
-            PlayerLblAlbum.text = track.collectionName.toString()
+            PlayerLblAlbum.text = track.collectionName
             PlayerLblGenre.text = track.primaryGenreName
             PlayerLblCountry.text = track.country
             PlayerLblFullDuration.text = track.trackTimeMillis.toTimeMmSs()
