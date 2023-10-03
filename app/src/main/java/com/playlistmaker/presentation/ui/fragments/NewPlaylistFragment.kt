@@ -50,10 +50,10 @@ class NewPlaylistFragment : Fragment() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) {
         if (it[Manifest.permission.READ_MEDIA_VIDEO] == true && it[Manifest.permission.READ_MEDIA_IMAGES] == true) {
-            (requireActivity() as AlertMessaging).showSnackBar("GOOD")
+            //(requireActivity() as AlertMessaging).showSnackBar("GOOD")
             pickImageFromGallery()
         } else {
-            (requireActivity() as AlertMessaging).showSnackBar("NO PERMISSIONS")
+            (requireActivity() as AlertMessaging).showSnackBar("Предоставьте приложению разрешение на доступ к изображениям в настройках")
         }
     }
 

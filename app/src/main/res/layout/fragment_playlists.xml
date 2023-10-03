@@ -47,7 +47,7 @@
         android:id="@+id/favourite_tracks_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/recycle_top_margin"
+        android:layout_marginTop="16dp"
         android:paddingHorizontal="16dp"
         android:visibility="visible"
         tools:listitem="@layout/playlist_item"

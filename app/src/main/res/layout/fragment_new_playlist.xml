@@ -23,8 +23,8 @@
 
     <TextView
         style="@style/settings_text_back"
-        android:layout_marginTop="10dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
         android:text="@string/new_playlist_article"
 
         app:layout_constraintStart_toEndOf="@id/btn_back"
@@ -35,11 +35,11 @@
         android:id="@+id/layout_add_photo"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1:1"
         android:layout_gravity="center_horizontal"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="8dp"
         android:layout_marginTop="26dp"
         android:background="@drawable/playlist_cover_dotted"
+        app:layout_constraintDimensionRatio="1:1"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,57 +50,57 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
+            android:layout_gravity="center_vertical|center_horizontal"
             android:background="@drawable/image_rounded_cover"
             android:clipToOutline="true"
-            android:scaleType="centerCrop"
 
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:src="@drawable/add_photo"
-            android:contentDescription="@string/playlist_cover_img" />
+            android:contentDescription="@string/playlist_cover_img"
+            android:scaleType="centerCrop"
+            android:src="@drawable/add_photo" />
 
     </FrameLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlinedTextFieldA"
 
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
 
+        android:layout_marginTop="32dp"
         android:hint="@string/playlist_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
 
         app:layout_constraintTop_toBottomOf="@id/layout_add_photo">
 
         <EditText
             android:id="@+id/txt_playlist_name"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:inputType="text"
-            android:focusable="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/outlinedTextFieldB"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
 
+        android:layout_marginTop="16dp"
         android:hint="@string/playlist_description"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
 
         app:layout_constraintTop_toBottomOf="@id/outlinedTextFieldA">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/txt_playlist_description"
-            android:focusable="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:focusable="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -108,21 +108,30 @@
         android:id="@+id/btn_create_playlist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="@string/playlist_button_create"
 
+        android:layout_marginBottom="32dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="@string/playlist_button_create"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+
+        android:textSize="16sp"
+
+        app:background="@drawable/btn_create_back"
         app:layout_constraintBottom_toBottomOf="parent" />
+
 
     <Button
         android:id="@+id/btn_check_base"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_create_back"
         android:text="@string/playlist_button_check_folder"
+
         android:visibility="gone"
 
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btn_create_playlist"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
