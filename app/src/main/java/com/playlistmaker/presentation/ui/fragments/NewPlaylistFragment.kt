@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -45,15 +46,14 @@ class NewPlaylistFragment : Fragment() {
             uri?.let { vm.handlePickedImage(it) }
         }
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            // Разрешение получено, можно выбирать изображение
+    private val requestPermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        if (it[Manifest.permission.READ_MEDIA_VIDEO] == true && it[Manifest.permission.READ_MEDIA_IMAGES] == true) {
+            (requireActivity() as AlertMessaging).showSnackBar("GOOD")
             pickImageFromGallery()
         } else {
-            //pickImageFromGallery()
-            (requireActivity() as AlertMessaging).showSnackBar("Разрешения нет")
+            (requireActivity() as AlertMessaging).showSnackBar("NO PERMISSIONS")
         }
     }
 
@@ -214,22 +214,28 @@ class NewPlaylistFragment : Fragment() {
 
     private fun checkAndAskPermission(permission: String) {
         when {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                permission
-            ) == PackageManager.PERMISSION_GRANTED -> {
+            haveRequiredPermission(permission) -> {
                 // You can use the API that requires the permission.
                 pickImageFromGallery()
             }
 
             shouldShowRequestPermissionRationale(permission) -> {
-                (requireActivity() as AlertMessaging).showSnackBar("Необходимо разрешение")
+                (requireActivity() as AlertMessaging).showSnackBar("Необходимо разрешение на доступ к изображениям на телефоне!")
             }
 
             else -> {
                 // You can directly ask for the permission.
                 // The registered ActivityResultCallback gets the result of this request.
-                requestPermissionLauncher.launch(permission)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    requestPermissions.launch(
+                        arrayOf(
+                            Manifest.permission.READ_MEDIA_IMAGES,
+                            Manifest.permission.READ_MEDIA_VIDEO
+                        )
+                    )
+                } else {
+                    requestPermissions.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
+                }
             }
         }
     }
