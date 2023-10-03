@@ -49,6 +49,9 @@
             android:id="@+id/img_add_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
+            android:background="@drawable/image_rounded_cover"
+            android:clipToOutline="true"
             android:scaleType="centerCrop"
 
             android:layout_gravity="center_vertical|center_horizontal"
@@ -115,6 +118,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/playlist_button_check_folder"
+        android:visibility="gone"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btn_create_playlist"

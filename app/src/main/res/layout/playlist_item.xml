@@ -12,6 +12,10 @@
         android:layout_height="160dp"
         android:src="@drawable/red_heart"
 
+        android:background="@drawable/image_rounded_cover"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
+
         android:contentDescription="@string/app_name"
 
         app:layout_constraintEnd_toEndOf="parent"

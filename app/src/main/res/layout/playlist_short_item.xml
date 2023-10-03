@@ -11,9 +11,12 @@
         android:id="@+id/img_playlist_cover"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:layout_marginStart="12dp"
 
         android:src="@drawable/red_heart"
+
+        android:background="@drawable/image_rounded_cover_2dp"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

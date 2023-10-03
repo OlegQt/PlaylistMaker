@@ -33,9 +33,6 @@ class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(
             .load(playList.cover)
             .placeholder(R.drawable.placeholder_no_track)
             .override(160, 160)
-
-            .transform(RoundedCorners(22)) //Params: roundingRadius – the corner radius (in device-specific pixels).
-            .centerCrop()
             .into(binding.imgPlaylistCover)
 
     }
@@ -53,9 +50,6 @@ class PlayListViewHolderSmall(private val binding: PlaylistShortItemBinding) : P
             .load(playList.cover)
             .placeholder(R.drawable.placeholder_no_track)
             .override(45, 45)
-
-            .transform(RoundedCorners(40)) //Params: roundingRadius – the corner radius (in device-specific pixels).
-            .centerCrop()
             .into(binding.imgPlaylistCover)
     }
 

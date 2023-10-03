@@ -52,6 +52,7 @@ class NewPlaylistFragment : Fragment() {
             // Разрешение получено, можно выбирать изображение
             pickImageFromGallery()
         } else {
+            //pickImageFromGallery()
             (requireActivity() as AlertMessaging).showSnackBar("Разрешения нет")
         }
     }
@@ -128,7 +129,6 @@ class NewPlaylistFragment : Fragment() {
         Glide.with(binding.root.context)
             .load(uri)
             .placeholder(R.drawable.no_track_found)
-            .centerCrop()
             .into(binding.imgAddPhoto)
     }
 
@@ -192,11 +192,7 @@ class NewPlaylistFragment : Fragment() {
         binding.btnBack.setOnClickListener { exitWithDialog() }
 
         binding.layoutAddPhoto.setOnClickListener {
-            if (this.haveRequiredPermission()) pickImageFromGallery()
-            else {
-                // Запрашиваем разрешение, если оно не предоставлено
-                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
+            checkAndAskPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
 
         binding.btnCreatePlaylist.setOnClickListener {
@@ -216,10 +212,32 @@ class NewPlaylistFragment : Fragment() {
 
     }
 
-    private fun haveRequiredPermission(): Boolean {
+    private fun checkAndAskPermission(permission: String) {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // You can use the API that requires the permission.
+                pickImageFromGallery()
+            }
+
+            shouldShowRequestPermissionRationale(permission) -> {
+                (requireActivity() as AlertMessaging).showSnackBar("Необходимо разрешение")
+            }
+
+            else -> {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissionLauncher.launch(permission)
+            }
+        }
+    }
+
+    private fun haveRequiredPermission(permissionToCheck: String): Boolean {
         return ContextCompat.checkSelfPermission(
             requireContext(),
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            permissionToCheck
         ) == PackageManager.PERMISSION_GRANTED
     }
 
