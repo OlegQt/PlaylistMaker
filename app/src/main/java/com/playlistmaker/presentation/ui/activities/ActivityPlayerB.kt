@@ -45,6 +45,7 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
 
     fun exitPlayerActivity() {
         finish()
+        //supportFragmentManager.popBackStack()
     }
 
     override fun onDestroy() {

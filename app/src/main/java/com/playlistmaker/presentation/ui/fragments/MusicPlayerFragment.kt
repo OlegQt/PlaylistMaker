@@ -65,6 +65,7 @@ class MusicPlayerFragment : Fragment() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 param = content.getParcelable(ARG_TRACK, MusicTrack::class.java)
             }
+            else param = content.getParcelable(MusicTrack.TRACK_KEY)
 
             param?.let {
                 musicTrack = it
@@ -131,9 +132,11 @@ class MusicPlayerFragment : Fragment() {
                 // Если не вызвать выключение плеера, то его выключение произойдет в методе
                 // onDestroy фрагмента, если к тому моменту activity уже закончит работу, возникнет ошибка
                 // Поэтому последовательно отключаем плеер и, после этого, закрываем activity
-                vm.turnOffPlayer()
-                (requireActivity() as ActivityPlayerB).exitPlayerActivity()
+                //vm.turnOffPlayer()
+                //(requireActivity() as ActivityPlayerB).exitPlayerActivity()
             }
+            vm.turnOffPlayer()
+            (requireActivity() as ActivityPlayerB).exitPlayerActivity()
 
         }
 

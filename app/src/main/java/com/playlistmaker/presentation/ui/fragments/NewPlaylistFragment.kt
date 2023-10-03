@@ -77,6 +77,10 @@ class NewPlaylistFragment : Fragment() {
 
         vm.btnCreateEnable.observe(viewLifecycleOwner) {
             binding.btnCreatePlaylist.isEnabled = it
+
+            if (it) binding.btnCreatePlaylist.setBackgroundColor(requireActivity().getColor(R.color.yp_blue))
+            else binding.btnCreatePlaylist.setBackgroundColor(requireActivity().getColor(R.color.Text_Grey))
+
         }
 
         setBehaviour()
