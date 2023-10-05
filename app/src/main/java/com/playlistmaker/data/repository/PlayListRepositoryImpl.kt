@@ -1,8 +1,7 @@
 package com.playlistmaker.data.repository
 
-import com.playlistmaker.data.db.playlist.PlayListDB
+import com.playlistmaker.data.db.favourite.MusicDB
 import com.playlistmaker.data.db.playlist.PlayListMapper
-import com.playlistmaker.data.db.playlist.musicTrackList.TrackListDB
 import com.playlistmaker.data.mapper.MusicTrackMapper
 import com.playlistmaker.domain.db.PlayListRepository
 import com.playlistmaker.domain.models.MusicTrack
@@ -11,8 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class PlayListRepositoryImpl(
-    private val db: PlayListDB,
-    private val trackDb: TrackListDB,
+    private val db: MusicDB,
     private val mapper: PlayListMapper,
     private val trackMapper: MusicTrackMapper
 ) : PlayListRepository {
@@ -39,11 +37,11 @@ class PlayListRepositoryImpl(
 
     // Сохранение музыкального трека, добавленного в какой-либо плейлист внутри базы треков
     override suspend fun saveMusicTrackInTrackListBD(musicTrack: MusicTrack) {
-        trackDb.trackListDao().addTrackToList(trackMapper.mapToDao(musicTrack))
+        db.trackListDao().addTrackToList(trackMapper.mapToDao(musicTrack))
     }
 
     override suspend fun loadAllTracksFromTrackListDB(): Flow<List<MusicTrack>> {
-        return trackDb.trackListDao().readAllTrackList().map {
+        return db.trackListDao().readAllTrackList().map {
             it.map { entity -> trackMapper.mapFromDao(entity) }
         }
     }

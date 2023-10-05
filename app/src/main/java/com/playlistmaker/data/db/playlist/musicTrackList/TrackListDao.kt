@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TrackListDao {
     // Add new musicTrack to TrackList
-    @Insert(entity = MusicTrackEntity::class, onConflict = OnConflictStrategy.IGNORE)
+    @Insert(entity = AllTracksEntity::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun addTrackToList(musTrack: MusicTrackEntity)
 
     // Read all tracks from DB
-    @Query("SELECT * from FavouriteTracks")
+    @Query("SELECT * from all_tracks_table")
     fun readAllTrackList(): Flow<List<MusicTrackEntity>>
 }

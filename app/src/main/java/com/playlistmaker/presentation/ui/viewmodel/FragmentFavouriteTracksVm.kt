@@ -22,7 +22,7 @@ class FragmentFavouriteTracksVm(
 
     fun loadFavouriteTracks() {
         // Временно ставим принудительную заглушку
-        fragmentState.value = FragmentFavouriteTracksState.NothingFound(null)
+        //fragmentState.value = FragmentFavouriteTracksState.NothingFound(null)
 
         // TODO: Здесь прописать загрузку избранных треков
         viewModelScope.launch(Dispatchers.IO) {

@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.playlistmaker.data.db.favourite.MusicDB
-import com.playlistmaker.data.db.playlist.PlayListDB
 import com.playlistmaker.data.db.playlist.PlayListMapper
-import com.playlistmaker.data.db.playlist.musicTrackList.TrackListDB
 import com.playlistmaker.data.mapper.MusicTrackMapper
 import com.playlistmaker.data.network.ItunesMediaSearchApi
 import com.playlistmaker.data.network.RetrofitNetworkClient
@@ -73,7 +71,6 @@ val dataModule = module {
     single<PlayListRepository> {
         PlayListRepositoryImpl(
             db = get(),
-            trackDb = get(),
             mapper = get(),
             trackMapper = get()
         )
@@ -81,19 +78,9 @@ val dataModule = module {
 
     single { RetrofitNetworkClient(mediaApi = get(), get()) }
 
-    single { Room.databaseBuilder(androidContext(), MusicDB::class.java, "MusicSQLite").build() }
-
-    single {
-        Room.databaseBuilder(
-            androidContext(),
-            TrackListDB::class.java,
-            name = "AllSelectedTracks"
-        ).build()
-    }
+    single { Room.databaseBuilder(androidContext(), MusicDB::class.java, "music_app_database").build() }
 
     factory { MusicTrackMapper() }
-
-    single { Room.databaseBuilder(androidContext(), PlayListDB::class.java, "PlayListDb").build() }
 
     factory { PlayListMapper() }
 

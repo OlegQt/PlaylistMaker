@@ -72,11 +72,12 @@ class MediaLibraryFragment : Fragment(), AlertMessaging {
 
     override fun onPause() {
         super.onPause()
-        mediator.detach()
+        //mediator.detach()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mediator.detach()
         _binding = null
     }
 
