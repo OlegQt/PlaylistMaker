@@ -13,9 +13,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentSearchBinding
 import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.logic.SearchTrackAdapter
+import com.playlistmaker.presentation.ui.fragments.recycleradapter.SearchTrackAdapter
 import com.playlistmaker.presentation.models.ActivitySearchState
-import com.playlistmaker.presentation.ui.activities.ActivityPlayer
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.viewmodel.FragmentSearchVm
 import org.koin.androidx.viewmodel.ext.android.viewModel

@@ -45,6 +45,9 @@ class FragmentMusicPlayerVm(
     private val _currentPlayingMusTrack = MutableLiveData<MusicTrack>()
     val currentMusTrack = _currentPlayingMusTrack as LiveData<MusicTrack>
 
+    private val _bottomSheetIsShown = MutableLiveData<Boolean>()
+    val bottomSheetIsShown = _bottomSheetIsShown as LiveData<Boolean>
+
     // LiveData для состояния экрана фрагмента
     // FragmentPlaylistsState.NothingFound - Показывать заглушку
     // FragmentPlaylistsState.Content - Показывать плейлисты
@@ -176,6 +179,9 @@ class FragmentMusicPlayerVm(
     private fun saveMusicTrackInTrackDB(musicTrack: MusicTrack) {
         viewModelScope.launch {
             playListController.safeMusicTrackToTrackListDB(musicTrackToSafe = musicTrack)
+            // Если текущий трек не добавлен в выбранный плейлист, то окно добавления трека в плейлист исчезает,
+            // текущий трек добавляется в выбранный плейлист
+            _bottomSheetIsShown.value = false
         }
     }
 

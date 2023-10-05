@@ -1,4 +1,4 @@
-package com.playlistmaker.logic
+package com.playlistmaker.presentation.ui.fragments.recycleradapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

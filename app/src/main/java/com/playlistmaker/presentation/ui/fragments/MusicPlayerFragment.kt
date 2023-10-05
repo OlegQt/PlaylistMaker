@@ -23,10 +23,10 @@ import com.playlistmaker.databinding.FragmentPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.models.PlayerState
-import com.playlistmaker.logic.PlayListAdapter
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
+import com.playlistmaker.presentation.ui.fragments.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,7 +44,7 @@ class MusicPlayerFragment : Fragment() {
 
     private var musicTrack = MusicTrack()
 
-    private var bottomSheetBehavior:BottomSheetBehavior<LinearLayout>? = null
+    private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
 
     private val playListFromDB = mutableListOf<PlayList>()
     private val adapterPlayList =
@@ -64,8 +64,7 @@ class MusicPlayerFragment : Fragment() {
             var param: MusicTrack? = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 param = content.getParcelable(ARG_TRACK, MusicTrack::class.java)
-            }
-            else param = content.getParcelable(MusicTrack.TRACK_KEY)
+            } else param = content.getParcelable(MusicTrack.TRACK_KEY)
 
             param?.let {
                 musicTrack = it
@@ -107,6 +106,11 @@ class MusicPlayerFragment : Fragment() {
         vm.currentMusTrack.observe(viewLifecycleOwner) { this.showTrackInfo(it) }
 
         vm.errorMsg.observe(viewLifecycleOwner) { showSnackBar(it) }
+
+        vm.bottomSheetIsShown.observe(viewLifecycleOwner) {
+            if (it) bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
+            else bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
         // Ниже подписываемся на обновление плейлистов из базы данных
         lifecycleScope.launch {
@@ -151,6 +155,7 @@ class MusicPlayerFragment : Fragment() {
         }
 
         binding.btnNewPlaylist.setOnClickListener {
+            Log.e("LOG", "PUSH btn CreateNEwPlaylist")
             parentFragmentManager.commit {
                 replace(R.id.fragment_holder, NewPlaylistFragment())
                 addToBackStack(null)
@@ -173,7 +178,7 @@ class MusicPlayerFragment : Fragment() {
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                   binding.overlay.alpha = slideOffset
+                    binding.overlay.alpha = slideOffset
                 }
             })
         }

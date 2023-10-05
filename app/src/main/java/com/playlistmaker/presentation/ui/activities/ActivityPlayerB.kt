@@ -59,7 +59,7 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
 
     override fun showSnackBar(messageToShow: String) {
         Snackbar.make(binding.fragmentHolder, messageToShow, Snackbar.LENGTH_INDEFINITE)
-            .setAction("OK") {}
+            //.setAction("OK") {}
             .setTextMaxLines(20)
             .show()
     }

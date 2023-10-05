@@ -1,10 +1,9 @@
-package com.playlistmaker.logic
+package com.playlistmaker.presentation.ui.fragments.recycleradapter
 
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.playlistmaker.R
 import com.playlistmaker.databinding.PlaylistItemBinding
 import com.playlistmaker.databinding.PlaylistShortItemBinding
