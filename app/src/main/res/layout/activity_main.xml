@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
 >
 
     <androidx.fragment.app.FragmentContainerView
@@ -14,15 +15,27 @@
         android:layout_height="0dp"
         app:navGraph="@navigation/navigation_graph"
         app:defaultNavHost="true"
+        android:visibility="visible"
 
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/root_navigation_bar"/>
+        app:layout_constraintBottom_toTopOf="@id/bottom_divider"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/bottom_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/root_navigation_bar"
+        />
+
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/root_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/root_menu"
+        android:background="?attr/colorPrimary"
         app:itemTextColor="@color/bottom_nav_item_color"
         app:itemIconTint="@color/bottom_nav_item_color"
         app:layout_constraintBottom_toBottomOf="parent"/>

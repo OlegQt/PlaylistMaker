@@ -29,7 +29,7 @@
         android:layout_marginHorizontal="16dp"
         app:tabTextAppearance="@style/tab_layout_text"
         android:contentDescription="@string/media_library"
-
+        android:background="?attr/colorPrimary"
         app:layout_constraintTop_toBottomOf="@id/txt_article"
         />
 
