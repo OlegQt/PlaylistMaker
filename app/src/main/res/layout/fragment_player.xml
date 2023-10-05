@@ -245,7 +245,7 @@
         android:layout_height="560dp"
         android:orientation="vertical"
         app:behavior_hideable="true"
-        android:background="?attr/colorPrimary"
+        android:background="@drawable/bottom_sheet_rounded"
 
         app:behavior_peekHeight="40dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
