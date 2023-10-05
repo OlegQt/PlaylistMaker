@@ -6,29 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingHorizontal="16dp"
     tools:context=".presentation.ui.fragments.SettingsFragment">
 
     <!-- back to Menu-->
-    <ImageView
-        android:id="@+id/btn_back"
-        style="@style/settings_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@string/back_to_main_Screen"
-        android:src="@drawable/arrow_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/app_name"
 
-    <TextView
-        style="@style/settings_text_back"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/new_playlist_article"
+        app:navigationIcon="@drawable/back_to_main_screen"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary"
+        app:titleTextAppearance="@style/MyToolbar"
+        app:navigationIconTint="?attr/colorOnPrimary"
+        android:elevation="0dp"
 
-        app:layout_constraintStart_toEndOf="@id/btn_back"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
 
     <FrameLayout
@@ -36,14 +30,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginHorizontal="8dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="26dp"
         android:background="@drawable/playlist_cover_dotted"
         app:layout_constraintDimensionRatio="1:1"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_back">
+        app:layout_constraintTop_toBottomOf="@id/topAppBar">
 
         <ImageView
             android:id="@+id/img_add_photo"
@@ -68,6 +62,7 @@
         android:layout_height="wrap_content"
 
         android:layout_marginTop="32dp"
+        android:layout_marginHorizontal="16dp"
         android:hint="@string/playlist_name"
 
         android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
@@ -93,6 +88,7 @@
         android:layout_height="wrap_content"
 
         android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
         android:hint="@string/playlist_description"
         android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
 
@@ -113,6 +109,7 @@
         android:paddingVertical="12dp"
 
         android:layout_marginBottom="32dp"
+        android:layout_marginHorizontal="16dp"
         android:fontFamily="@font/ys_display_medium"
         android:text="@string/playlist_button_create"
         android:textAllCaps="false"
@@ -125,19 +122,6 @@
 
         android:backgroundTint="@color/yp_blue"
         app:layout_constraintBottom_toBottomOf="parent" />
-
-
-    <Button
-        android:id="@+id/btn_check_base"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/Text_Grey"
-        android:text="@string/playlist_button_check_folder"
-
-        android:visibility="gone"
-
-        app:layout_constraintBottom_toTopOf="@id/btn_create_playlist"
-        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

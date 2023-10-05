@@ -118,4 +118,9 @@
         <item name="colorAccent">@color/light_grey</item>
     </style>
 
+    <style name="MyToolbar" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="colorAccent">@color/light_grey</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
 </resources>

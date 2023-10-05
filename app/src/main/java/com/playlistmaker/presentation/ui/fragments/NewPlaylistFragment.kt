@@ -193,7 +193,12 @@ class NewPlaylistFragment : Fragment() {
             vm.changeDescription(newDescription = it.toString())
         }
 
-        binding.btnBack.setOnClickListener { exitWithDialog() }
+        binding.topAppBar.setOnClickListener { exitWithDialog() }
+
+        binding.topAppBar.setOnLongClickListener {
+            directoryCheck()
+            true
+        }
 
         binding.layoutAddPhoto.setOnClickListener {
             checkAndAskPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -203,8 +208,6 @@ class NewPlaylistFragment : Fragment() {
             saveImageToPrivateStorage(vm.selectedImage.value)
             vm.savePlayListToDB()
         }
-
-        binding.btnCheckBase.setOnClickListener { directoryCheck() }
 
         val backCallback = object : OnBackPressedCallback(enabled = true) {
             override fun handleOnBackPressed() {
