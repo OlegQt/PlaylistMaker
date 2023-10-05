@@ -16,19 +16,7 @@
 
     </style>
 
-    <style name="ThemeOverlay.AppTheme.TextInputEditText.Outlined" parent="">
-        <item name="colorPrimary">#3772E7</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:textColorHint">#FFFFFF</item>
-        <item name="android:background">@null</item>
-        <item name="boxStrokeColor">@color/Text_Red</item>
-        <item name="boxStrokeWidth">1dp</item>
-        <item name="hintTextColor">#3772E7</item>
-    </style>
+
     
-    <style name="CircularProgress" parent="Theme.YandexPracticumPlaylistMaker">
-        <item name="colorAccent">@color/yp_blue</item>
-    </style>
+
 </resources>

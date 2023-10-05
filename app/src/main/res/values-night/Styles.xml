@@ -5,4 +5,8 @@
         <item name="trackTint">@color/yp_dk_blue</item>
     </style>
 
+    <style name="Oval_drawable_button" parent="Theme.YandexPracticumPlaylistMaker">
+        <item name="colorAccent">@color/darker_grey</item>
+    </style>
+
 </resources>

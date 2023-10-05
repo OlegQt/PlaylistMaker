@@ -69,6 +69,7 @@
 
         android:layout_marginTop="32dp"
         android:hint="@string/playlist_name"
+
         android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
 
         app:layout_constraintTop_toBottomOf="@id/layout_add_photo">
@@ -80,7 +81,8 @@
             android:focusable="true"
             android:inputType="text"
             android:maxLines="1"
-            android:singleLine="true" />
+            android:singleLine="true"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 

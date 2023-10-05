@@ -5,6 +5,7 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
     tools:context=".presentation.ui.activities.ActivityPlayer">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -96,6 +97,7 @@
             android:background="@drawable/player_btn_round"
             android:contentDescription="@string/Playlists"
             android:src="@drawable/plus_track"
+            android:theme="@style/Oval_drawable_button"
             app:layout_constraintStart_toEndOf="@id/left_guideline"
             app:layout_constraintTop_toTopOf="@id/player_btn_play" />
 
@@ -107,6 +109,8 @@
             android:background="@drawable/player_btn_round"
             android:contentDescription="@string/favouriteTracks"
             android:src="@drawable/like_track"
+            android:theme="@style/Oval_drawable_button"
+
             app:layout_constraintEnd_toStartOf="@id/right_guideline"
             app:layout_constraintTop_toTopOf="@id/player_btn_play" />
 
