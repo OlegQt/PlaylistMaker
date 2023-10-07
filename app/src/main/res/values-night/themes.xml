@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/YP_black</item>
+        <item name="colorSecondary">@color/yp_blue</item>
         <item name="colorSecondaryVariant">@color/YP_black</item>
         <item name="colorOnSecondary">@color/black</item>
         <item name="colorOnSurfaceInverse">@color/white</item>

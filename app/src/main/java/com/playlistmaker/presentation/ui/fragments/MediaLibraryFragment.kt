@@ -1,30 +1,28 @@
 package com.playlistmaker.presentation.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.commit
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentMedialibraryBinding
 import com.playlistmaker.presentation.models.AlertMessaging
-import com.playlistmaker.presentation.ui.activities.MainActivity
 import com.playlistmaker.presentation.ui.fragments.medialibrary.FavouriteTracksFragment
 import com.playlistmaker.presentation.ui.fragments.medialibrary.PlayListsFragment
 
-class MediaLibraryFragment : Fragment() ,AlertMessaging{
+class MediaLibraryFragment : Fragment(), AlertMessaging {
 
     private var _binding: FragmentMedialibraryBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var mediator: TabLayoutMediator
+    private lateinit var adapter: MediaPager
 
     // Хранение фрагментов внутри коллекции fragmentMap
     private val fragmentMap = mutableMapOf<String, Fragment>()
@@ -33,7 +31,7 @@ class MediaLibraryFragment : Fragment() ,AlertMessaging{
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMedialibraryBinding.inflate(layoutInflater)
 
         // Заполняем коллекцию нужными фрагментами
@@ -45,24 +43,41 @@ class MediaLibraryFragment : Fragment() ,AlertMessaging{
             binding.mediaStorageTab.addTab(binding.mediaStorageTab.newTab().setText(it))
         }
 
-        // Инициализация адаптера для
-        binding.mediaStorageFragmentPlaceholder.adapter = MediaPager(requireActivity(),fragmentMap)
-        mediator = TabLayoutMediator(binding.mediaStorageTab,binding.mediaStorageFragmentPlaceholder){
-            tab,pos ->
-            tab.text = fragmentMap.keys.elementAt(pos)
-        }
-        mediator.attach()
+        tabLayoutConnection()
 
         return binding.root
     }
 
+    private fun tabLayoutConnection() {
+        // Инициализация адаптера для
+        adapter = MediaPager(requireActivity(), fragmentMap)
+        binding.mediaStorageFragmentPlaceholder.adapter = adapter
+        mediator = TabLayoutMediator(
+            binding.mediaStorageTab,
+            binding.mediaStorageFragmentPlaceholder
+        ) { tab, pos ->
+            tab.text = fragmentMap.keys.elementAt(pos)
+        }
+        mediator.attach()
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("LOG_TAG", "resume mediaStorage")
+        //mediator.detach()
+
+    }
+
     override fun onPause() {
         super.onPause()
-        mediator.detach()
+        //mediator.detach()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mediator.detach()
         _binding = null
     }
 
@@ -70,8 +85,12 @@ class MediaLibraryFragment : Fragment() ,AlertMessaging{
         MaterialAlertDialogBuilder(requireActivity())
             .setTitle("Alert")
             .setMessage(alertMessage)
-            .setPositiveButton("OK",null)
+            .setPositiveButton("OK", null)
             .show()
+    }
+
+    override fun showSnackBar(messageToShow: String) {
+        (requireActivity() as AlertMessaging).showSnackBar(messageToShow)
     }
 
     // Есть ли необходимость выносить данный класс в отдельный файл? По сути он используется только

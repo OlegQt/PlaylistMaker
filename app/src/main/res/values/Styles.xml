@@ -103,4 +103,24 @@
     </style>
 
 
+    <!-- CircularProgress style-->
+    <style name="CircularProgress" parent="Theme.YandexPracticumPlaylistMaker">
+        <item name="colorAccent">@color/yp_blue</item>
+    </style>
+
+    <!--Input field style-->
+    <style name="ThemeOverlay.AppTheme.TextInputEditText.Outlined" parent="">
+        <!-- colorPrimary цвет рамки -->
+        <item name="colorPrimary">@color/yp_blue</item>
+    </style>
+
+    <style name="Oval_drawable_button" parent="Theme.YandexPracticumPlaylistMaker">
+        <item name="colorAccent">@color/light_grey</item>
+    </style>
+
+    <style name="MyToolbar" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="colorAccent">@color/light_grey</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
 </resources>

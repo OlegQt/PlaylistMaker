@@ -92,7 +92,7 @@ class PlayerVm(
         currentPlayingMusTrack.value = currentPlayingMusTrack.value?.apply {
             isFavourite = !isFavourite
         }
-        currentPlayingMusTrack.value?.copy(isFavourite = !currentPlayingMusTrack.value?.isFavourite!!)
+        //currentPlayingMusTrack.value?.copy(isFavourite = !currentPlayingMusTrack.value?.isFavourite!!)
     }
 
     fun pushPlayPauseButton() {
@@ -149,7 +149,7 @@ class PlayerVm(
         val errorHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
             _errorMsg.value = throwable.message
         }
-        viewModelScope.launch {
+        viewModelScope.launch(errorHandler) {
             val result = loadFavouriteUseCase.execute()
             result.collect() {
                 val strBld = StringBuilder()

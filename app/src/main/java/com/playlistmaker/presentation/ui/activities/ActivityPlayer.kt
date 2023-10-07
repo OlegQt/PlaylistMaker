@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
-import com.playlistmaker.databinding.ActivityPlayerBinding
+import com.playlistmaker.databinding.FragmentPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.ui.viewmodel.PlayerVm
@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class ActivityPlayer : AppCompatActivity() {
-    private lateinit var binding: ActivityPlayerBinding
+    private lateinit var binding: FragmentPlayerBinding
     private val vm: PlayerVm by viewModel()
 
     private fun setUiBehaviour() {
@@ -27,7 +27,7 @@ class ActivityPlayer : AppCompatActivity() {
 
         binding.addToFavBtn.setOnClickListener { vm.pushAddToFavourite() }
 
-        binding.temporalBtn.setOnClickListener { vm.showFavTracks() }
+        binding.btnAddToPlaylist.setOnClickListener { vm.showFavTracks() }
     }
 
     private fun showTrackInfo(track: MusicTrack): Boolean {
@@ -41,7 +41,7 @@ class ActivityPlayer : AppCompatActivity() {
         with(binding) {
             playerTrackName.text = track.trackName
             playerArtistName.text = track.artistName
-            PlayerLblAlbum.text = track.collectionName.toString()
+            PlayerLblAlbum.text = track.collectionName
             PlayerLblGenre.text = track.primaryGenreName
             PlayerLblCountry.text = track.country
             PlayerLblFullDuration.text = track.trackTimeMillis.toTimeMmSs()
@@ -96,7 +96,7 @@ class ActivityPlayer : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPlayerBinding.inflate(layoutInflater)
+        binding = FragmentPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         vm.getCurrentMusTrack.observe(this) {

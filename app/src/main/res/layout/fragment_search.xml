@@ -122,7 +122,9 @@
         android:layout_gravity="center_horizontal"
         android:indeterminateBehavior="repeat"
         android:indeterminate="true"
-        android:visibility="gone"/>
+        android:theme="@style/CircularProgress"
+        android:visibility="gone"
+        />
 
     <!-- Track Main recycler -->
     <androidx.recyclerview.widget.RecyclerView
