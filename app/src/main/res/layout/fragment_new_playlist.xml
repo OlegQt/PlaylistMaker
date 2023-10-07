@@ -13,7 +13,7 @@
         android:id="@+id/topAppBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="@string/app_name"
+        app:title="@string/new_playlist_article"
 
         app:navigationIcon="@drawable/back_to_main_screen"
         style="@style/Widget.MaterialComponents.Toolbar.Primary"
