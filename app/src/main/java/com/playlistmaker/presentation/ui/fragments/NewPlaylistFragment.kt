@@ -176,7 +176,7 @@ class NewPlaylistFragment : Fragment() {
             filePath.listFiles()?.forEachIndexed { index, element ->
                 logString.append("($index)-$element\n")
             }
-            Snackbar.make(binding.imgAddPhoto, logString.toString(), Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(binding.imgAddPhoto, logString.toString(), Snackbar.LENGTH_SHORT)
                 .setTextMaxLines(20)
                 .setAction("OK") {}
                 .show()
