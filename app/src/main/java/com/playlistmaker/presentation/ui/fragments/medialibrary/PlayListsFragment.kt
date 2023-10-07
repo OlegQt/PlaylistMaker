@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -14,9 +15,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.domain.models.PlayList
-import com.playlistmaker.presentation.ui.fragments.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
+import com.playlistmaker.presentation.ui.fragments.PlayListEditorFragment
+import com.playlistmaker.presentation.ui.fragments.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -30,8 +32,21 @@ class PlayListsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val playListFromDB = mutableListOf<PlayList>()
-    private val playlistAdapter = PlayListAdapter(playListFromDB, PlayListAdapter.RecyclerType.LARGE,){
-        //(requireActivity() as AlertMessaging).showSnackBar(it.toString())
+    private val playlistAdapter =
+        PlayListAdapter(playListFromDB, PlayListAdapter.RecyclerType.LARGE) {
+            navigateToPlayList(playListToSend = playListFromDB[it])
+        }
+
+    private fun navigateToPlayList(playListToSend: PlayList) {
+        // Инициализируем навигатор
+        val navigator = parentFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
+        val navController = navigator.navController
+        navController.navigate(R.id.action_mediaLibraryFragment_to_playListEditorFragment,
+
+            Bundle().apply {
+                // По заданию, передаем только id
+                putLong(PlayListEditorFragment.PLAYLIST_ID_ARG, playListToSend.id)
+            })
     }
 
     private fun setScreenState(newState: FragmentPlaylistsState) {
@@ -40,6 +55,7 @@ class PlayListsFragment : Fragment() {
                 binding.favouriteTracksRecycler.visibility = View.GONE
                 binding.stubLayout.visibility = View.VISIBLE
             }
+
             is FragmentPlaylistsState.Content -> {
                 binding.favouriteTracksRecycler.visibility = View.VISIBLE
                 binding.stubLayout.visibility = View.GONE
@@ -49,6 +65,8 @@ class PlayListsFragment : Fragment() {
                 playListFromDB.addAll(newState.playLists)
                 playlistAdapter.notifyItemRangeChanged(0, playListFromDB.size)
             }
+
+            else -> {}
         }
     }
 
