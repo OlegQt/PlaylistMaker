@@ -50,6 +50,6 @@ class MainActivity : AppCompatActivity(), AlertMessaging {
     }
 
     override fun showSnackBar(messageToShow: String) {
-        Snackbar.make(binding.rootNavigationBar, messageToShow, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(binding.rootNavigationBar, messageToShow, Snackbar.LENGTH_SHORT).show()
     }
 }

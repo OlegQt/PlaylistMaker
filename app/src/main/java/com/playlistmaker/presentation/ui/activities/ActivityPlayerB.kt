@@ -3,7 +3,6 @@ package com.playlistmaker.presentation.ui.activities
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.google.android.material.snackbar.Snackbar
@@ -58,7 +57,7 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
     }
 
     override fun showSnackBar(messageToShow: String) {
-        Snackbar.make(binding.fragmentHolder, messageToShow, Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(binding.fragmentHolder, messageToShow, Snackbar.LENGTH_SHORT)
             //.setAction("OK") {}
             .setTextMaxLines(20)
             .show()

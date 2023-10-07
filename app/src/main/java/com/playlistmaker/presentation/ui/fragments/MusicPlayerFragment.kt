@@ -64,7 +64,7 @@ class MusicPlayerFragment : Fragment() {
             var param: MusicTrack? = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 param = content.getParcelable(ARG_TRACK, MusicTrack::class.java)
-            } else param = content.getParcelable(MusicTrack.TRACK_KEY)
+            } else param = content.getParcelable(ARG_TRACK)
 
             param?.let {
                 musicTrack = it
