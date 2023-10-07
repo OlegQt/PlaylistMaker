@@ -195,11 +195,6 @@ class NewPlaylistFragment : Fragment() {
 
         binding.topAppBar.setOnClickListener { exitWithDialog() }
 
-        binding.topAppBar.setOnLongClickListener {
-            directoryCheck()
-            true
-        }
-
         binding.layoutAddPhoto.setOnClickListener {
             checkAndAskPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
