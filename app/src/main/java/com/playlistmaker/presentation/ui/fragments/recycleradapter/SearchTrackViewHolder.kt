@@ -38,6 +38,8 @@ class SearchTrackViewHolder(
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(duration)
     }
 
+    fun getRootView():View = item
+
     fun bind(musTrack: MusicTrack) {
         txtTrackName.text = musTrack.trackName
         txtArtistName.text = musTrack.artistName

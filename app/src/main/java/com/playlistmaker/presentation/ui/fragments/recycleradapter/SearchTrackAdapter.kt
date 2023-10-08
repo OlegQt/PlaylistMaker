@@ -10,8 +10,14 @@ import com.playlistmaker.domain.models.MusicTrack
 class SearchTrackAdapter(private val trackList: ArrayList<MusicTrack>, private var onTrackClickListener: OnTrackClickListener) :
     Adapter<SearchTrackViewHolder>() {
 
+    var longClickListener:OnTrackLongClick? = null
+
     fun interface OnTrackClickListener {
         fun onTrackClick(position: Int)
+    }
+
+    fun interface OnTrackLongClick{
+        fun onTrackLongClick(position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchTrackViewHolder {
@@ -26,11 +32,11 @@ class SearchTrackAdapter(private val trackList: ArrayList<MusicTrack>, private v
 
     override fun onBindViewHolder(holder: SearchTrackViewHolder, position: Int) {
         holder.bind(trackList[position])
+        holder.getRootView().setOnLongClickListener {
+            longClickListener?.onTrackLongClick(position)
+            true
+        }
     }
 
     override fun getItemCount() =trackList.size
-
-    fun getItem(position:Int): MusicTrack {
-        return trackList[position]
-    }
 }
