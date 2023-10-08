@@ -49,6 +49,6 @@
     <!-- fragment playlists -->
     <string name="Create_new_playlist">Новый плейлист</string>
     <string name="img_description_nothing_found">NothingFound</string>
-    <string name="playlists_button_clearBd">ClearBD</string>
+    <string name="playlists_button_clearBd">CLBD</string>
 
 </resources>

@@ -33,6 +33,7 @@ class PlayListRepositoryImpl(
     // Полное стирание всех плейлистов
     override suspend fun clearDB() {
         db.playListDao().deleteAllPlaylists()
+        db.trackListDao().deleteAll()
     }
 
     // Обновление плейлиста
