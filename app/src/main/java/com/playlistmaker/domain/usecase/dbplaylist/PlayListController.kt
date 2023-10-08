@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.Flow
 interface PlayListController {
     suspend fun savePlaylist(playList: PlayList)
 
-    suspend fun loadAllPlayLists(): Flow<List<PlayList>>
+    fun loadAllPlayLists(): Flow<List<PlayList>>
+
+    suspend fun loadPlayListById(id:Long):PlayList
 
     suspend fun  clearBD()
 
@@ -15,5 +17,8 @@ interface PlayListController {
 
     suspend fun safeMusicTrackToTrackListDB(musicTrackToSafe:MusicTrack)
 
-    suspend fun loadAllTracksFromTrackListDB():Flow<List<MusicTrack>>
+    fun loadAllTracksFromTrackListDB():Flow<List<MusicTrack>>
+
+    suspend fun getMusicTracksMatchedIds(ids:List<Long>):List<MusicTrack>
+
 }

@@ -11,8 +11,12 @@ class PlayListControllerImpl(private val playListRepository: PlayListRepository)
         playListRepository.savePlaylist(playListToSave = playList)
     }
 
-    override suspend fun loadAllPlayLists(): Flow<List<PlayList>> =
+    override fun loadAllPlayLists(): Flow<List<PlayList>> =
         playListRepository.loadAllPlayLists()
+
+    override suspend fun loadPlayListById(id: Long): PlayList {
+        return playListRepository.loadPlayListById(id)
+    }
 
     override suspend fun clearBD() {
         playListRepository.clearDB()
@@ -26,7 +30,11 @@ class PlayListControllerImpl(private val playListRepository: PlayListRepository)
         playListRepository.saveMusicTrackInTrackListBD(musicTrackToSafe)
     }
 
-    override suspend fun loadAllTracksFromTrackListDB(): Flow<List<MusicTrack>> {
+    override fun loadAllTracksFromTrackListDB(): Flow<List<MusicTrack>> {
         return playListRepository.loadAllTracksFromTrackListDB()
+    }
+
+    override suspend fun getMusicTracksMatchedIds(ids: List<Long>): List<MusicTrack> {
+        return playListRepository.loadTracksMatchedId(ids)
     }
 }

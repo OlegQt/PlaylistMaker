@@ -7,6 +7,7 @@ import com.playlistmaker.domain.db.PlayListRepository
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class PlayListRepositoryImpl(
@@ -19,10 +20,14 @@ class PlayListRepositoryImpl(
     }
 
     // Загружает все плейлисты
-    override suspend fun loadAllPlayLists(): Flow<List<PlayList>> {
+    override fun loadAllPlayLists(): Flow<List<PlayList>> {
         return db.playListDao().getAllPlayLists()
             .map { it.map { entity -> mapper.convertFromDao(entity) } }
 
+    }
+
+    override suspend fun loadPlayListById(id: Long): PlayList {
+        return mapper.convertFromDao(db.playListDao().getPlayListById(playlistId = id))
     }
 
     // Полное стирание всех плейлистов
@@ -40,9 +45,16 @@ class PlayListRepositoryImpl(
         db.trackListDao().addTrackToList(trackMapper.mapToDao(musicTrack))
     }
 
-    override suspend fun loadAllTracksFromTrackListDB(): Flow<List<MusicTrack>> {
+    override fun loadAllTracksFromTrackListDB(): Flow<List<MusicTrack>> {
         return db.trackListDao().readAllTrackList().map {
             it.map { entity -> trackMapper.mapFromDao(entity) }
         }
     }
+
+    override suspend fun loadTracksMatchedId(ids: List<Long>): List<MusicTrack> {
+        return loadAllTracksFromTrackListDB().first()
+            .filter { musicTrack -> ids.contains(musicTrack.trackId) }
+    }
+
+
 }
