@@ -15,7 +15,8 @@ import kotlinx.coroutines.flow.map
 class PlayListRepositoryImpl(
     private val db: MusicDB,
     private val mapper: PlayListMapper,
-    private val trackMapper: MusicTrackMapper
+    private val trackMapper: MusicTrackMapper,
+    private val gSon: Gson
 ) : PlayListRepository {
     override suspend fun savePlaylist(playListToSave: PlayList) {
         db.playListDao().addNewPlayList(playList = mapper.convertToDao(playListToSave))
@@ -48,7 +49,8 @@ class PlayListRepositoryImpl(
         idTrackToDelete: Long
     ) {
         // Считываем id всех треков из строки в массив
-        val listOfTracks: Array<Long> = Gson().fromJson(playListToUpdate.trackList, Array<Long>::class.java)
+        val listOfTracks: Array<Long> =
+            Gson().fromJson(playListToUpdate.trackList, Array<Long>::class.java)
 
         if (listOfTracks.contains(idTrackToDelete)) {
             Log.e("LOG", "Delete track $idTrackToDelete")
@@ -75,6 +77,30 @@ class PlayListRepositoryImpl(
         }
     }
 
+    override suspend fun checkIfTrackIsUnused(id: Long) {
+        var isUsed = false
+
+        val temp = db.playListDao().getAllPlayLists()
+            .map { it.map { entity -> mapper.convertFromDao(entity) } }.first()
+
+        temp.forEach {
+            Log.e("LOG", it.name)
+            if(extractTracksFromGson(it.trackList).contains(id)){
+                Log.e("LOG","track inside ${it.name} ")
+                isUsed=true
+            }
+        }
+
+        if (!isUsed) {
+            Log.e("LOG","track is not Used")
+            db.trackListDao().deleteTrackById(id)
+        }
+        else{
+            Log.e("LOG","track is Used someWhere")
+        }
+
+    }
+
     override fun flowLoadTracksMatchedId(ids: List<Long>): Flow<List<MusicTrack>> {
         return loadAllTracksFromTrackListDB().map {
             it.filter { musTrack ->
@@ -82,4 +108,11 @@ class PlayListRepositoryImpl(
             }
         }
     }
+
+    private fun extractTracksFromGson(jSonTrackList: String): Array<Long> {
+        return if (jSonTrackList.isEmpty()) arrayOf()
+        else return gSon.fromJson(jSonTrackList, Array<Long>::class.java)
+    }
+
+
 }

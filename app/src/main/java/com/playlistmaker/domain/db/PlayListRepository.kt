@@ -23,5 +23,7 @@ interface PlayListRepository {
 
     suspend fun loadTracksMatchedId(ids: List<Long>):List<MusicTrack>
 
+    suspend fun checkIfTrackIsUnused(id:Long)
+
     fun flowLoadTracksMatchedId(ids: List<Long>):Flow<List<MusicTrack>>
 }

@@ -72,7 +72,8 @@ val dataModule = module {
         PlayListRepositoryImpl(
             db = get(),
             mapper = get(),
-            trackMapper = get()
+            trackMapper = get(),
+            gSon = get()
         )
     }
 

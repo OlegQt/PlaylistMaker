@@ -12,6 +12,10 @@ class SearchTrackAdapter(private val trackList: ArrayList<MusicTrack>, private v
 
     var longClickListener:OnTrackLongClick? = null
 
+    fun changeData(newData:ArrayList<MusicTrack>){
+
+    }
+
     fun interface OnTrackClickListener {
         fun onTrackClick(position: Int)
     }

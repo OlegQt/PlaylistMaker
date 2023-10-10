@@ -60,6 +60,8 @@ class FragmentPlayListEditorVm(
         }
     }
 
+
+
     private fun extractTracksFromPlayList(playList: PlayList) {
         val listOfTracks = when (playList.trackList) {
             "" -> emptyList()
@@ -85,17 +87,18 @@ class FragmentPlayListEditorVm(
         viewModelScope.launch {
             val longTask = async(Dispatchers.IO) {
                 playListController.deleteTrackFromPlayList(temporalPlayList, trackId)
+                playListController.checkIfTrackIsUnused(trackId)
             }
             longTask.invokeOnCompletion {
                 it?.let {
                     _errorMsg.value = it.message
                 }
-                if (it == null) evaluatePlayList(temporalPlayList.id)
+                if (it == null) {
+                    evaluatePlayList(temporalPlayList.id)
+                }
                 else _errorMsg.value = "it.message"
 
             }
         }
-
-
     }
 }

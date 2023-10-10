@@ -47,4 +47,8 @@ class PlayListControllerImpl(private val playListRepository: PlayListRepository)
     override fun getFlowMusicTracksMatchedIds(ids: List<Long>): Flow<List<MusicTrack>> {
         return playListRepository.flowLoadTracksMatchedId(ids)
     }
+
+    override suspend fun checkIfTrackIsUnused(id: Long) {
+        playListRepository.checkIfTrackIsUnused(id)
+    }
 }

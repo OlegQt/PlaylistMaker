@@ -9,20 +9,22 @@ interface PlayListController {
 
     fun loadAllPlayLists(): Flow<List<PlayList>>
 
-    suspend fun loadPlayListById(id:Long):PlayList
+    suspend fun loadPlayListById(id: Long): PlayList
 
-    suspend fun  clearBD()
+    suspend fun clearBD()
 
     suspend fun updatePlayList(playListToUpdate: PlayList)
 
-    suspend fun deleteTrackFromPlayList(playListToUpdate: PlayList, trackId:Long)
+    suspend fun deleteTrackFromPlayList(playListToUpdate: PlayList, trackId: Long)
 
-    suspend fun safeMusicTrackToTrackListDB(musicTrackToSafe:MusicTrack)
+    suspend fun safeMusicTrackToTrackListDB(musicTrackToSafe: MusicTrack)
 
-    fun loadAllTracksFromTrackListDB():Flow<List<MusicTrack>>
+    fun loadAllTracksFromTrackListDB(): Flow<List<MusicTrack>>
 
-    suspend fun getMusicTracksMatchedIds(ids:List<Long>):List<MusicTrack>
+    suspend fun getMusicTracksMatchedIds(ids: List<Long>): List<MusicTrack>
 
-     fun getFlowMusicTracksMatchedIds(ids:List<Long>):Flow<List<MusicTrack>>
+    fun getFlowMusicTracksMatchedIds(ids: List<Long>): Flow<List<MusicTrack>>
+
+    suspend fun checkIfTrackIsUnused(id: Long)
 
 }
