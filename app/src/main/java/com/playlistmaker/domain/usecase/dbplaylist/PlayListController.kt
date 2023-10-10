@@ -15,10 +15,14 @@ interface PlayListController {
 
     suspend fun updatePlayList(playListToUpdate: PlayList)
 
+    suspend fun deleteTrackFromPlayList(playListToUpdate: PlayList, trackId:Long)
+
     suspend fun safeMusicTrackToTrackListDB(musicTrackToSafe:MusicTrack)
 
     fun loadAllTracksFromTrackListDB():Flow<List<MusicTrack>>
 
     suspend fun getMusicTracksMatchedIds(ids:List<Long>):List<MusicTrack>
+
+     fun getFlowMusicTracksMatchedIds(ids:List<Long>):Flow<List<MusicTrack>>
 
 }

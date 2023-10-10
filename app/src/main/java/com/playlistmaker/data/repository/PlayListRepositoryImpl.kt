@@ -1,5 +1,7 @@
 package com.playlistmaker.data.repository
 
+import android.util.Log
+import com.google.gson.Gson
 import com.playlistmaker.data.db.favourite.MusicDB
 import com.playlistmaker.data.db.playlist.PlayListMapper
 import com.playlistmaker.data.mapper.MusicTrackMapper
@@ -41,9 +43,30 @@ class PlayListRepositoryImpl(
         db.playListDao().updatePlaylist(mapper.convertToDao(playList))
     }
 
+    override suspend fun deleteTrackFromPlayList(
+        playListToUpdate: PlayList,
+        idTrackToDelete: Long
+    ) {
+        // Считываем id всех треков из строки в массив
+        val listOfTracks: Array<Long> = Gson().fromJson(playListToUpdate.trackList, Array<Long>::class.java)
+
+        if (listOfTracks.contains(idTrackToDelete)) {
+            Log.e("LOG", "Delete track $idTrackToDelete")
+            val betta = listOfTracks.filter { it != idTrackToDelete }
+            Log.e("LOG", "Delete track $betta")
+            val newListOfTrack = Gson().toJson(betta)
+            updatePlaylist(playListToUpdate.copy(trackList = newListOfTrack, quantity = betta.size))
+        }
+    }
+
     // Сохранение музыкального трека, добавленного в какой-либо плейлист внутри базы треков
     override suspend fun saveMusicTrackInTrackListBD(musicTrack: MusicTrack) {
         db.trackListDao().addTrackToList(trackMapper.mapToDao(musicTrack))
+    }
+
+    override suspend fun loadTracksMatchedId(ids: List<Long>): List<MusicTrack> {
+        return loadAllTracksFromTrackListDB().first()
+            .filter { musicTrack -> ids.contains(musicTrack.trackId) }
     }
 
     override fun loadAllTracksFromTrackListDB(): Flow<List<MusicTrack>> {
@@ -52,10 +75,11 @@ class PlayListRepositoryImpl(
         }
     }
 
-    override suspend fun loadTracksMatchedId(ids: List<Long>): List<MusicTrack> {
-        return loadAllTracksFromTrackListDB().first()
-            .filter { musicTrack -> ids.contains(musicTrack.trackId) }
+    override fun flowLoadTracksMatchedId(ids: List<Long>): Flow<List<MusicTrack>> {
+        return loadAllTracksFromTrackListDB().map {
+            it.filter { musTrack ->
+                ids.contains(musTrack.trackId)
+            }
+        }
     }
-
-
 }

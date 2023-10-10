@@ -84,6 +84,7 @@ class PlayListEditorFragment : Fragment() {
         // Инициализируем слушатель долгого нажатия на VH адаптера
         musTrackAdapter.longClickListener = SearchTrackAdapter.OnTrackLongClick {
             vm.setError("VERY long click on ${tracksInPlayList[it].trackName}")
+            vm.deleteTrackFromPlaylist(trackId = tracksInPlayList[it].trackId)
         }
 
     }

@@ -26,6 +26,12 @@ class PlayListControllerImpl(private val playListRepository: PlayListRepository)
         playListRepository.updatePlaylist(playList = playListToUpdate)
     }
 
+    override suspend fun deleteTrackFromPlayList(playListToUpdate: PlayList, trackId: Long) {
+        playListRepository.deleteTrackFromPlayList(
+            playListToUpdate,
+            idTrackToDelete = trackId)
+    }
+
     override suspend fun safeMusicTrackToTrackListDB(musicTrackToSafe: MusicTrack) {
         playListRepository.saveMusicTrackInTrackListBD(musicTrackToSafe)
     }
@@ -36,5 +42,9 @@ class PlayListControllerImpl(private val playListRepository: PlayListRepository)
 
     override suspend fun getMusicTracksMatchedIds(ids: List<Long>): List<MusicTrack> {
         return playListRepository.loadTracksMatchedId(ids)
+    }
+
+    override fun getFlowMusicTracksMatchedIds(ids: List<Long>): Flow<List<MusicTrack>> {
+        return playListRepository.flowLoadTracksMatchedId(ids)
     }
 }

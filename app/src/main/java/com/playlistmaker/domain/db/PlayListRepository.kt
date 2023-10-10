@@ -15,9 +15,13 @@ interface PlayListRepository {
 
     suspend fun updatePlaylist(playList: PlayList)
 
+    suspend fun deleteTrackFromPlayList(playListToUpdate: PlayList, idTrackToDelete:Long)
+
     suspend fun  saveMusicTrackInTrackListBD(musicTrack: MusicTrack)
 
     fun loadAllTracksFromTrackListDB():Flow<List<MusicTrack>>
 
     suspend fun loadTracksMatchedId(ids: List<Long>):List<MusicTrack>
+
+    fun flowLoadTracksMatchedId(ids: List<Long>):Flow<List<MusicTrack>>
 }

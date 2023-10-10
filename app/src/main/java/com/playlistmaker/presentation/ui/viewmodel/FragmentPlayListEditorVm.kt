@@ -10,6 +10,8 @@ import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.presentation.ui.fragments.PlayListEditorFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -37,7 +39,8 @@ class FragmentPlayListEditorVm(
     fun evaluatePlayList(idPlayList: Long) {
         viewModelScope.launch {
             temporalPlayList = playListController.loadPlayListById(id = idPlayList)
-            getMusicFromPlayList(temporalPlayList)
+            //getMusicFromPlayList(temporalPlayList)
+            extractTracksFromPlayList(temporalPlayList)
         }
     }
 
@@ -55,5 +58,44 @@ class FragmentPlayListEditorVm(
             )
             //_errorMsg.postValue(lst.map { "${it.trackName} \n" }.toString())
         }
+    }
+
+    private fun extractTracksFromPlayList(playList: PlayList) {
+        val listOfTracks = when (playList.trackList) {
+            "" -> emptyList()
+            else -> Gson().fromJson(playList.trackList, Array<Long>::class.java).toList()
+        }
+
+        viewModelScope.launch {
+            playListController.getFlowMusicTracksMatchedIds(listOfTracks).collect {
+                _screenState.value = PlayListEditorFragment.ScreenState.Content(
+                    playList = playList,
+                    it
+                )
+            }
+        }
+    }
+
+    fun deleteTrackFromPlaylist(trackId: Long) {
+        /*        viewModelScope.launch {
+                    playListController.deleteTrackFromPlayList(temporalPlayList, trackId)
+                    evaluatePlayList(temporalPlayList.id)
+                }*/
+
+        viewModelScope.launch {
+            val longTask = async(Dispatchers.IO) {
+                playListController.deleteTrackFromPlayList(temporalPlayList, trackId)
+            }
+            longTask.invokeOnCompletion {
+                it?.let {
+                    _errorMsg.value = it.message
+                }
+                if (it == null) evaluatePlayList(temporalPlayList.id)
+                else _errorMsg.value = "it.message"
+
+            }
+        }
+
+
     }
 }

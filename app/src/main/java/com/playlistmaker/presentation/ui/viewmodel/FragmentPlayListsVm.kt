@@ -32,7 +32,7 @@ class FragmentPlayListsVm(
         loadPlaylists()
     }
 
-    fun loadPlaylists() {
+    private fun loadPlaylists() {
         // TODO: Здесь прописать загрузку избранных треков
         val errorHandler = CoroutineExceptionHandler { _, throwable ->
             _errorMsg.value = throwable.message
