@@ -14,7 +14,7 @@ class PlayListControllerImpl(private val playListRepository: PlayListRepository)
     override fun loadAllPlayLists(): Flow<List<PlayList>> =
         playListRepository.loadAllPlayLists()
 
-    override suspend fun loadPlayListById(id: Long): PlayList {
+    override fun loadPlayListById(id: Long): Flow<PlayList> {
         return playListRepository.loadPlayListById(id)
     }
 

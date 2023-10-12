@@ -9,7 +9,7 @@ interface PlayListRepository {
 
     fun loadAllPlayLists(): Flow<List<PlayList>>
 
-    suspend fun loadPlayListById(id:Long):PlayList
+    fun loadPlayListById(id:Long):Flow<PlayList>
 
     suspend fun clearDB()
 

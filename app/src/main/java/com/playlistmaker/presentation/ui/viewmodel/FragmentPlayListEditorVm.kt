@@ -22,7 +22,7 @@ class FragmentPlayListEditorVm(
     private val _errorMsg = MutableLiveData<String>()
     val errorMsg = _errorMsg as LiveData<String>
 
-    private var temporalPlayList: PlayList = PlayList()
+    private var currentPlayListOnScreen: PlayList = PlayList()
 
     private val _screenState = MutableStateFlow<PlayListEditorFragment.ScreenState>(
         PlayListEditorFragment.ScreenState.NoData(null)
@@ -32,35 +32,14 @@ class FragmentPlayListEditorVm(
     private var startPlayerApp = SingleLiveEvent<MusicTrack>()
     val getStartPlayerCommand = startPlayerApp as LiveData<MusicTrack>
 
-    fun setError(str: String) {
-        _errorMsg.value = str
-    }
-
     fun evaluatePlayList(idPlayList: Long) {
         viewModelScope.launch {
-            temporalPlayList = playListController.loadPlayListById(id = idPlayList)
-            //getMusicFromPlayList(temporalPlayList)
-            extractTracksFromPlayList(temporalPlayList)
+            playListController.loadPlayListById(id = idPlayList).collect {
+                currentPlayListOnScreen = it
+                extractTracksFromPlayList(it)
+            }
         }
     }
-
-    private fun getMusicFromPlayList(playList: PlayList) {
-        val listOfTracks = when (temporalPlayList.trackList) {
-            "" -> emptyList()
-            else -> Gson().fromJson(temporalPlayList.trackList, Array<Long>::class.java).toList()
-        }
-
-        viewModelScope.launch {
-            val lst = playListController.getMusicTracksMatchedIds(listOfTracks.toList())
-            _screenState.value = PlayListEditorFragment.ScreenState.Content(
-                playList = temporalPlayList,
-                lst
-            )
-            //_errorMsg.postValue(lst.map { "${it.trackName} \n" }.toString())
-        }
-    }
-
-
 
     private fun extractTracksFromPlayList(playList: PlayList) {
         val listOfTracks = when (playList.trackList) {
@@ -76,29 +55,26 @@ class FragmentPlayListEditorVm(
                 )
             }
         }
+
+    }
+
+    private fun deleteUnusedMusicTrack(trackId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            playListController.checkIfTrackIsUnused(trackId)
+        }
     }
 
     fun deleteTrackFromPlaylist(trackId: Long) {
-        /*        viewModelScope.launch {
-                    playListController.deleteTrackFromPlayList(temporalPlayList, trackId)
-                    evaluatePlayList(temporalPlayList.id)
-                }*/
-
         viewModelScope.launch {
             val longTask = async(Dispatchers.IO) {
-                playListController.deleteTrackFromPlayList(temporalPlayList, trackId)
-                playListController.checkIfTrackIsUnused(trackId)
-            }
-            longTask.invokeOnCompletion {
-                it?.let {
-                    _errorMsg.value = it.message
-                }
-                if (it == null) {
-                    evaluatePlayList(temporalPlayList.id)
-                }
-                else _errorMsg.value = "it.message"
+                playListController.deleteTrackFromPlayList(currentPlayListOnScreen, trackId)
 
             }
+            longTask.invokeOnCompletion {
+                if (it == null) deleteUnusedMusicTrack(trackId)
+                else _errorMsg.value = it.message
+            }
+
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.playlistmaker.data.repository
 
-import android.util.Log
 import com.google.gson.Gson
 import com.playlistmaker.data.db.favourite.MusicDB
 import com.playlistmaker.data.db.playlist.PlayListMapper
@@ -29,8 +28,12 @@ class PlayListRepositoryImpl(
 
     }
 
-    override suspend fun loadPlayListById(id: Long): PlayList {
-        return mapper.convertFromDao(db.playListDao().getPlayListById(playlistId = id))
+    override fun loadPlayListById(id: Long): Flow<PlayList> {
+        return db.playListDao().getPlayListById(id).map {
+            mapper.convertFromDao(it)
+        }
+
+        //mapper.convertFromDao(db.playListDao().getPlayListById(playlistId = id))
     }
 
     // Полное стирание всех плейлистов
@@ -50,12 +53,11 @@ class PlayListRepositoryImpl(
     ) {
         // Считываем id всех треков из строки в массив
         val listOfTracks: Array<Long> =
-            Gson().fromJson(playListToUpdate.trackList, Array<Long>::class.java)
+            extractTracksFromGson(playListToUpdate.trackList)
 
+        // Обновляем плейлист (перезаписываем список треков и их количество)
         if (listOfTracks.contains(idTrackToDelete)) {
-            Log.e("LOG", "Delete track $idTrackToDelete")
             val betta = listOfTracks.filter { it != idTrackToDelete }
-            Log.e("LOG", "Delete track $betta")
             val newListOfTrack = Gson().toJson(betta)
             updatePlaylist(playListToUpdate.copy(trackList = newListOfTrack, quantity = betta.size))
         }
@@ -80,24 +82,18 @@ class PlayListRepositoryImpl(
     override suspend fun checkIfTrackIsUnused(id: Long) {
         var isUsed = false
 
+        // Извлечение всех треков из базы
         val temp = db.playListDao().getAllPlayLists()
             .map { it.map { entity -> mapper.convertFromDao(entity) } }.first()
 
+        // Просматриваем все плейлисты на наличие трека
+        // Если находим искомый трек, помечаем флажок isUsed
         temp.forEach {
-            Log.e("LOG", it.name)
-            if(extractTracksFromGson(it.trackList).contains(id)){
-                Log.e("LOG","track inside ${it.name} ")
-                isUsed=true
+            if (extractTracksFromGson(it.trackList).contains(id)) {
+                isUsed = true
             }
         }
-
-        if (!isUsed) {
-            Log.e("LOG","track is not Used")
-            db.trackListDao().deleteTrackById(id)
-        }
-        else{
-            Log.e("LOG","track is Used someWhere")
-        }
+        if (!isUsed) db.trackListDao().deleteTrackById(id)
 
     }
 

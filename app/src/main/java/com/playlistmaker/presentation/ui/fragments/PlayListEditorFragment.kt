@@ -12,6 +12,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
@@ -106,6 +107,7 @@ class PlayListEditorFragment : Fragment() {
         when (state) {
             is ScreenState.Content -> {
                 fillRecyclerWithTracks(state.musicTracks)
+                setCover(state.playList)
             }
 
             is ScreenState.NoData -> {}
@@ -113,10 +115,32 @@ class PlayListEditorFragment : Fragment() {
         }
     }
 
+    private fun setCover(playListInfo: PlayList) {
+        Glide
+            .with(binding.root)
+            .load(playListInfo.cover)
+            .placeholder(R.drawable.placeholder_no_track)
+            .override(1000,1000)
+            .into(binding.playListCover)
+
+    }
+
     private fun fillRecyclerWithTracks(tracks: List<MusicTrack>) {
         tracksInPlayList.clear()
         tracksInPlayList.addAll(tracks)
         musTrackAdapter.notifyDataSetChanged()
+
+        with(binding) {
+            if (tracksInPlayList.isEmpty()) {
+                trackRecycler.visibility = View.GONE
+                imgStub.visibility = View.VISIBLE
+                txtStubMainError.visibility = View.VISIBLE
+            } else {
+                trackRecycler.visibility = View.VISIBLE
+                imgStub.visibility = View.GONE
+                txtStubMainError.visibility = View.GONE
+            }
+        }
     }
 
     private fun startPlayerActivity(musicTrackToPlay: MusicTrack) {
@@ -125,14 +149,16 @@ class PlayListEditorFragment : Fragment() {
         startActivity(intentPlayerActivity)
     }
 
-    private fun askToDeleteTrack(clickedTrackId:Long){
+    private fun askToDeleteTrack(clickedTrackId: Long) {
         MaterialAlertDialogBuilder(requireContext())
             .setMessage("Хотите удалить трек? ")
             .setNegativeButton("НЕТ", null)
-            .setPositiveButton("ДА"
+            .setPositiveButton(
+                "ДА"
             ) { p0, p1 ->
                 vm.deleteTrackFromPlaylist(trackId = clickedTrackId)
-                p0.dismiss() }
+                p0.dismiss()
+            }
             .show().apply {
                 getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(
                     resources.getColor(
@@ -149,6 +175,7 @@ class PlayListEditorFragment : Fragment() {
             }
 
     }
+
     companion object {
         const val PLAYLIST_ID_ARG = "ARG"
         const val PARAM_BEFORE_ON_CREATE = -1L

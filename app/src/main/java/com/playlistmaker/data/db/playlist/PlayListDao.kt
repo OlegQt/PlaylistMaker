@@ -19,7 +19,7 @@ interface PlayListDao {
     fun getAllPlayLists(): Flow<List<PlayListEntity>>
 
     @Query("SELECT * FROM PlayListDB WHERE id = :playlistId")
-    suspend fun getPlayListById(playlistId: Long): PlayListEntity
+    fun getPlayListById(playlistId: Long): Flow<PlayListEntity>
 
 
     @Delete
