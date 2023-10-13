@@ -9,14 +9,14 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import com.playlistmaker.presentation.SingleLiveEvent
-import com.playlistmaker.presentation.ui.fragments.PlayListEditorFragment
+import com.playlistmaker.presentation.ui.fragments.PlayListViewerFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class FragmentPlayListEditorVm(
+class FragmentPlayListViewerVm(
     private val playListController: PlayListController
 ) : ViewModel() {
     private val _errorMsg = MutableLiveData<String>()
@@ -24,10 +24,10 @@ class FragmentPlayListEditorVm(
 
     private var currentPlayListOnScreen: PlayList = PlayList()
 
-    private val _screenState = MutableStateFlow<PlayListEditorFragment.ScreenState>(
-        PlayListEditorFragment.ScreenState.NoData(null)
+    private val _screenState = MutableStateFlow<PlayListViewerFragment.ScreenState>(
+        PlayListViewerFragment.ScreenState.NoData(null)
     )
-    val screenState = _screenState as StateFlow<PlayListEditorFragment.ScreenState>
+    val screenState = _screenState as StateFlow<PlayListViewerFragment.ScreenState>
 
     private var startPlayerApp = SingleLiveEvent<MusicTrack>()
     val getStartPlayerCommand = startPlayerApp as LiveData<MusicTrack>
@@ -49,7 +49,7 @@ class FragmentPlayListEditorVm(
 
         viewModelScope.launch {
             playListController.getFlowMusicTracksMatchedIds(listOfTracks).collect {
-                _screenState.value = PlayListEditorFragment.ScreenState.Content(
+                _screenState.value = PlayListViewerFragment.ScreenState.Content(
                     playList = playList,
                     it
                 )

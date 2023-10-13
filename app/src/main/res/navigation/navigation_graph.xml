@@ -44,7 +44,7 @@
         tools:layout="@layout/fragment_new_playlist"/>
     <fragment
         android:id="@+id/playListEditorFragment"
-        android:name="com.playlistmaker.presentation.ui.fragments.PlayListEditorFragment"
+        android:name="com.playlistmaker.presentation.ui.fragments.PlayListViewerFragment"
         android:label="fragment_playlist_editor"
         tools:layout="@layout/fragment_playlist_editor" />
 

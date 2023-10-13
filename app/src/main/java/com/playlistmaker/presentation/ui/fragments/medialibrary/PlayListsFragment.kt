@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,7 +16,7 @@ import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
-import com.playlistmaker.presentation.ui.fragments.PlayListEditorFragment
+import com.playlistmaker.presentation.ui.fragments.PlayListViewerFragment
 import com.playlistmaker.presentation.ui.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -45,7 +44,7 @@ class PlayListsFragment : Fragment() {
 
             Bundle().apply {
                 // По заданию, передаем только id
-                putLong(PlayListEditorFragment.PLAYLIST_ID_ARG, playListToSend.id)
+                putLong(PlayListViewerFragment.PLAYLIST_ID_ARG, playListToSend.id)
             })
     }
 
