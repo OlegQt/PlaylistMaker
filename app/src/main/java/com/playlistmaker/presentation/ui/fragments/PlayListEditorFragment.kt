@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +24,7 @@ import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.recycleradapter.SearchTrackAdapter
 import com.playlistmaker.presentation.ui.recycleradapter.Syntactic
+import com.playlistmaker.presentation.ui.viewmodel.FragmentChangePlaylistVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListEditorVm
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -104,6 +106,14 @@ class PlayListEditorFragment : Fragment() {
                 requireActivity().supportFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
             val navController = navHostFragment.navController
             navController.navigateUp()
+        }
+
+
+        binding.btnPlaylistMenu.setOnClickListener {
+            requireActivity().supportFragmentManager.commit {
+                replace(R.id.root_placeholder,ChangePlaylistFragment.changeInstance(param))
+                addToBackStack(null)
+            }
         }
 
     }

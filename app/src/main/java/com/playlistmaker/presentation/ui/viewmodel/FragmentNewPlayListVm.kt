@@ -13,11 +13,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
-class FragmentNewPlayListVm(
+open class FragmentNewPlayListVm(
     private val playListController: PlayListController
 ) : ViewModel() {
     // Error message
-    private val _errorMsg = MutableLiveData<String>()
+    protected val _errorMsg = MutableLiveData<String>()
     val errorMsg = _errorMsg as LiveData<String>
 
     private val _btnCreateEnable = MutableLiveData<Boolean>()

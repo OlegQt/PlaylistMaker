@@ -34,9 +34,9 @@ import java.io.FileOutputStream
 
 const val PLAYLIST_COVER = "PLAYLIST_COVERS"
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
 
-    private val vm: FragmentNewPlayListVm by viewModel()
+    open val vm: FragmentNewPlayListVm by viewModel()
 
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
@@ -118,7 +118,7 @@ class NewPlaylistFragment : Fragment() {
 
     }
 
-    private fun setImageAsCover(uri: Uri) {
+    open fun setImageAsCover(uri: Uri) {
         // Изменяем layout картинки
         with(binding.imgAddPhoto) {
             // Установите параметры ширины и высоты на wrap_content
@@ -265,7 +265,7 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e("LOG_TAG", "DESTROY PLAYLIST")
+        Log.e("LOG_TAG", "DESTROY NEW PLAYLIST FRAGMENT")
         parentFragmentManager.setFragmentResult(FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY, Bundle())
 
         _binding = null
@@ -279,6 +279,7 @@ class NewPlaylistFragment : Fragment() {
     companion object {
         const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY = "NEW_PLAYLIST_DESTROY"
         private const val REQUEST_PERMISSION_CODE = 101
+        const val ARG_PLAYLIST_ID = "PLAY_LIST_ID_ARG"
     }
 
 }
