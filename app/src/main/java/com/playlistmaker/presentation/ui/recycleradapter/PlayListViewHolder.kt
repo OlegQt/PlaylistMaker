@@ -1,4 +1,4 @@
-package com.playlistmaker.presentation.ui.fragments.recycleradapter
+package com.playlistmaker.presentation.ui.recycleradapter
 
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +25,7 @@ abstract class PlayListVH(itemView:View):ViewHolder(itemView){
 class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(binding.root) {
     override fun bind(playList: PlayList) {
         binding.txtPlaylistName.text = playList.name
-        binding.txtAmount.text = getTrackEnding(playList.quantity)
+        binding.txtAmount.text = Syntactic.getTrackEnding(playList.quantity)
 
         Glide
             .with(binding.root)

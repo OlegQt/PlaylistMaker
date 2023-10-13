@@ -1,4 +1,4 @@
-package com.playlistmaker.presentation.ui.fragments.recycleradapter
+package com.playlistmaker.presentation.ui.recycleradapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +10,7 @@ import com.playlistmaker.domain.models.MusicTrack
 class SearchTrackAdapter(private val trackList: ArrayList<MusicTrack>, private var onTrackClickListener: OnTrackClickListener) :
     Adapter<SearchTrackViewHolder>() {
 
-    var longClickListener:OnTrackLongClick? = null
+    var longClickListener: OnTrackLongClick? = null
 
     fun changeData(newData:ArrayList<MusicTrack>){
 

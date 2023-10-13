@@ -21,10 +21,13 @@ import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
-import com.playlistmaker.presentation.ui.fragments.recycleradapter.SearchTrackAdapter
+import com.playlistmaker.presentation.ui.recycleradapter.SearchTrackAdapter
+import com.playlistmaker.presentation.ui.recycleradapter.Syntactic
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListEditorVm
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlayListEditorFragment : Fragment() {
     private val vm: FragmentPlayListEditorVm by viewModel()
@@ -62,7 +65,7 @@ class PlayListEditorFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            vm.screenState.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).collect() {
+            vm.screenState.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).collect {
                 setScreenState(it)
             }
         }
@@ -71,6 +74,8 @@ class PlayListEditorFragment : Fragment() {
         // Inflate the layout for this fragment
         return binding.root
     }
+
+    fun Long.getStringMm() = SimpleDateFormat("m", Locale.getDefault()).format(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -81,7 +86,7 @@ class PlayListEditorFragment : Fragment() {
 
         // Разбираемся со шторкой
         val standardBottomSheetBehavior = BottomSheetBehavior.from(binding.standardBottomSheet)
-        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         // Инициализируем адаптер
         binding.trackRecycler.layoutManager = LinearLayoutManager(this.requireContext())
@@ -107,7 +112,7 @@ class PlayListEditorFragment : Fragment() {
         when (state) {
             is ScreenState.Content -> {
                 fillRecyclerWithTracks(state.musicTracks)
-                setCover(state.playList)
+                bindPlayListInfo(state.playList)
             }
 
             is ScreenState.NoData -> {}
@@ -115,13 +120,18 @@ class PlayListEditorFragment : Fragment() {
         }
     }
 
-    private fun setCover(playListInfo: PlayList) {
+    private fun bindPlayListInfo(playListInfo: PlayList) {
         Glide
             .with(binding.root)
             .load(playListInfo.cover)
             .placeholder(R.drawable.placeholder_no_track)
-            .override(1000,1000)
+            .override(1000, 1000)
             .into(binding.playListCover)
+
+        with(binding) {
+            txtPlaylistName.text = playListInfo.name
+            txtPlaylistDescription.text = playListInfo.description
+        }
 
     }
 
@@ -130,6 +140,8 @@ class PlayListEditorFragment : Fragment() {
         tracksInPlayList.addAll(tracks)
         musTrackAdapter.notifyDataSetChanged()
 
+
+        // Показываем заглушку в случае пустого списка
         with(binding) {
             if (tracksInPlayList.isEmpty()) {
                 trackRecycler.visibility = View.GONE
@@ -140,8 +152,19 @@ class PlayListEditorFragment : Fragment() {
                 imgStub.visibility = View.GONE
                 txtStubMainError.visibility = View.GONE
             }
+
+            // Отображение количества треков и общей их продолжительности
+            // производим только после загрузки треков
+            val playListLength =
+                Syntactic.getMinuteEnding(getPlayListDuration(tracks).getStringMm().toInt())
+            val trackQuantity = Syntactic.getTrackEnding(tracks.size)
+
+            txtPlaylistLength.text = "$playListLength * $trackQuantity"
         }
     }
+
+    private fun getPlayListDuration(tracksInPlaylist: List<MusicTrack>) =
+        tracksInPlaylist.sumOf { it.trackTimeMillis }
 
     private fun startPlayerActivity(musicTrackToPlay: MusicTrack) {
         val intentPlayerActivity = Intent(requireContext(), ActivityPlayerB::class.java)

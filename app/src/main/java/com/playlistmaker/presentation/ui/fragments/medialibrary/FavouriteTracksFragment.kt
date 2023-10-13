@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.playlistmaker.databinding.FragmentFavouriteTracksBinding
 import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.presentation.ui.fragments.recycleradapter.SearchTrackAdapter
+import com.playlistmaker.presentation.ui.recycleradapter.SearchTrackAdapter
 import com.playlistmaker.presentation.models.FragmentFavouriteTracksState
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm

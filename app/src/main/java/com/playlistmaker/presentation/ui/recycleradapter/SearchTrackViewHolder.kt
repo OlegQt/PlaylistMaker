@@ -1,4 +1,4 @@
-package com.playlistmaker.presentation.ui.fragments.recycleradapter
+package com.playlistmaker.presentation.ui.recycleradapter
 
 import android.content.res.Resources
 import android.util.Log
