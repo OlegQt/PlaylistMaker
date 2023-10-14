@@ -17,7 +17,7 @@ open class FragmentNewPlayListVm(
     private val playListController: PlayListController
 ) : ViewModel() {
     // Error message
-    protected val _errorMsg = MutableLiveData<String>()
+    private val _errorMsg = MutableLiveData<String>()
     val errorMsg = _errorMsg as LiveData<String>
 
     private val _btnCreateEnable = MutableLiveData<Boolean>()
@@ -36,7 +36,7 @@ open class FragmentNewPlayListVm(
         _btnCreateEnable.value = false
     }
 
-    fun handlePickedImage(uri: Uri) {
+    open fun handlePickedImage(uri: Uri) {
         // После выбора картинки, сохраняем идентификатор внутри viewModel
         _selectedImage.value = uri
     }
@@ -54,16 +54,15 @@ open class FragmentNewPlayListVm(
         newPlayList.name = newName
     }
 
-    fun changeDescription(newDescription: String) {
+    open fun changeDescription(newDescription: String) {
         newPlayList.description = newDescription
     }
 
-    fun updatePlayListCoverLocation(file: File) {
+    open fun updatePlayListCoverLocation(file: File) {
         newPlayList.cover = file.toString()
     }
 
     fun savePlayListToDB() {
-        // Добавляем трек в базу сразу при старте плеера временно
         val errorHandler = CoroutineExceptionHandler { _, throwable ->
             _errorMsg.value = throwable.message
         }

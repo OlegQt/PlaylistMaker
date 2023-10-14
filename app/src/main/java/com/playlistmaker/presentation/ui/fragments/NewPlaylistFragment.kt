@@ -136,7 +136,7 @@ open class NewPlaylistFragment : Fragment() {
             .into(binding.imgAddPhoto)
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri?) {
+    protected fun saveImageToPrivateStorage(uri: Uri?) {
         if (uri == null) return
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath = File(
@@ -151,6 +151,19 @@ open class NewPlaylistFragment : Fragment() {
 
         //создаём экземпляр класса File, который указывает на файл внутри каталога
         val file = File(filePath, "${vm.playListName}_cover.jpg")
+
+        // Удаляем файл, если он уже существует
+        if (file.exists()) {
+            file.delete()
+        }
+
+        val logString = StringBuilder()
+        filePath.listFiles()?.forEach {
+            logString.append(it.name).append("\n")
+        }
+        val lst = logString.toString()
+
+
 
         // создаём входящий поток байтов из выбранной картинки
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
@@ -214,7 +227,7 @@ open class NewPlaylistFragment : Fragment() {
 
     }
 
-    private fun checkAndAskPermission(permission: String) {
+    fun checkAndAskPermission(permission: String) {
         when {
             haveRequiredPermission(permission) -> {
                 // You can use the API that requires the permission.

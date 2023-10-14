@@ -181,7 +181,6 @@ class PlayListViewerFragment : Fragment() {
             .with(binding.root)
             .load(playListInfo.cover)
             .placeholder(R.drawable.no_track_found)
-            //.override(1000, 1000)
             .listener(stubReplacer)
             .into(binding.playListCover)
 
