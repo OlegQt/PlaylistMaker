@@ -34,12 +34,12 @@ import java.io.FileOutputStream
 
 const val PLAYLIST_COVER = "PLAYLIST_COVERS"
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
 
-    private val vm: FragmentNewPlayListVm by viewModel()
+    protected open val vm: FragmentNewPlayListVm by viewModel()
 
-    private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+    open var _binding: FragmentNewPlaylistBinding? = null
+    protected val binding get() = _binding!!
 
     private var pickImageContent =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -278,7 +278,6 @@ class NewPlaylistFragment : Fragment() {
 
     companion object {
         const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY = "NEW_PLAYLIST_DESTROY"
-        private const val REQUEST_PERMISSION_CODE = 101
     }
 
 }

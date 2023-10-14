@@ -2,17 +2,25 @@ package com.playlistmaker.presentation.ui.fragments
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
@@ -29,7 +37,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-open class PlayListViewerFragment : Fragment() {
+class PlayListViewerFragment : Fragment() {
     private val vm: FragmentPlayListViewerVm by viewModel()
     private var param = PARAM_BEFORE_ON_CREATE
 
@@ -106,6 +114,13 @@ open class PlayListViewerFragment : Fragment() {
             navController.navigateUp()
         }
 
+        binding.btnPlaylistShare.setOnClickListener {
+            requireActivity().supportFragmentManager.commit {
+                replace(R.id.root_placeholder, PlayListEditorFragment.setArg(param))
+                addToBackStack(null)
+            }
+        }
+
     }
 
     private fun setScreenState(state: ScreenState) {
@@ -121,11 +136,53 @@ open class PlayListViewerFragment : Fragment() {
     }
 
     private fun bindPlayListInfo(playListInfo: PlayList) {
+        // Анонимный класс ниже является слушателем, реагирующем на успешность
+        // загрузки изображения в glide
+        val stubReplacer = object : RequestListener<Drawable?> {
+            // Called when an exception occurs during a load
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Drawable?>?,
+                isFirstResource: Boolean
+            ): Boolean {
+
+                Log.e("LOG", "onLoadFailed")
+                with(binding.playListCover) {
+                    // Установите параметры ширины и высоты на wrap_content
+                    layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                    layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+                    // Вычисляем плотность пикселей на экране
+                    val dpi = resources.displayMetrics.density
+                    val marginLayoutParams = layoutParams as MarginLayoutParams
+                    marginLayoutParams.topMargin = (VERTICAL_MARGIN_COVER_PLACEHOLDER * dpi).toInt()
+                    marginLayoutParams.bottomMargin = (VERTICAL_MARGIN_COVER_PLACEHOLDER * dpi).toInt()
+                    // Обновляем ImageView, чтобы применить изменения
+                    requestLayout()
+                }
+                return false
+            }
+
+            // Called when a load completes successfully
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: Target<Drawable?>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
+
+        }
+
         Glide
             .with(binding.root)
             .load(playListInfo.cover)
-            .placeholder(R.drawable.placeholder_no_track)
+            .placeholder(R.drawable.no_track_found)
             //.override(1000, 1000)
+            .listener(stubReplacer)
             .into(binding.playListCover)
 
         with(binding) {
@@ -202,6 +259,7 @@ open class PlayListViewerFragment : Fragment() {
     companion object {
         const val PLAYLIST_ID_ARG = "ARG"
         const val PARAM_BEFORE_ON_CREATE = -1L
+        const val VERTICAL_MARGIN_COVER_PLACEHOLDER = 56
     }
 
     sealed class ScreenState {

@@ -23,9 +23,30 @@
             android:clipToOutline="true"
             android:contentDescription="@string/app_name"
             android:scaleType="centerCrop"
+            android:visibility="visible"
 
             android:src="@drawable/no_track_found"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <ImageView
+            android:id="@+id/play_list_cover_stub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintDimensionRatio="1:1"
+
+
+            android:background="@drawable/image_rounded_cover"
+
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
+
+            android:visibility="gone"
+
+            android:src="@drawable/no_track_found"
+            app:layout_constraintTop_toBottomOf="@id/topAppBar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             />
@@ -103,6 +124,7 @@
             android:src="@drawable/share_app_ic"
             app:tint="@color/YP_black"
             android:background="@null"
+            android:contentDescription="@string/app_name"
 
             app:layout_constraintTop_toBottomOf="@id/txt_playlist_length"
             app:layout_constraintStart_toStartOf="parent"
@@ -118,6 +140,7 @@
             android:src="@drawable/plus_track"
             app:tint="@color/YP_black"
             android:background="@null"
+            android:contentDescription="@string/app_name"
 
             app:layout_constraintTop_toBottomOf="@id/txt_playlist_length"
             app:layout_constraintStart_toEndOf="@id/btn_playlist_share"
