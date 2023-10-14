@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -49,6 +50,9 @@ class PlayListViewerFragment : Fragment() {
         startPlayerActivity(musicTrackToPlay = tracksInPlayList[it])
     }
 
+    private lateinit var bottomSheetAdapter:BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetMenu:BottomSheetBehavior<LinearLayout>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,12 +76,15 @@ class PlayListViewerFragment : Fragment() {
             startPlayerActivity(it)
         }
 
+        vm._exitTrigger.observe(viewLifecycleOwner){
+            exitFragment()
+        }
+
         lifecycleScope.launch {
             vm.screenState.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).collect {
                 setScreenState(it)
             }
         }
-
 
         // Inflate the layout for this fragment
         return binding.root
@@ -93,8 +100,12 @@ class PlayListViewerFragment : Fragment() {
         vm.evaluatePlayList(param)
 
         // Разбираемся со шторкой
-        val standardBottomSheetBehavior = BottomSheetBehavior.from(binding.standardBottomSheet)
-        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        this.bottomSheetAdapter =  BottomSheetBehavior.from(binding.standardBottomSheet)
+        bottomSheetAdapter.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        this.bottomSheetMenu =  BottomSheetBehavior.from(binding.menuBottomSheet)
+        bottomSheetMenu.state = BottomSheetBehavior.STATE_HIDDEN
+
 
         // Инициализируем адаптер
         binding.trackRecycler.layoutManager = LinearLayoutManager(this.requireContext())
@@ -108,10 +119,7 @@ class PlayListViewerFragment : Fragment() {
 
 
         binding.topAppBar.setNavigationOnClickListener {
-            val navHostFragment =
-                requireActivity().supportFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
-            val navController = navHostFragment.navController
-            navController.navigateUp()
+            exitFragment()
         }
 
         binding.btnPlaylistShare.setOnClickListener {
@@ -121,6 +129,22 @@ class PlayListViewerFragment : Fragment() {
             }
         }
 
+        binding.btnPlaylistMenu.setOnClickListener {
+            bottomSheetAdapter.state = BottomSheetBehavior.STATE_HIDDEN
+            bottomSheetMenu.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.btnDeletePlaylist.setOnClickListener {
+            vm.deletePlayList()
+        }
+
+    }
+
+    private fun exitFragment(){
+        val navHostFragment =
+            requireActivity().supportFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
+        val navController = navHostFragment.navController
+        navController.navigateUp()
     }
 
     private fun setScreenState(state: ScreenState) {
@@ -184,9 +208,16 @@ class PlayListViewerFragment : Fragment() {
             .listener(stubReplacer)
             .into(binding.playListCover)
 
+        Glide
+            .with(binding.root)
+            .load(playListInfo.cover)
+            .placeholder(R.drawable.no_track_found)
+            .into(binding.imgSmallPlaylistCover)
+
         with(binding) {
             txtPlaylistName.text = playListInfo.name
             txtPlaylistDescription.text = playListInfo.description
+            txtSmallPlaylistName.text=playListInfo.name
         }
 
     }
@@ -216,6 +247,7 @@ class PlayListViewerFragment : Fragment() {
             val trackQuantity = Syntactic.getTrackEnding(tracks.size)
 
             txtPlaylistLength.text = "$playListLength * $trackQuantity"
+            txtAmountSmall.text = trackQuantity
         }
     }
 

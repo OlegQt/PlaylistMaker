@@ -15,7 +15,11 @@ interface PlayListController {
 
     suspend fun updatePlayList(playListToUpdate: PlayList)
 
+    suspend fun deletePlayList(playList: PlayList)
+
     suspend fun deleteTrackFromPlayList(playListToUpdate: PlayList, trackId: Long)
+
+    // Ниже функционал для работы с таблицей треков
 
     suspend fun safeMusicTrackToTrackListDB(musicTrackToSafe: MusicTrack)
 

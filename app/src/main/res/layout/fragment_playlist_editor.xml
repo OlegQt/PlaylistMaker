@@ -114,7 +114,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
 
-            android:src="@drawable/plus_track"
+            android:src="@drawable/ic_menu"
             app:tint="@color/YP_black"
             android:background="@null"
             android:contentDescription="@string/app_name"
@@ -132,10 +132,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bottom_sheet_rounded"
+        android:visibility="visible"
 
         android:orientation="vertical"
         app:behavior_hideable="false"
-
         app:behavior_peekHeight="160dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -177,5 +177,85 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/menu_bottom_sheet"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bottom_sheet_rounded"
+        android:visibility="visible"
+
+        android:orientation="vertical"
+        app:behavior_hideable="true"
+
+        app:behavior_peekHeight="160dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:layout_width="50dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/Yp_Light_Grey" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="8dp"
+            android:paddingStart="12dp">
+
+            <ImageView
+                android:id="@+id/img_small_playlist_cover"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+
+                android:src="@drawable/red_heart"
+
+                android:background="@drawable/image_rounded_cover_2dp"
+                android:clipToOutline="true"
+                android:scaleType="centerCrop"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txt_small_playlist_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/app_name"
+                android:textSize="16sp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/img_small_playlist_cover"
+                app:layout_constraintTop_toTopOf="@id/img_small_playlist_cover" />
+
+            <TextView
+                android:id="@+id/txt_amount_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/app_name"
+
+                android:textSize="11sp"
+                app:layout_constraintStart_toEndOf="@id/img_small_playlist_cover"
+                app:layout_constraintTop_toBottomOf="@id/txt_small_playlist_name" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_delete_playlist"
+            android:text="delete"/>
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

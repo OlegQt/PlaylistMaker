@@ -110,5 +110,7 @@ class PlayListRepositoryImpl(
         else return gSon.fromJson(jSonTrackList, Array<Long>::class.java)
     }
 
-
+    override suspend fun deletePlaylist(playList: PlayList) {
+        db.playListDao().deletePlaylist(mapper.convertToDao(playList))
+    }
 }

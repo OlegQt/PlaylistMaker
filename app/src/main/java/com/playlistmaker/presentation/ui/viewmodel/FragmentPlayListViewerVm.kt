@@ -11,6 +11,7 @@ import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.presentation.ui.fragments.PlayListViewerFragment
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,13 +33,19 @@ class FragmentPlayListViewerVm(
     private var startPlayerApp = SingleLiveEvent<MusicTrack>()
     val getStartPlayerCommand = startPlayerApp as LiveData<MusicTrack>
 
+    val _exitTrigger = SingleLiveEvent<Boolean>()
+
+    private var job: Job? = null
+
+
     fun evaluatePlayList(idPlayList: Long) {
-        viewModelScope.launch {
+        job = viewModelScope.launch {
             playListController.loadPlayListById(id = idPlayList).collect {
                 currentPlayListOnScreen = it
                 extractTracksFromPlayList(it)
             }
         }
+
     }
 
     private fun extractTracksFromPlayList(playList: PlayList) {
@@ -61,6 +68,15 @@ class FragmentPlayListViewerVm(
     private fun deleteUnusedMusicTrack(trackId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             playListController.checkIfTrackIsUnused(trackId)
+        }
+    }
+
+    fun deletePlayList() {
+        viewModelScope.launch {
+            job?.cancel()
+            playListController.deletePlayList(currentPlayListOnScreen)
+            _exitTrigger.value=true
+
         }
     }
 
