@@ -20,8 +20,6 @@ open class FragmentPlayListEditorVm(
     private val _playListOpened = MutableLiveData<PlayList?>()
     val playListOpened = _playListOpened as LiveData<PlayList?>
 
-    val color = MutableLiveData<Boolean>()
-
     private var changedPlayList = PlayList()
 
     fun loadPlaylistById(id: Long) {
@@ -43,13 +41,11 @@ open class FragmentPlayListEditorVm(
     override fun changePlayListName(newName: String) {
         super.changePlayListName(newName)
         changedPlayList.name = newName
-        color.value = isPlaylistDataChanged()
     }
 
     override fun changeDescription(newDescription: String) {
         super.changeDescription(newDescription)
         changedPlayList.description = newDescription
-        color.value = isPlaylistDataChanged()
     }
 
     override fun handlePickedImage(uri: Uri) {

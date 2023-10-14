@@ -83,21 +83,6 @@ class PlayListEditorFragment : NewPlaylistFragment() {
                 }
             }
 
-            vm.color.observe(viewLifecycleOwner) {
-                if (it) binding.root.setBackgroundColor(
-                    resources.getColor(
-                        R.color.Text_Grey,
-                        null
-                    )
-                )
-                else binding.root.setBackgroundColor(
-                    resources.getColor(
-                        R.color.Text_Red,
-                        null
-                    )
-                )
-            }
-
             vm.selectedImage.observe(viewLifecycleOwner){
                 setImageAsCover(it)
             }
