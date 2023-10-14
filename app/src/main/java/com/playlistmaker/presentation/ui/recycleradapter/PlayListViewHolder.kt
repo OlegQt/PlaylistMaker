@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.playlistmaker.R
 import com.playlistmaker.databinding.PlaylistItemBinding
 import com.playlistmaker.databinding.PlaylistShortItemBinding
@@ -32,6 +33,8 @@ class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(
             .load(playList.cover)
             .placeholder(R.drawable.placeholder_no_track)
             .override(160, 160)
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .skipMemoryCache(true)
             .into(binding.imgPlaylistCover)
 
     }
@@ -49,6 +52,8 @@ class PlayListViewHolderSmall(private val binding: PlaylistShortItemBinding) : P
             .load(playList.cover)
             .placeholder(R.drawable.placeholder_no_track)
             .override(45, 45)
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .skipMemoryCache(true)
             .into(binding.imgPlaylistCover)
     }
 

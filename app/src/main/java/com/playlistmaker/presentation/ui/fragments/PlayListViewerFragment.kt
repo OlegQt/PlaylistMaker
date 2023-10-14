@@ -22,6 +22,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.playlistmaker.R
@@ -76,7 +77,7 @@ class PlayListViewerFragment : Fragment() {
             startPlayerActivity(it)
         }
 
-        vm._exitTrigger.observe(viewLifecycleOwner){
+        vm.exitTrigger.observe(viewLifecycleOwner){
             exitFragment()
         }
 
@@ -135,6 +136,10 @@ class PlayListViewerFragment : Fragment() {
         }
 
         binding.btnDeletePlaylist.setOnClickListener {
+            // Вначале удаление всех треков
+            vm.deleteMultipleTrack(tracksIds = tracksInPlayList.map { it.trackId })
+
+            // Удаление плейлиста
             vm.deletePlayList()
         }
 
@@ -200,18 +205,22 @@ class PlayListViewerFragment : Fragment() {
             }
 
         }
-
+        //Uri.fromFile(File(playListInfo.cover))
+        //playListInfo.cover
         Glide
             .with(binding.root)
             .load(playListInfo.cover)
             .placeholder(R.drawable.no_track_found)
             .listener(stubReplacer)
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .skipMemoryCache(true)
             .into(binding.playListCover)
 
         Glide
             .with(binding.root)
             .load(playListInfo.cover)
             .placeholder(R.drawable.no_track_found)
+            .signature(ObjectKey(System.currentTimeMillis()))
             .into(binding.imgSmallPlaylistCover)
 
         with(binding) {

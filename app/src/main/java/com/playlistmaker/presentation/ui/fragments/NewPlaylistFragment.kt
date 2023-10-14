@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
@@ -133,6 +134,7 @@ open class NewPlaylistFragment : Fragment() {
         Glide.with(binding.root.context)
             .load(uri)
             .placeholder(R.drawable.no_track_found)
+            .signature(ObjectKey(System.currentTimeMillis()))
             .into(binding.imgAddPhoto)
     }
 
@@ -154,6 +156,7 @@ open class NewPlaylistFragment : Fragment() {
 
         // Удаляем файл, если он уже существует
         if (file.exists()) {
+            (requireActivity() as AlertMessaging).showAlertDialog("$file exists")
             file.delete()
         }
 
@@ -162,7 +165,6 @@ open class NewPlaylistFragment : Fragment() {
             logString.append(it.name).append("\n")
         }
         val lst = logString.toString()
-
 
 
         // создаём входящий поток байтов из выбранной картинки
@@ -187,12 +189,8 @@ open class NewPlaylistFragment : Fragment() {
         if (filePath.exists()) {
             val logString = StringBuilder()
             filePath.listFiles()?.forEachIndexed { index, element ->
-                logString.append("($index)-$element\n")
+                element.delete()
             }
-            Snackbar.make(binding.imgAddPhoto, logString.toString(), Snackbar.LENGTH_SHORT)
-                .setTextMaxLines(20)
-                .setAction("OK") {}
-                .show()
         }
     }
 

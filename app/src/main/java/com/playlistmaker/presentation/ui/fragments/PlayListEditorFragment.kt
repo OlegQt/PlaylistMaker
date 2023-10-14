@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.playlistmaker.presentation.models.AlertMessaging
@@ -110,6 +111,8 @@ class PlayListEditorFragment : NewPlaylistFragment() {
         Glide.with(binding.root.context)
             .load(uri)
             .placeholder(R.drawable.no_track_found)
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .skipMemoryCache(true)
             .into(binding.imgAddPhoto)
     }
 

@@ -1,6 +1,7 @@
 package com.playlistmaker.presentation.ui.fragments.medialibrary
 
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +17,14 @@ import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
+import com.playlistmaker.presentation.ui.fragments.PLAYLIST_COVER
 import com.playlistmaker.presentation.ui.fragments.PlayListViewerFragment
 import com.playlistmaker.presentation.ui.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 
 class PlayListsFragment : Fragment() {
@@ -103,9 +106,35 @@ class PlayListsFragment : Fragment() {
         }
 
         binding.btnClearDb.setOnClickListener { vm.clearPlayListBD() }
+        binding.btnClearDb.setOnLongClickListener {
+            directoryCheck()
+            true
+        }
 
         binding.favouriteTracksRecycler.adapter = playlistAdapter
         binding.favouriteTracksRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
+    }
+
+    private fun directoryCheck() {
+        // Функция считывает все обложки, сохраненные внутри каталога приложения
+        val filePath = File(
+            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            PLAYLIST_COVER
+        )
+
+        if (filePath.exists()) {
+            val logString = StringBuilder()
+            filePath.listFiles()?.forEachIndexed { index, element ->
+                Log.e("LOG",element.absolutePath)
+                    //element.delete()
+            }
+        }
+        Log.e("LOG","__________________________________________")
+        this.playListFromDB.forEach{
+            Log.e("LOG",it.cover)
+        }
+
+
     }
 
     override fun onResume() {

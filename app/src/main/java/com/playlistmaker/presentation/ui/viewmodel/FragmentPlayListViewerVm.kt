@@ -33,7 +33,7 @@ class FragmentPlayListViewerVm(
     private var startPlayerApp = SingleLiveEvent<MusicTrack>()
     val getStartPlayerCommand = startPlayerApp as LiveData<MusicTrack>
 
-    val _exitTrigger = SingleLiveEvent<Boolean>()
+    val exitTrigger = SingleLiveEvent<Boolean>()
 
     private var job: Job? = null
 
@@ -74,9 +74,17 @@ class FragmentPlayListViewerVm(
     fun deletePlayList() {
         viewModelScope.launch {
             job?.cancel()
-            playListController.deletePlayList(currentPlayListOnScreen)
-            _exitTrigger.value=true
 
+
+            playListController.deletePlayList(currentPlayListOnScreen)
+            exitTrigger.value=true
+
+        }
+    }
+
+    fun deleteMultipleTrack(tracksIds:List<Long>){
+        tracksIds.forEach {
+            deleteTrackFromPlaylist(it)
         }
     }
 
@@ -90,7 +98,6 @@ class FragmentPlayListViewerVm(
                 if (it == null) deleteUnusedMusicTrack(trackId)
                 else _errorMsg.value = it.message
             }
-
         }
     }
 }
