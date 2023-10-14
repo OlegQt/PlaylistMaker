@@ -101,6 +101,10 @@ class PlayListEditorFragment : NewPlaylistFragment() {
             vm.selectedImage.observe(viewLifecycleOwner){
                 setImageAsCover(it)
             }
+
+            vm.exitTrigger.observe(viewLifecycleOwner){
+                requireActivity().supportFragmentManager.popBackStack()
+            }
         }
 
         return binding.root

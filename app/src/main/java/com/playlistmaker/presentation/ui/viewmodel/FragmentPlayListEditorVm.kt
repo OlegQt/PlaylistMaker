@@ -68,6 +68,7 @@ open class FragmentPlayListEditorVm(
     fun updatePlayListInfo(){
         viewModelScope.launch {
             playListController.updatePlayList(changedPlayList)
+            exitTrigger.postValue(true)
         }
     }
 }
