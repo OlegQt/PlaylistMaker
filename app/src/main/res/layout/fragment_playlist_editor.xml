@@ -136,7 +136,7 @@
 
         android:orientation="vertical"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="160dp"
+        app:behavior_peekHeight="30dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -188,7 +188,7 @@
         android:orientation="vertical"
         app:behavior_hideable="true"
 
-        app:behavior_peekHeight="160dp"
+        app:behavior_peekHeight="30dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -249,24 +249,45 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <Button
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_share_playlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_back_playlist_viewer"
+
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="16sp"
+            style="@style/App.Button"
+            android:textAllCaps="false"
+            android:fontFamily="@font/ys_display_regular"
+
             android:text="Поделиться"/>
-        <Button
+
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_edit_playlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_back_playlist_viewer"
+
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="16sp"
+            style="@style/App.Button"
+            android:textAllCaps="false"
+            android:fontFamily="@font/ys_display_regular"
+
             android:text="Редактировать информацию"/>
 
         <Button
             android:id="@+id/btn_delete_playlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_back_playlist_viewer"
+            android:textAllCaps="false"
+
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="16sp"
+            style="@style/App.Button"
+            android:fontFamily="@font/ys_display_regular"
+
             android:text="Удалить плейлист"/>
 
     </LinearLayout>

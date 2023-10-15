@@ -156,7 +156,7 @@ open class NewPlaylistFragment : Fragment() {
 
         // Удаляем файл, если он уже существует
         if (file.exists()) {
-            (requireActivity() as AlertMessaging).showAlertDialog("$file exists")
+            //(requireActivity() as AlertMessaging).showAlertDialog("$file exists")
             file.delete()
         }
 

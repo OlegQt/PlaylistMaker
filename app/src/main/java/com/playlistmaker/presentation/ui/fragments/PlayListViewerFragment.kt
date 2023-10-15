@@ -4,7 +4,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,6 +55,8 @@ class PlayListViewerFragment : Fragment() {
     private lateinit var bottomSheetAdapter: BottomSheetBehavior<LinearLayout>
     private lateinit var bottomSheetMenu: BottomSheetBehavior<LinearLayout>
 
+    private val handler = Handler(Looper.getMainLooper())
+
     fun Long.getStringMm() = SimpleDateFormat("m", Locale.getDefault()).format(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,8 +102,9 @@ class PlayListViewerFragment : Fragment() {
         vm.evaluatePlayList(param)
 
         // Разбираемся со шторкой
+
         this.bottomSheetAdapter = BottomSheetBehavior.from(binding.standardBottomSheet)
-        bottomSheetAdapter.state = BottomSheetBehavior.STATE_COLLAPSED
+        bottomSheetAdapter.state = BottomSheetBehavior.STATE_HIDDEN
 
         this.bottomSheetMenu = BottomSheetBehavior.from(binding.menuBottomSheet)
         bottomSheetMenu.state = BottomSheetBehavior.STATE_HIDDEN
@@ -127,11 +131,7 @@ class PlayListViewerFragment : Fragment() {
         }
 
         binding.btnDeletePlaylist.setOnClickListener {
-            // Вначале удаление всех треков
-            vm.deleteMultipleTrack(tracksIds = tracksInPlayList.map { it.trackId })
-
-            // Удаление плейлиста
-            vm.deletePlayList()
+            showDeletePlaylistDialog("Хотите удалить плейлист ${vm.getCurrentPlyList().name}?")
         }
 
         binding.btnEditPlaylist.setOnClickListener {
@@ -143,30 +143,32 @@ class PlayListViewerFragment : Fragment() {
 
         binding.btnSharePlaylist.setOnClickListener { sharePlayListIntent() }
 
+
     }
 
     private fun sharePlayListIntent() {
-        if(tracksInPlayList.isEmpty()){
-            showLightDialog("В этом плейлисте нет списка треков, которым можно поделиться")
-        }
-        else{
+        if (tracksInPlayList.isEmpty()) {
+            (requireActivity() as AlertMessaging).showSnackBar("В этом плейлисте нет списка треков, которым можно поделиться")
+        } else {
             val intent = Intent(Intent.ACTION_SEND).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             val strExtra = vm.generateMessage(vm.getCurrentPlyList(), tracksInPlayList)
-            intent.putExtra(Intent.EXTRA_TEXT,strExtra)
+            intent.putExtra(Intent.EXTRA_TEXT, strExtra)
             intent.type = "text/plain"
             //showLightDialog(strExtra)
             requireActivity().startActivity(intent)
         }
     }
 
-    private fun showLightDialog(message:String){
-        MaterialAlertDialogBuilder(requireContext(),R.style.DialogStyle)
-            .setMessage("")
-            .setNegativeButton("Отмена") { _, _ -> }
-            .setPositiveButton("Завершить") { _, _ ->
-                // сохраняем изменения и выходим
-                //saveImageToPrivateStorage(vm.selectedImage.value)
-                //vm.savePlayListToDB()
+    private fun showDeletePlaylistDialog(message: String) {
+        MaterialAlertDialogBuilder(requireContext(), R.style.DialogStyle)
+            .setMessage(message)
+            .setNegativeButton("Нет") { _, _ -> }
+            .setPositiveButton("Да") { _, _ ->
+                // Вначале удаление всех треков
+                vm.deleteMultipleTrack(tracksIds = tracksInPlayList.map { it.trackId })
+
+                // Удаление плейлиста
+                vm.deletePlayList()
             }.show()
     }
 
@@ -200,8 +202,7 @@ class PlayListViewerFragment : Fragment() {
                 target: Target<Drawable?>?,
                 isFirstResource: Boolean
             ): Boolean {
-
-                Log.e("LOG", "onLoadFailed")
+                //Log.e("LOG", "onLoadFailed")
                 with(binding.playListCover) {
                     // Установите параметры ширины и высоты на wrap_content
                     layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -216,6 +217,8 @@ class PlayListViewerFragment : Fragment() {
                     // Обновляем ImageView, чтобы применить изменения
                     requestLayout()
                 }
+                // Рассчитываем высоту шторок, после загрузки placeholder Glide
+                handler.postDelayed({ calculatePeekHeight() }, BOTTOM_SHEET_REACTION_TIME_MILLS)
                 return false
             }
 
@@ -227,12 +230,15 @@ class PlayListViewerFragment : Fragment() {
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
+                // Рассчитываем высоту шторок, после успешной загрузки изображения Glide
+                // C задержкой, чтобы успелся обновиться view картинки
+                handler.postDelayed({ calculatePeekHeight() }, BOTTOM_SHEET_REACTION_TIME_MILLS)
+                //calculatePeekHeight()
                 return false
             }
 
         }
-        //Uri.fromFile(File(playListInfo.cover))
-        //playListInfo.cover
+
         Glide
             .with(binding.root)
             .load(playListInfo.cover)
@@ -322,10 +328,33 @@ class PlayListViewerFragment : Fragment() {
 
     }
 
+    private fun calculatePeekHeight() {
+        // Текущее положение кнопки sharePlaylist на экране
+        val location = IntArray(2)
+        binding.btnPlaylistShare.getLocationOnScreen(location)
+        val yPos = location[1]
+
+        // Текущее положение заголовка плейлиста на экране
+        val locationTxt = IntArray(2)
+        binding.txtPlaylistName.getLocationOnScreen(locationTxt)
+        val yPosTxt = locationTxt[1]
+
+        // Новое значение peekHeight в зависимости от положения кнопки buttonA
+        val screenHeight = resources.displayMetrics.heightPixels
+
+        bottomSheetAdapter.peekHeight = screenHeight - yPos - binding.btnPlaylistShare.height
+
+        bottomSheetMenu.peekHeight = screenHeight - yPosTxt - binding.txtPlaylistName.height
+        bottomSheetAdapter.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+
     companion object {
         const val PLAYLIST_ID_ARG = "ARG"
         const val PARAM_BEFORE_ON_CREATE = -1L
         const val VERTICAL_MARGIN_COVER_PLACEHOLDER = 56
+        const val BOTTOM_SHEET_REACTION_TIME_MILLS = 150L
+
     }
 
     sealed class ScreenState {
