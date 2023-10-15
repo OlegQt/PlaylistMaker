@@ -10,12 +10,15 @@ import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import com.playlistmaker.presentation.SingleLiveEvent
 import com.playlistmaker.presentation.ui.fragments.PlayListViewerFragment
+import com.playlistmaker.presentation.ui.recycleradapter.Syntactic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class FragmentPlayListViewerVm(
     private val playListController: PlayListController
@@ -24,6 +27,7 @@ class FragmentPlayListViewerVm(
     val errorMsg = _errorMsg as LiveData<String>
 
     private var currentPlayListOnScreen: PlayList = PlayList()
+    fun getCurrentPlyList() = this.currentPlayListOnScreen
 
     private val _screenState = MutableStateFlow<PlayListViewerFragment.ScreenState>(
         PlayListViewerFragment.ScreenState.NoData(null)
@@ -77,12 +81,12 @@ class FragmentPlayListViewerVm(
 
 
             playListController.deletePlayList(currentPlayListOnScreen)
-            exitTrigger.value=true
+            exitTrigger.value = true
 
         }
     }
 
-    fun deleteMultipleTrack(tracksIds:List<Long>){
+    fun deleteMultipleTrack(tracksIds: List<Long>) {
         tracksIds.forEach {
             deleteTrackFromPlaylist(it)
         }
@@ -100,4 +104,24 @@ class FragmentPlayListViewerVm(
             }
         }
     }
+
+    fun generateMessage(playlist: PlayList, tracks: List<MusicTrack>): String {
+        val sb = StringBuilder()
+        sb.append(playlist.name).append("\n")
+        if (playlist.description.isNotEmpty()) {
+            sb.append(playlist.description).append("\n")
+        }
+        sb.append(Syntactic.getTrackEnding(tracks.size)).append("\n")
+        tracks.forEachIndexed { index, track ->
+            val trackDuration = getFullDurationFromLong((track.trackTimeMillis))
+            sb.append("${index + 1}. ${track.artistName} - ${track.trackName} ($trackDuration)")
+                .append("\n")
+        }
+        return sb.toString()
+    }
+
+    private fun getFullDurationFromLong(duration: Long): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(duration)
+    }
+
 }

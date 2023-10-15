@@ -51,10 +51,10 @@ class PlayListViewerFragment : Fragment() {
         startPlayerActivity(musicTrackToPlay = tracksInPlayList[it])
     }
 
-    private lateinit var bottomSheetAdapter:BottomSheetBehavior<LinearLayout>
-    private lateinit var bottomSheetMenu:BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetAdapter: BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetMenu: BottomSheetBehavior<LinearLayout>
 
-
+    fun Long.getStringMm() = SimpleDateFormat("m", Locale.getDefault()).format(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -77,7 +77,7 @@ class PlayListViewerFragment : Fragment() {
             startPlayerActivity(it)
         }
 
-        vm.exitTrigger.observe(viewLifecycleOwner){
+        vm.exitTrigger.observe(viewLifecycleOwner) {
             exitFragment()
         }
 
@@ -91,8 +91,6 @@ class PlayListViewerFragment : Fragment() {
         return binding.root
     }
 
-    fun Long.getStringMm() = SimpleDateFormat("m", Locale.getDefault()).format(this)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -101,10 +99,10 @@ class PlayListViewerFragment : Fragment() {
         vm.evaluatePlayList(param)
 
         // Разбираемся со шторкой
-        this.bottomSheetAdapter =  BottomSheetBehavior.from(binding.standardBottomSheet)
+        this.bottomSheetAdapter = BottomSheetBehavior.from(binding.standardBottomSheet)
         bottomSheetAdapter.state = BottomSheetBehavior.STATE_COLLAPSED
 
-        this.bottomSheetMenu =  BottomSheetBehavior.from(binding.menuBottomSheet)
+        this.bottomSheetMenu = BottomSheetBehavior.from(binding.menuBottomSheet)
         bottomSheetMenu.state = BottomSheetBehavior.STATE_HIDDEN
 
 
@@ -119,16 +117,9 @@ class PlayListViewerFragment : Fragment() {
         }
 
 
-        binding.topAppBar.setNavigationOnClickListener {
-            exitFragment()
-        }
+        binding.topAppBar.setNavigationOnClickListener { exitFragment() }
 
-        binding.btnPlaylistShare.setOnClickListener {
-            requireActivity().supportFragmentManager.commit {
-                replace(R.id.root_placeholder, PlayListEditorFragment.setArg(param))
-                addToBackStack(null)
-            }
-        }
+        binding.btnPlaylistShare.setOnClickListener { sharePlayListIntent() }
 
         binding.btnPlaylistMenu.setOnClickListener {
             bottomSheetAdapter.state = BottomSheetBehavior.STATE_HIDDEN
@@ -143,9 +134,43 @@ class PlayListViewerFragment : Fragment() {
             vm.deletePlayList()
         }
 
+        binding.btnEditPlaylist.setOnClickListener {
+            requireActivity().supportFragmentManager.commit {
+                replace(R.id.root_placeholder, PlayListEditorFragment.setArg(param))
+                addToBackStack(null)
+            }
+        }
+
+        binding.btnSharePlaylist.setOnClickListener { sharePlayListIntent() }
+
     }
 
-    private fun exitFragment(){
+    private fun sharePlayListIntent() {
+        if(tracksInPlayList.isEmpty()){
+            showLightDialog("В этом плейлисте нет списка треков, которым можно поделиться")
+        }
+        else{
+            val intent = Intent(Intent.ACTION_SEND).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val strExtra = vm.generateMessage(vm.getCurrentPlyList(), tracksInPlayList)
+            intent.putExtra(Intent.EXTRA_TEXT,strExtra)
+            intent.type = "text/plain"
+            //showLightDialog(strExtra)
+            requireActivity().startActivity(intent)
+        }
+    }
+
+    private fun showLightDialog(message:String){
+        MaterialAlertDialogBuilder(requireContext(),R.style.DialogStyle)
+            .setMessage("")
+            .setNegativeButton("Отмена") { _, _ -> }
+            .setPositiveButton("Завершить") { _, _ ->
+                // сохраняем изменения и выходим
+                //saveImageToPrivateStorage(vm.selectedImage.value)
+                //vm.savePlayListToDB()
+            }.show()
+    }
+
+    private fun exitFragment() {
         val navHostFragment =
             requireActivity().supportFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
         val navController = navHostFragment.navController
@@ -186,7 +211,8 @@ class PlayListViewerFragment : Fragment() {
                     val dpi = resources.displayMetrics.density
                     val marginLayoutParams = layoutParams as MarginLayoutParams
                     marginLayoutParams.topMargin = (VERTICAL_MARGIN_COVER_PLACEHOLDER * dpi).toInt()
-                    marginLayoutParams.bottomMargin = (VERTICAL_MARGIN_COVER_PLACEHOLDER * dpi).toInt()
+                    marginLayoutParams.bottomMargin =
+                        (VERTICAL_MARGIN_COVER_PLACEHOLDER * dpi).toInt()
                     // Обновляем ImageView, чтобы применить изменения
                     requestLayout()
                 }
@@ -226,7 +252,7 @@ class PlayListViewerFragment : Fragment() {
         with(binding) {
             txtPlaylistName.text = playListInfo.name
             txtPlaylistDescription.text = playListInfo.description
-            txtSmallPlaylistName.text=playListInfo.name
+            txtSmallPlaylistName.text = playListInfo.name
         }
 
     }

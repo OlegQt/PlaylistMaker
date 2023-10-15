@@ -249,12 +249,25 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
         <Button
+            android:id="@+id/btn_share_playlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/btn_back_playlist_viewer"
+            android:text="Поделиться"/>
+        <Button
+            android:id="@+id/btn_edit_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_back_playlist_viewer"
+            android:text="Редактировать информацию"/>
+
+        <Button
             android:id="@+id/btn_delete_playlist"
-            android:text="delete"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_back_playlist_viewer"
+            android:text="Удалить плейлист"/>
 
     </LinearLayout>
 
