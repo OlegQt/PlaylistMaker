@@ -36,7 +36,7 @@ open class FragmentNewPlayListVm(
         _btnCreateEnable.value = false
     }
 
-    fun handlePickedImage(uri: Uri) {
+    open fun handlePickedImage(uri: Uri) {
         // После выбора картинки, сохраняем идентификатор внутри viewModel
         _selectedImage.value = uri
     }
@@ -48,22 +48,21 @@ open class FragmentNewPlayListVm(
 
     }
 
-    fun changePlayListName(newName: String) {
+    open fun changePlayListName(newName: String) {
         // Если текстовое поле названия плейлиста пустое, скрываем кнопку создать
         _btnCreateEnable.value = newName.isNotEmpty()
         newPlayList.name = newName
     }
 
-    fun changeDescription(newDescription: String) {
+    open fun changeDescription(newDescription: String) {
         newPlayList.description = newDescription
     }
 
-    fun updatePlayListCoverLocation(file: File) {
+    open fun updatePlayListCoverLocation(file: File) {
         newPlayList.cover = file.toString()
     }
 
     fun savePlayListToDB() {
-        // Добавляем трек в базу сразу при старте плеера временно
         val errorHandler = CoroutineExceptionHandler { _, throwable ->
             _errorMsg.value = throwable.message
         }

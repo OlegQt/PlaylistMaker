@@ -26,6 +26,10 @@ class PlayListControllerImpl(private val playListRepository: PlayListRepository)
         playListRepository.updatePlaylist(playList = playListToUpdate)
     }
 
+    override suspend fun deletePlayList(playList: PlayList) {
+        playListRepository.deletePlaylist(playList)
+    }
+
     override suspend fun deleteTrackFromPlayList(playListToUpdate: PlayList, trackId: Long) {
         playListRepository.deleteTrackFromPlayList(
             playListToUpdate,

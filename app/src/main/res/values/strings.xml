@@ -52,6 +52,6 @@
     <string name="playlists_button_clearBd">CLBD</string>
 
     <!-- fragment playlistEditor -->
-    <string name="empty_playlist">Плейлист пут</string>
+    <string name="empty_playlist">Плейлист пуст</string>
 
 </resources>

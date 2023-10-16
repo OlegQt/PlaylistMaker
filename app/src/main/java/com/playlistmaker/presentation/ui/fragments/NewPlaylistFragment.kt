@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.R
@@ -36,10 +37,10 @@ const val PLAYLIST_COVER = "PLAYLIST_COVERS"
 
 open class NewPlaylistFragment : Fragment() {
 
-    open val vm: FragmentNewPlayListVm by viewModel()
+    protected open val vm: FragmentNewPlayListVm by viewModel()
 
-    private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+    open var _binding: FragmentNewPlaylistBinding? = null
+    protected val binding get() = _binding!!
 
     private var pickImageContent =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -118,7 +119,7 @@ open class NewPlaylistFragment : Fragment() {
 
     }
 
-    open fun setImageAsCover(uri: Uri) {
+    private fun setImageAsCover(uri: Uri) {
         // Изменяем layout картинки
         with(binding.imgAddPhoto) {
             // Установите параметры ширины и высоты на wrap_content
@@ -133,10 +134,11 @@ open class NewPlaylistFragment : Fragment() {
         Glide.with(binding.root.context)
             .load(uri)
             .placeholder(R.drawable.no_track_found)
+            .signature(ObjectKey(System.currentTimeMillis()))
             .into(binding.imgAddPhoto)
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri?) {
+    protected fun saveImageToPrivateStorage(uri: Uri?) {
         if (uri == null) return
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath = File(
@@ -151,6 +153,19 @@ open class NewPlaylistFragment : Fragment() {
 
         //создаём экземпляр класса File, который указывает на файл внутри каталога
         val file = File(filePath, "${vm.playListName}_cover.jpg")
+
+        // Удаляем файл, если он уже существует
+        if (file.exists()) {
+            //(requireActivity() as AlertMessaging).showAlertDialog("$file exists")
+            file.delete()
+        }
+
+        val logString = StringBuilder()
+        filePath.listFiles()?.forEach {
+            logString.append(it.name).append("\n")
+        }
+        val lst = logString.toString()
+
 
         // создаём входящий поток байтов из выбранной картинки
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
@@ -174,12 +189,8 @@ open class NewPlaylistFragment : Fragment() {
         if (filePath.exists()) {
             val logString = StringBuilder()
             filePath.listFiles()?.forEachIndexed { index, element ->
-                logString.append("($index)-$element\n")
+                element.delete()
             }
-            Snackbar.make(binding.imgAddPhoto, logString.toString(), Snackbar.LENGTH_SHORT)
-                .setTextMaxLines(20)
-                .setAction("OK") {}
-                .show()
         }
     }
 
@@ -214,7 +225,7 @@ open class NewPlaylistFragment : Fragment() {
 
     }
 
-    private fun checkAndAskPermission(permission: String) {
+    fun checkAndAskPermission(permission: String) {
         when {
             haveRequiredPermission(permission) -> {
                 // You can use the API that requires the permission.
@@ -265,7 +276,7 @@ open class NewPlaylistFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e("LOG_TAG", "DESTROY NEW PLAYLIST FRAGMENT")
+        Log.e("LOG_TAG", "DESTROY PLAYLIST")
         parentFragmentManager.setFragmentResult(FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY, Bundle())
 
         _binding = null
@@ -278,8 +289,6 @@ open class NewPlaylistFragment : Fragment() {
 
     companion object {
         const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY = "NEW_PLAYLIST_DESTROY"
-        private const val REQUEST_PERMISSION_CODE = 101
-        const val ARG_PLAYLIST_ID = "PLAY_LIST_ID_ARG"
     }
 
 }

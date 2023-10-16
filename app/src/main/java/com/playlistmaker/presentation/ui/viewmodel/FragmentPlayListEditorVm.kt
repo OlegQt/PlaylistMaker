@@ -1,80 +1,70 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
+import android.net.Uri
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.playlistmaker.domain.models.MusicTrack
+import com.google.android.material.snackbar.Snackbar
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
-import com.playlistmaker.presentation.SingleLiveEvent
-import com.playlistmaker.presentation.ui.fragments.PlayListEditorFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
 
-class FragmentPlayListEditorVm(
+open class FragmentPlayListEditorVm(
     private val playListController: PlayListController
-) : ViewModel() {
-    private val _errorMsg = MutableLiveData<String>()
-    val errorMsg = _errorMsg as LiveData<String>
+) : FragmentNewPlayListVm(playListController) {
 
-    private var currentPlayListOnScreen: PlayList = PlayList()
+    private val _playListOpened = MutableLiveData<PlayList?>()
+    val playListOpened = _playListOpened as LiveData<PlayList?>
 
-    private val _screenState = MutableStateFlow<PlayListEditorFragment.ScreenState>(
-        PlayListEditorFragment.ScreenState.NoData(null)
-    )
-    val screenState = _screenState as StateFlow<PlayListEditorFragment.ScreenState>
+    private var changedPlayList = PlayList()
 
-    private var startPlayerApp = SingleLiveEvent<MusicTrack>()
-    val getStartPlayerCommand = startPlayerApp as LiveData<MusicTrack>
-
-    fun evaluatePlayList(idPlayList: Long) {
+    fun loadPlaylistById(id: Long) {
         viewModelScope.launch {
-            playListController.loadPlayListById(id = idPlayList).collect {
-                currentPlayListOnScreen = it
-                extractTracksFromPlayList(it)
+            playListController.loadPlayListById(id).collect {
+                _playListOpened.value = it
+                changedPlayList = it.copy()
             }
         }
     }
 
-    private fun extractTracksFromPlayList(playList: PlayList) {
-        val listOfTracks = when (playList.trackList) {
-            "" -> emptyList()
-            else -> Gson().fromJson(playList.trackList, Array<Long>::class.java).toList()
+    private fun isPlaylistDataChanged(): Boolean {
+        _playListOpened.value?.let {
+            return it == changedPlayList
         }
-
-        viewModelScope.launch {
-            playListController.getFlowMusicTracksMatchedIds(listOfTracks).collect {
-                _screenState.value = PlayListEditorFragment.ScreenState.Content(
-                    playList = playList,
-                    it
-                )
-            }
-        }
-
+        return false
     }
 
-    private fun deleteUnusedMusicTrack(trackId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            playListController.checkIfTrackIsUnused(trackId)
-        }
+    override fun changePlayListName(newName: String) {
+        super.changePlayListName(newName)
+        changedPlayList.name = newName
     }
 
-    fun deleteTrackFromPlaylist(trackId: Long) {
+    override fun changeDescription(newDescription: String) {
+        super.changeDescription(newDescription)
+        changedPlayList.description = newDescription
+    }
+
+    override fun handlePickedImage(uri: Uri) {
+        super.handlePickedImage(uri)
+        // Данная функция вызывается при замене изображения в области обложки плейлиста
+        // На данном этапе не происходит переноса изображения во внутреннюю память приложения
+        changedPlayList.cover = uri.toString()
+    }
+
+    override fun updatePlayListCoverLocation(file: File) {
+        // Данная функция вызывается только при попытке сохранения изменений плейлиста
+        // Функция копирует изображение во внутренне хранилище приложения и обновляет URI в плейлисте
+        changedPlayList.cover = file.toString()
+    }
+
+    fun updatePlayListInfo(){
         viewModelScope.launch {
-            val longTask = async(Dispatchers.IO) {
-                playListController.deleteTrackFromPlayList(currentPlayListOnScreen, trackId)
-
-            }
-            longTask.invokeOnCompletion {
-                if (it == null) deleteUnusedMusicTrack(trackId)
-                else _errorMsg.value = it.message
-            }
-
+            playListController.updatePlayList(changedPlayList)
+            exitTrigger.postValue(true)
         }
     }
 }
