@@ -251,53 +251,44 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.button.MaterialButton
+        <TextView
             android:id="@+id/btn_share_playlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:paddingStart="0dp"
-            android:layout_marginStart="16dp"
-
+            android:fontFamily="@font/ys_display_regular"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="16sp"
-            style="@style/App.Button"
-            android:textAllCaps="false"
-            android:fontFamily="@font/ys_display_regular"
-
-            android:text="Поделиться"/>
 
 
-        <com.google.android.material.button.MaterialButton
+            android:paddingVertical="21dp"
+            android:paddingStart="16dp"
+            android:text="Поделиться"
+            />
+
+        <TextView
             android:id="@+id/btn_edit_playlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:paddingStart="0dp"
-            android:layout_marginStart="16dp"
-
+            android:fontFamily="@font/ys_display_regular"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="16sp"
-            style="@style/App.Button"
-            android:textAllCaps="false"
+            android:paddingVertical="21dp"
+            android:paddingStart="16dp"
+            android:text="Редактировать информацию"
+            />
 
-            android:text="Редактировать информацию"/>
-
-        <Button
+        <TextView
             android:id="@+id/btn_delete_playlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAllCaps="false"
-
-            android:paddingStart="0dp"
-            android:layout_marginStart="16dp"
-
+            android:fontFamily="@font/ys_display_regular"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="16sp"
-            style="@style/App.Button"
-            android:fontFamily="@font/ys_display_regular"
+            android:paddingVertical="21dp"
+            android:paddingStart="16dp"
+            android:text="Удалить плейлист"
+            />
 
-            android:text="Удалить плейлист"/>
 
     </LinearLayout>
 
