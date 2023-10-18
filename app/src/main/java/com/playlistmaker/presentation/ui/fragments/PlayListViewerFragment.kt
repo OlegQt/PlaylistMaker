@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -99,6 +100,7 @@ class PlayListViewerFragment : Fragment() {
 
         // Достаем информацию о листе через базу данных, используя
         // переданный в аргументах id листа
+        Log.e("LOG", "before evaluate playlist")
         vm.evaluatePlayList(param)
 
         // Разбираемся со шторкой
@@ -329,23 +331,12 @@ class PlayListViewerFragment : Fragment() {
     }
 
     private fun calculatePeekHeight() {
-        // Текущее положение кнопки sharePlaylist на экране
-        val location = IntArray(2)
-        binding.btnPlaylistShare.getLocationOnScreen(location)
-        val yPos = location[1]
+        val screenHeight = binding.root.height
+        bottomSheetAdapter.peekHeight = screenHeight - binding.btnPlaylistShare.bottom
+        bottomSheetMenu.peekHeight = screenHeight - binding.txtPlaylistName.bottom
 
-        // Текущее положение заголовка плейлиста на экране
-        val locationTxt = IntArray(2)
-        binding.txtPlaylistName.getLocationOnScreen(locationTxt)
-        val yPosTxt = locationTxt[1]
-
-        // Новое значение peekHeight в зависимости от положения кнопки buttonA
-        val screenHeight = resources.displayMetrics.heightPixels
-
-        bottomSheetAdapter.peekHeight = screenHeight - yPos - binding.btnPlaylistShare.height
-
-        bottomSheetMenu.peekHeight = screenHeight - yPosTxt - binding.txtPlaylistName.height
         bottomSheetAdapter.state = BottomSheetBehavior.STATE_COLLAPSED
+
     }
 
 

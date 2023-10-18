@@ -1,5 +1,6 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,6 +30,7 @@ class FragmentPlayListsVm(
     val errorMsg = _errorMsg as LiveData<String>
 
     init {
+        Log.e("LOG","INIT inside FragmentPlayListsVm")
         loadPlaylists()
     }
 

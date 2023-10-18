@@ -1,111 +1,126 @@
 package com.playlistmaker.presentation.ui.fragments
 
 import android.Manifest
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
-import com.google.android.material.snackbar.Snackbar
+import com.bumptech.glide.Glide
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.playlistmaker.presentation.models.AlertMessaging
-import com.playlistmaker.presentation.ui.viewmodel.FragmentChangePlaylistVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListEditorVm
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
+import java.io.File
 
 class ChangePlaylistFragment : NewPlaylistFragment() {
-
-    override val vm:FragmentChangePlaylistVm by viewModel()
-
-    private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
-
-    private var pickImageContent =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            uri?.let { vm.handlePickedImage(it) }
-        }
-
-    private val requestPermissions = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) {
-        if (it[Manifest.permission.READ_MEDIA_VIDEO] == true && it[Manifest.permission.READ_MEDIA_IMAGES] == true) {
-            //(requireActivity() as AlertMessaging).showSnackBar("GOOD")
-            //pickImageFromGallery()
-        } else {
-            (requireActivity() as AlertMessaging).showSnackBar("Предоставьте приложению разрешение на доступ к изображениям в настройках")
-        }
-    }
-
+    override val vm: FragmentPlayListEditorVm by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            val param = it.getLong(ARG_PLAYLIST_ID)
-            Log.e("LOG","param for change $param")
+            val playListId = it.getLong(ARG_PARAM_1)
+            vm.loadPlaylistById(id = playListId)
         }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
 
-        vm.errorMsg.observe(viewLifecycleOwner){
-            Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+        with(binding) {
+            topAppBar.title = "Редактировать"
+
+            btnCreatePlaylist.text = "Сохранить"
+
+            txtPlaylistDescription.doAfterTextChanged {
+                vm.changeDescription(newDescription = it.toString())
+            }
+
+            txtPlaylistName.doAfterTextChanged {
+                vm.changePlayListName(it.toString())
+            }
+
+            topAppBar.setNavigationOnClickListener {
+                requireActivity().supportFragmentManager.popBackStack()
+            }
+
+            layoutAddPhoto.setOnClickListener {
+                checkAndAskPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+
+            btnCreatePlaylist.setOnClickListener {
+                saveImageToPrivateStorage(vm.selectedImage.value)
+                vm.updatePlayListInfo()
+            }
         }
 
-        vm.btnCreateEnable.observe(viewLifecycleOwner) {
-            binding.btnCreatePlaylist.isEnabled = it
+        with(vm) {
+            errorMsg.observe(viewLifecycleOwner) {
+                (requireActivity() as AlertMessaging).showSnackBar(it)
+            }
 
-            if (it) binding.btnCreatePlaylist.setBackgroundColor(requireActivity().getColor(R.color.yp_blue))
-            else binding.btnCreatePlaylist.setBackgroundColor(requireActivity().getColor(R.color.Text_Grey))
+            btnCreateEnable.observe(viewLifecycleOwner) {
+                binding.btnCreatePlaylist.isEnabled = it
 
-        }
+                if (it) binding.btnCreatePlaylist.setBackgroundColor(requireActivity().getColor(R.color.yp_blue))
+                else binding.btnCreatePlaylist.setBackgroundColor(requireActivity().getColor(R.color.Text_Grey))
 
-        binding.topAppBar.setNavigationOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            }
+
+            playListOpened.observe(viewLifecycleOwner) {
+                it?.let {
+                    setImageAsCover(Uri.fromFile(File(it.cover)))
+                    binding.txtPlaylistName.setText(it.name)
+                    binding.txtPlaylistDescription.setText(it.description)
+                }
+            }
+
+            vm.selectedImage.observe(viewLifecycleOwner){
+                setImageAsCover(it)
+            }
         }
 
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun setImageAsCover(uri: Uri) {
+        // Изменяем layout картинки
+        with(binding.imgAddPhoto) {
+            // Установите параметры ширины и высоты на wrap_content
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
 
-        binding.topAppBar.title ="Редактировать"
-
-        binding.btnCreatePlaylist.text ="Сохранить"
-
-        binding.txtPlaylistName.doAfterTextChanged {
-            vm.changePlayListName(it.toString())
+            // Обновите ImageView, чтобы применить изменения
+            requestLayout()
         }
 
-
+        // Загружаем изображение
+        Glide.with(binding.root.context)
+            .load(uri)
+            .placeholder(R.drawable.no_track_found)
+            .into(binding.imgAddPhoto)
     }
-
-
-
-
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e("LOG_TAG", "DESTROY PLAYLIST")
-        parentFragmentManager.setFragmentResult(FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY, Bundle())
         _binding = null
     }
 
-
     companion object {
-        fun changeInstance(playListId:Long) = ChangePlaylistFragment().apply {
+        private const val ARG_PARAM_1 = "param_id_playlist"
+
+        fun setArg(playListId: Long) = PlayListEditorFragment().apply {
             arguments = Bundle().apply {
-                putLong(ARG_PLAYLIST_ID,playListId)
+                putLong(ARG_PARAM_1, playListId)
             }
         }
     }
-
 }

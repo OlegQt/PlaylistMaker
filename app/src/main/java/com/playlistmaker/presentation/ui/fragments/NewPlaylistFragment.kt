@@ -34,7 +34,6 @@ import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.activities.MainActivity
 import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
-import jp.wasabeef.glide.transformations.CropSquareTransformation
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
