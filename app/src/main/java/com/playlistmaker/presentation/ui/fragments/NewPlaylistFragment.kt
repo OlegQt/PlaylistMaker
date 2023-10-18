@@ -3,7 +3,6 @@ package com.playlistmaker.presentation.ui.fragments
 import android.Manifest
 import android.content.DialogInterface
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -11,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +22,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
@@ -98,12 +97,10 @@ open class NewPlaylistFragment : Fragment() {
         if (vm.nothingChanged()) {
             // Если нет изменений или название альбома не заполнено, выходим
             exit()
-        }
-        else if (vm.playListName.isEmpty()){
+        } else if (vm.playListName.isEmpty()) {
             //(requireActivity() as AlertMessaging).showSnackBar("Введите название альбома")
             exit()
-        }
-        else {
+        } else {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Завершить создание плейлиста?")
                 .setMessage("Все несохраненные данные будут потеряны")
@@ -130,7 +127,7 @@ open class NewPlaylistFragment : Fragment() {
 
     }
 
-    private fun setImageAsCover(uri: Uri) {
+    protected fun setImageAsCover(uri: Uri) {
         // Изменяем layout картинки
         with(binding.imgAddPhoto) {
             // Установите параметры ширины и высоты на wrap_content
@@ -145,15 +142,18 @@ open class NewPlaylistFragment : Fragment() {
         binding.layoutAddPhoto.background = null
 
         // Расчет радиуса скругления
-        val dens = Resources.getSystem().displayMetrics.density
-        val picCornerRad = 8*dens
+        val picCornerRad = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            COVER_BODY_RADIUS,
+            resources.displayMetrics
+        )
 
         // Загружаем изображение
         Glide.with(binding.root.context)
             .load(uri)
             .placeholder(R.drawable.no_track_found)
             .signature(ObjectKey(System.currentTimeMillis()))
-            .apply(RequestOptions().transform(CenterCrop(),RoundedCorners(picCornerRad.toInt())))
+            .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(picCornerRad.toInt())))
             .into(binding.imgAddPhoto)
     }
 
@@ -170,20 +170,19 @@ open class NewPlaylistFragment : Fragment() {
             filePath.mkdirs()
         }
 
-        //создаём экземпляр класса File, который указывает на файл внутри каталога
-        val file = File(filePath, "${vm.playListName}_cover.jpg")
+        var version = 1
+        var existence = true
+        var file: File? = null
 
-        // Удаляем файл, если он уже существует
-        if (file.exists()) {
-            //(requireActivity() as AlertMessaging).showAlertDialog("$file exists")
-            file.delete()
-        }
+        while (existence) {
+            // создаём экземпляр класса File, который указывает на файл внутри каталога
+            // Так же добавляем к названию версию для вероятности выбора разных
+            // картинок для альбома с одним названием
+            file = File(filePath, "${vm.playListName}_cover_v$version.jpg")
 
-        val logString = StringBuilder()
-        filePath.listFiles()?.forEach {
-            logString.append(it.name).append("\n")
+            if (file.exists()) version++
+            else existence = false
         }
-        val lst = logString.toString()
 
 
         // создаём входящий поток байтов из выбранной картинки
@@ -195,7 +194,7 @@ open class NewPlaylistFragment : Fragment() {
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
 
         // Сохраняем путь к новому файлу обложки внутри нашей модели плейлиста
-        vm.updatePlayListCoverLocation(file)
+        vm.updatePlayListCoverLocation(file!!)
     }
 
     private fun directoryCheck() {
@@ -308,6 +307,7 @@ open class NewPlaylistFragment : Fragment() {
 
     companion object {
         const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY = "NEW_PLAYLIST_DESTROY"
+        const val COVER_BODY_RADIUS = 8.0F
     }
 
 }

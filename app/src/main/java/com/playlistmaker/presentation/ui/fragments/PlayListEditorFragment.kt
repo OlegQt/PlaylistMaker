@@ -78,6 +78,7 @@ class PlayListEditorFragment : NewPlaylistFragment() {
 
             playListOpened.observe(viewLifecycleOwner) {
                 it?.let {
+                    // Грузим обложку и текстовые данные плейлиста
                     setImageAsCover(Uri.fromFile(File(it.cover)))
                     binding.txtPlaylistName.setText(it.name)
                     binding.txtPlaylistDescription.setText(it.description)
@@ -85,6 +86,7 @@ class PlayListEditorFragment : NewPlaylistFragment() {
             }
 
             vm.selectedImage.observe(viewLifecycleOwner){
+                // Если была выбрана новая обложка, грузим ее через родительский класс в img
                 setImageAsCover(it)
             }
 
@@ -96,25 +98,6 @@ class PlayListEditorFragment : NewPlaylistFragment() {
         return binding.root
     }
 
-    private fun setImageAsCover(uri: Uri) {
-        // Изменяем layout картинки
-        with(binding.imgAddPhoto) {
-            // Установите параметры ширины и высоты на wrap_content
-            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-
-            // Обновите ImageView, чтобы применить изменения
-            requestLayout()
-        }
-
-        // Загружаем изображение
-        Glide.with(binding.root.context)
-            .load(uri)
-            .placeholder(R.drawable.no_track_found)
-            .signature(ObjectKey(System.currentTimeMillis()))
-            .skipMemoryCache(true)
-            .into(binding.imgAddPhoto)
-    }
 
     override fun onDestroy() {
         super.onDestroy()
