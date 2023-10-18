@@ -47,7 +47,6 @@
             android:layout_gravity="center_vertical|center_horizontal"
             android:background="@drawable/image_rounded_cover"
 
-
             android:contentDescription="@string/playlist_cover_img"
 
             android:src="@drawable/add_photo" />

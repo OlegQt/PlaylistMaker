@@ -1,17 +1,23 @@
 package com.playlistmaker.presentation.ui.recycleradapter
 
+import android.content.res.Resources
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.playlistmaker.R
 import com.playlistmaker.databinding.PlaylistItemBinding
 import com.playlistmaker.databinding.PlaylistShortItemBinding
 import com.playlistmaker.domain.models.PlayList
+import com.playlistmaker.presentation.ui.fragments.NewPlaylistFragment
 
-
+const val COVER_BODY_RADIUS = 4.0F
 abstract class PlayListVH(itemView:View):ViewHolder(itemView){
     abstract fun bind(playList: PlayList)
     abstract fun getRootView():ViewGroup
@@ -29,6 +35,13 @@ class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(
         binding.txtPlaylistName.text = playList.name
         binding.txtAmount.text = Syntactic.getTrackEnding(playList.quantity)
 
+        // Расчет радиуса скругления
+        val picCornerRad = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            COVER_BODY_RADIUS,
+            Resources.getSystem().displayMetrics
+        )
+
         Glide
             .with(binding.root)
             .load(playList.cover)
@@ -37,6 +50,7 @@ class PlayListViewHolder(private val binding: PlaylistItemBinding) : PlayListVH(
             .signature(ObjectKey(System.currentTimeMillis()))
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(picCornerRad.toInt())))
             .into(binding.imgPlaylistCover)
 
     }
@@ -49,6 +63,13 @@ class PlayListViewHolderSmall(private val binding: PlaylistShortItemBinding) : P
         binding.txtPlaylistName.text = playList.name
         binding.txtAmount.text = getTrackEnding(playList.quantity)
 
+        // Расчет радиуса скругления
+        val picCornerRad = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            COVER_BODY_RADIUS/2,
+            Resources.getSystem().displayMetrics
+        )
+
         Glide
             .with(binding.root)
             .load(playList.cover)
@@ -57,6 +78,7 @@ class PlayListViewHolderSmall(private val binding: PlaylistShortItemBinding) : P
             .signature(ObjectKey(System.currentTimeMillis()))
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(picCornerRad.toInt())))
             .into(binding.imgPlaylistCover)
     }
 

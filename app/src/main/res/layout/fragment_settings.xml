@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/settings_layout_color"
@@ -8,93 +8,113 @@
     android:orientation="vertical"
     tools:context=".presentation.ui.fragments.SettingsFragment">
 
-    <!-- Settings back to Menu-->
-    <LinearLayout
-        style="@style/settings_layout_color"
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/main_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="14dp"
-        android:orientation="horizontal">
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/options"
 
-        <TextView
-            style="@style/settings_text_back"
-            android:text="@string/options" />
-
-    </LinearLayout>
-
-    <!-- Dark theme -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:layout_marginTop="@dimen/night_theme_margin_top"
-        android:paddingStart="@dimen/padding_left_right"
-        android:paddingEnd="@dimen/search_stub_btn_hor_pad">
-
-        <TextView
-            android:id="@+id/theme_lbl"
-            style="@style/settings_minor_txt"
-            android:layout_width="wrap_content"
-            android:text="@string/night_theme"
-
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"/>
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/night_theme_switch"
-            style="@style/settings_switch_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            />
-
-    </RelativeLayout>
-
-    <!-- Share app -->
-    <LinearLayout style="@style/setting_minor_layout">
-
-        <TextView
-            style="@style/settings_minor_txt"
-            android:text="@string/share_app" />
-
-        <ImageView
-            android:id="@+id/img_share"
-            style="@style/settings_img"
-            android:contentDescription="@string/share_app"
-            android:src="@drawable/share_app_ic" />
-
-    </LinearLayout>
-
-    <!-- Ask prof -->
-    <LinearLayout style="@style/setting_minor_layout">
-
-        <TextView
-            style="@style/settings_minor_txt"
-            android:text="@string/support_ask" />
-
-        <ImageView
-            android:id="@+id/ask_support"
-            style="@style/settings_img"
-            android:contentDescription="@string/support_ask"
-            android:src="@drawable/support_ask" />
-    </LinearLayout>
-
-    <!-- Agreement -->
-    <LinearLayout style="@style/setting_minor_layout">
-
-        <TextView
-            style="@style/settings_minor_txt"
-            android:text="@string/user_agreement" />
-
-        <ImageView
-            android:id="@+id/agreement"
-            style="@style/settings_img"
-            android:contentDescription="@string/user_agreement"
-            android:src="@drawable/agreement" />
+        app:titleTextAppearance="@style/settings_text_back" />
 
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/theme_lbl"
+        style="@style/settings_minor_txt"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="24dp"
+        android:paddingVertical="21dp"
+        android:paddingStart="16dp"
+        android:text="@string/night_theme"
+        android:textSize="19sp"
 
-</LinearLayout>
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_title" />
+
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/night_theme_switch"
+        style="@style/settings_switch_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/theme_lbl"
+        app:layout_constraintBottom_toBottomOf="@id/theme_lbl"
+        />
+
+    <TextView
+        android:id="@+id/txt_share"
+        style="@style/settings_minor_txt"
+        android:paddingVertical="21dp"
+        android:paddingStart="16dp"
+        android:text="@string/share_app"
+        android:textSize="19sp"
+
+        app:layout_constraintTop_toBottomOf="@id/theme_lbl"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/img_share"
+        style="@style/settings_img"
+        android:contentDescription="@string/share_app"
+        android:src="@drawable/share_app_ic"
+        android:layout_marginEnd="12dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/txt_share"
+        app:layout_constraintBottom_toBottomOf="@id/txt_share"
+        />
+
+
+    <TextView
+        android:id="@+id/lbl_wright"
+        style="@style/settings_minor_txt"
+        android:text="@string/support_ask"
+        android:paddingVertical="21dp"
+        android:paddingStart="16dp"
+        android:textSize="19sp"
+
+        app:layout_constraintTop_toBottomOf="@id/txt_share"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <ImageView
+        android:id="@+id/ask_support"
+        style="@style/settings_img"
+        android:contentDescription="@string/support_ask"
+        android:src="@drawable/support_ask"
+        android:layout_marginEnd="12dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/lbl_wright"
+        app:layout_constraintBottom_toBottomOf="@id/lbl_wright"/>
+
+    <TextView
+        android:id="@+id/lbl_agree"
+        style="@style/settings_minor_txt"
+        android:text="@string/user_agreement"
+        android:paddingVertical="21dp"
+        android:paddingStart="16dp"
+        android:textSize="19sp"
+
+        app:layout_constraintTop_toBottomOf="@id/lbl_wright"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <ImageView
+        android:id="@+id/agreement"
+        style="@style/settings_img"
+        android:contentDescription="@string/user_agreement"
+        android:src="@drawable/agreement"
+
+        android:layout_marginEnd="20dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/lbl_agree"
+        app:layout_constraintBottom_toBottomOf="@id/lbl_agree"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
