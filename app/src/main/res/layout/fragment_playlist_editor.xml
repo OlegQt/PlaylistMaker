@@ -97,6 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
+            android:paddingBottom="24dp"
 
             android:src="@drawable/share_app_ic"
             app:tint="@color/YP_black"
@@ -188,7 +189,7 @@
         android:orientation="vertical"
         app:behavior_hideable="true"
 
-        app:behavior_peekHeight="30dp"
+        app:behavior_peekHeight="300dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -255,6 +256,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
+            android:paddingStart="0dp"
+            android:layout_marginStart="16dp"
+
             android:textColor="?attr/colorOnPrimary"
             android:textSize="16sp"
             style="@style/App.Button"
@@ -269,11 +273,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
+            android:paddingStart="0dp"
+            android:layout_marginStart="16dp"
+
             android:textColor="?attr/colorOnPrimary"
             android:textSize="16sp"
             style="@style/App.Button"
             android:textAllCaps="false"
-            android:fontFamily="@font/ys_display_regular"
 
             android:text="Редактировать информацию"/>
 
@@ -282,6 +288,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
+
+            android:paddingStart="0dp"
+            android:layout_marginStart="16dp"
 
             android:textColor="?attr/colorOnPrimary"
             android:textSize="16sp"

@@ -154,6 +154,7 @@
     <style name="App.Button" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="shapeAppearance">@style/ShapeAppearance.App.SmallComponent</item>
         <item name="textAppearanceButton">@style/TextAppearance.App.Button</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.App.Button</item>
     </style>
 
     <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
@@ -165,5 +166,6 @@
     <style name="TextAppearance.App.Button" parent="TextAppearance.MaterialComponents.Button">
         <item name="fontFamily">@font/ys_display_medium</item>
         <item name="android:textColor">@color/Text_Red</item>
+
     </style>
 </resources>

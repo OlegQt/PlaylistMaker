@@ -3,6 +3,7 @@ package com.playlistmaker.presentation.ui.fragments
 import android.Manifest
 import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -20,6 +21,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.CenterInside
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -29,6 +34,7 @@ import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.activities.MainActivity
 import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
+import jp.wasabeef.glide.transformations.CropSquareTransformation
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -91,8 +97,14 @@ open class NewPlaylistFragment : Fragment() {
 
     private fun exitWithDialog() {
         if (vm.nothingChanged()) {
+            // Если нет изменений или название альбома не заполнено, выходим
             exit()
-        } else {
+        }
+        else if (vm.playListName.isEmpty()){
+            //(requireActivity() as AlertMessaging).showSnackBar("Введите название альбома")
+            exit()
+        }
+        else {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Завершить создание плейлиста?")
                 .setMessage("Все несохраненные данные будут потеряны")
@@ -130,11 +142,19 @@ open class NewPlaylistFragment : Fragment() {
             requestLayout()
         }
 
+        // Скрываем пунктирную линию вокруг layout
+        binding.layoutAddPhoto.background = null
+
+        // Расчет радиуса скругления
+        val dens = Resources.getSystem().displayMetrics.density
+        val picCornerRad = 8*dens
+
         // Загружаем изображение
         Glide.with(binding.root.context)
             .load(uri)
             .placeholder(R.drawable.no_track_found)
             .signature(ObjectKey(System.currentTimeMillis()))
+            .apply(RequestOptions().transform(CenterCrop(),RoundedCorners(picCornerRad.toInt())))
             .into(binding.imgAddPhoto)
     }
 
