@@ -3,10 +3,10 @@ package com.playlistmaker.presentation.ui.fragments
 import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
@@ -18,7 +18,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -251,37 +250,60 @@ open class NewPlaylistFragment : Fragment() {
 
     }
 
+    private fun choosePermission(): String {
+        //This permission is enforced starting in API level Build.VERSION_CODES.TIRAMISU .
+        // An app which targets Build.VERSION_CODES.TIRAMISU  or higher and needs to read image files
+        // from external storage must hold this permission; READ_EXTERNAL_STORAGE  is not required.
+        // For apps with a targetSdkVersion of Build.VERSION_CODES.S_V2  or lower, the READ_EXTERNAL_STORAGE
+        // permission is required, instead, to read image files.
+        // Permission request logic
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        } else {
+            return ""
+        }
+
+    }
+
     fun checkAndAskPermission(permission: String) {
-        lifecycleScope.launch {
-            requester.request(
-                Manifest.permission.READ_MEDIA_IMAGES,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ).collect { p ->
-                when (p) {
-                    is PermissionResult.Granted -> {
-                        pickImageFromGallery()
-                    }
+        Log.e("LOG", Build.VERSION.SDK_INT.toString())
+        if (choosePermission().isEmpty()) pickImageFromGallery()
+        else {
+            lifecycleScope.launch {
+                requester.request(choosePermission())
+                    .collect { p ->
+                        when (p) {
+                            is PermissionResult.Granted -> {
+                                pickImageFromGallery()
+                            }
 
-                    is PermissionResult.Denied.DeniedPermanently -> {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        intent.data = Uri.fromParts("package", requireContext().packageName, null)
-                        requireContext().startActivity(intent)
-                    }
+                            is PermissionResult.Denied.DeniedPermanently -> {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                intent.data =
+                                    Uri.fromParts("package", requireContext().packageName, null)
+                                requireContext().startActivity(intent)
+                            }
 
-                    is PermissionResult.Denied.NeedsRationale -> {
-                        (requireActivity() as AlertMessaging).showSnackBar(
-                            "Разрешение на доступ к изображениям необходимо, для добавления обложки плейлиста"
-                        )
-                    }
+                            is PermissionResult.Denied.NeedsRationale -> {
+                                (requireActivity() as AlertMessaging).showSnackBar(
+                                    "Разрешение на доступ к изображениям необходимо, для добавления обложки плейлиста"
+                                )
+                            }
 
-                    is PermissionResult.Cancelled -> {
-                        return@collect
+                            is PermissionResult.Cancelled -> {
+                                return@collect
+                            }
+                        }
                     }
-                }
             }
         }
+
     }
+
     private fun pickImageFromGallery() {
         pickImageContent.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
