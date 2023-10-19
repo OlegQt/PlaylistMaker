@@ -289,7 +289,8 @@ class PlayListViewerFragment : Fragment() {
                 Syntactic.getMinuteEnding(getPlayListDuration(tracks).getStringMm().toInt())
             val trackQuantity = Syntactic.getTrackEnding(tracks.size)
 
-            txtPlaylistLength.text = "$playListLength * $trackQuantity"
+            txtPlaylistLength.text = playListLength
+            txtTrackCount.text = trackQuantity
             txtAmountSmall.text = trackQuantity
         }
     }
