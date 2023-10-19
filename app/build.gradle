@@ -39,6 +39,9 @@ android {
 }
 
 dependencies {
+    // Permissions
+    implementation 'com.markodevcic:peko:3.0.3'
+
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 

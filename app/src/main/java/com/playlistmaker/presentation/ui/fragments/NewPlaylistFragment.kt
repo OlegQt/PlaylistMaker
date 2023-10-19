@@ -2,13 +2,14 @@ package com.playlistmaker.presentation.ui.fragments
 
 import android.Manifest
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -27,12 +29,15 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.markodevcic.peko.PermissionRequester
+import com.markodevcic.peko.PermissionResult
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.activities.MainActivity
 import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -46,21 +51,24 @@ open class NewPlaylistFragment : Fragment() {
     open var _binding: FragmentNewPlaylistBinding? = null
     protected val binding get() = _binding!!
 
+    val requester = PermissionRequester.instance()
+
     private var pickImageContent =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let { vm.handlePickedImage(it) }
         }
 
-    private val requestPermissions = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) {
-        if (it[Manifest.permission.READ_MEDIA_VIDEO] == true && it[Manifest.permission.READ_MEDIA_IMAGES] == true) {
-            //(requireActivity() as AlertMessaging).showSnackBar("GOOD")
-            pickImageFromGallery()
-        } else {
-            (requireActivity() as AlertMessaging).showSnackBar("Предоставьте приложению разрешение на доступ к изображениям в настройках")
+    private val requestPermissions =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // Разрешение получено, можно запустить pickerImage
+                pickImageFromGallery()
+            } else {
+                // Разрешение не получено, предпримите необходимые действия
+                // Например, покажите пользователю сообщение о том, что без разрешения доступа к фото невозможно продолжить
+                (requireActivity() as AlertMessaging).showSnackBar("Без этого разрешения невозможно выбрать обложку")
+            }
         }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -244,32 +252,37 @@ open class NewPlaylistFragment : Fragment() {
     }
 
     fun checkAndAskPermission(permission: String) {
-        when {
-            haveRequiredPermission(permission) -> {
-                // You can use the API that requires the permission.
-                pickImageFromGallery()
-            }
+        lifecycleScope.launch {
+            requester.request(
+                //Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ).collect { p ->
+                when (p) {
+                    is PermissionResult.Granted -> {
+                        pickImageFromGallery()
+                    }
 
-            shouldShowRequestPermissionRationale(permission) -> {
-                (requireActivity() as AlertMessaging).showSnackBar("Необходимо разрешение на доступ к изображениям на телефоне!")
-            }
+                    is PermissionResult.Denied.DeniedPermanently -> {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.data = Uri.fromParts("package", requireContext().packageName, null)
+                        requireContext().startActivity(intent)
+                    }
 
-            else -> {
-                // You can directly ask for the permission.
-                // The registered ActivityResultCallback gets the result of this request.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    requestPermissions.launch(
-                        arrayOf(
-                            Manifest.permission.READ_MEDIA_IMAGES,
-                            Manifest.permission.READ_MEDIA_VIDEO
+                    is PermissionResult.Denied.NeedsRationale -> {
+                        (requireActivity() as AlertMessaging).showSnackBar(
+                            "Разрешение на доступ к изображениям необходимо, для добавления обложки плейлиста"
                         )
-                    )
-                } else {
-                    requestPermissions.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
+                    }
+
+                    is PermissionResult.Cancelled -> {
+                        return@collect
+                    }
                 }
             }
         }
     }
+
 
     private fun haveRequiredPermission(permissionToCheck: String): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -279,9 +292,7 @@ open class NewPlaylistFragment : Fragment() {
     }
 
     private fun pickImageFromGallery() {
-        if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())) {
-            pickImageContent.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        }
+        pickImageContent.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     private fun exit() {

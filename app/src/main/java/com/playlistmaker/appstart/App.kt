@@ -2,6 +2,7 @@ package com.playlistmaker.appstart
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.markodevcic.peko.PermissionRequester
 import com.playlistmaker.di.dataModule
 import com.playlistmaker.di.domainModule
 import com.playlistmaker.di.presentationModule
@@ -29,6 +30,9 @@ class App : Application() {
         // Загружаем сохраненную тему
         val settingsController: SettingsController = getKoin().get()
         applyTheme(settingsController.loadMode())
+
+        // Initialise Peko
+        PermissionRequester.initialize(context = baseContext)
     }
 
     private fun applyTheme(themeMode:Theme) {

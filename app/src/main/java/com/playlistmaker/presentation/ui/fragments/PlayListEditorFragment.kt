@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
-import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.ObjectKey
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.playlistmaker.presentation.models.AlertMessaging
@@ -79,18 +77,18 @@ class PlayListEditorFragment : NewPlaylistFragment() {
             playListOpened.observe(viewLifecycleOwner) {
                 it?.let {
                     // Грузим обложку и текстовые данные плейлиста
-                    setImageAsCover(Uri.fromFile(File(it.cover)))
+                    if (it.cover.isNotEmpty()) setImageAsCover(Uri.fromFile(File(it.cover)))
                     binding.txtPlaylistName.setText(it.name)
                     binding.txtPlaylistDescription.setText(it.description)
                 }
             }
 
-            vm.selectedImage.observe(viewLifecycleOwner){
+            vm.selectedImage.observe(viewLifecycleOwner) {
                 // Если была выбрана новая обложка, грузим ее через родительский класс в img
                 setImageAsCover(it)
             }
 
-            vm.exitTrigger.observe(viewLifecycleOwner){
+            vm.exitTrigger.observe(viewLifecycleOwner) {
                 requireActivity().supportFragmentManager.popBackStack()
             }
         }
