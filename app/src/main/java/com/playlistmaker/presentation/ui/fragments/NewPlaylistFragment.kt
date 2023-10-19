@@ -57,18 +57,6 @@ open class NewPlaylistFragment : Fragment() {
             uri?.let { vm.handlePickedImage(it) }
         }
 
-    private val requestPermissions =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                // Разрешение получено, можно запустить pickerImage
-                pickImageFromGallery()
-            } else {
-                // Разрешение не получено, предпримите необходимые действия
-                // Например, покажите пользователю сообщение о том, что без разрешения доступа к фото невозможно продолжить
-                (requireActivity() as AlertMessaging).showSnackBar("Без этого разрешения невозможно выбрать обложку")
-            }
-        }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -258,14 +246,9 @@ open class NewPlaylistFragment : Fragment() {
         // permission is required, instead, to read image files.
         // Permission request logic
 
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             Manifest.permission.READ_MEDIA_IMAGES
-        } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        } else {
-            return ""
-        }
-
+        else Manifest.permission.READ_EXTERNAL_STORAGE
     }
 
     fun checkAndAskPermission(permission: String) {
