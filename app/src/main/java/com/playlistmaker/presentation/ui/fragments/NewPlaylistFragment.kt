@@ -254,7 +254,7 @@ open class NewPlaylistFragment : Fragment() {
     fun checkAndAskPermission(permission: String) {
         lifecycleScope.launch {
             requester.request(
-                //Manifest.permission.CAMERA,
+                Manifest.permission.READ_MEDIA_IMAGES,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             ).collect { p ->
                 when (p) {
@@ -282,15 +282,6 @@ open class NewPlaylistFragment : Fragment() {
             }
         }
     }
-
-
-    private fun haveRequiredPermission(permissionToCheck: String): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(),
-            permissionToCheck
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
     private fun pickImageFromGallery() {
         pickImageContent.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
