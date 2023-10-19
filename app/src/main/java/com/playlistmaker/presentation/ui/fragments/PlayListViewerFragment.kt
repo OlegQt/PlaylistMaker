@@ -10,8 +10,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -194,58 +194,14 @@ class PlayListViewerFragment : Fragment() {
     }
 
     private fun bindPlayListInfo(playListInfo: PlayList) {
-        // Анонимный класс ниже является слушателем, реагирующем на успешность
-        // загрузки изображения в glide
-        val stubReplacer = object : RequestListener<Drawable?> {
-            // Called when an exception occurs during a load
-            override fun onLoadFailed(
-                e: GlideException?,
-                model: Any?,
-                target: Target<Drawable?>?,
-                isFirstResource: Boolean
-            ): Boolean {
-                //Log.e("LOG", "onLoadFailed")
-                with(binding.playListCover) {
-                    // Установите параметры ширины и высоты на wrap_content
-                    layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
-                    layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
-
-                    // Вычисляем плотность пикселей на экране
-                    val dpi = resources.displayMetrics.density
-                    val marginLayoutParams = layoutParams as MarginLayoutParams
-                    marginLayoutParams.topMargin = (VERTICAL_MARGIN_COVER_PLACEHOLDER * dpi).toInt()
-                    marginLayoutParams.bottomMargin =
-                        (VERTICAL_MARGIN_COVER_PLACEHOLDER * dpi).toInt()
-                    // Обновляем ImageView, чтобы применить изменения
-                    requestLayout()
-                }
-                // Рассчитываем высоту шторок, после загрузки placeholder Glide
-                handler.postDelayed({ calculatePeekHeight() }, BOTTOM_SHEET_REACTION_TIME_MILLS)
-                return false
-            }
-
-            // Called when a load completes successfully
-            override fun onResourceReady(
-                resource: Drawable?,
-                model: Any?,
-                target: Target<Drawable?>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean
-            ): Boolean {
-                // Рассчитываем высоту шторок, после успешной загрузки изображения Glide
-                // C задержкой, чтобы успелся обновиться view картинки
-                handler.postDelayed({ calculatePeekHeight() }, BOTTOM_SHEET_REACTION_TIME_MILLS)
-                //calculatePeekHeight()
-                return false
-            }
-
-        }
+        binding.playListCover.isVisible = playListInfo.cover.isNotEmpty()
+        binding.playListCoverPlaceholder.isVisible = playListInfo.cover.isEmpty()
+        handler.postDelayed({ calculatePeekHeight() }, BOTTOM_SHEET_REACTION_TIME_MILLS)
 
         Glide
             .with(binding.root)
             .load(playListInfo.cover)
             .placeholder(R.drawable.no_track_found)
-            .listener(stubReplacer)
             .signature(ObjectKey(System.currentTimeMillis()))
             .skipMemoryCache(true)
             .into(binding.playListCover)
