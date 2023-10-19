@@ -239,7 +239,7 @@ open class NewPlaylistFragment : Fragment() {
     }
 
     private fun choosePermission(): String {
-        //This permission is enforced starting in API level Build.VERSION_CODES.TIRAMISU .
+        // This permission is enforced starting in API level Build.VERSION_CODES.TIRAMISU .
         // An app which targets Build.VERSION_CODES.TIRAMISU  or higher and needs to read image files
         // from external storage must hold this permission; READ_EXTERNAL_STORAGE  is not required.
         // For apps with a targetSdkVersion of Build.VERSION_CODES.S_V2  or lower, the READ_EXTERNAL_STORAGE
