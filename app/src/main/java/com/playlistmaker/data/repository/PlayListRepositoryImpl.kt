@@ -23,8 +23,12 @@ class PlayListRepositoryImpl(
 
     // Загружает все плейлисты
     override fun loadAllPlayLists(): Flow<List<PlayList>> {
-        return db.playListDao().getAllPlayLists()
-            .map { it.map { entity -> mapper.convertFromDao(entity) } }
+        return db.playListDao().getAllPlayLists().map {list->
+            list.filterNotNull().map {
+                mapper.convertFromDao(it)
+            }
+        }
+            //.map { it.map { entity -> mapper.convertFromDao(entity) } }
 
     }
 
@@ -84,7 +88,11 @@ class PlayListRepositoryImpl(
 
         // Извлечение всех треков из базы
         val temp = db.playListDao().getAllPlayLists()
-            .map { it.map { entity -> mapper.convertFromDao(entity) } }.first()
+            .map { list->
+                list.filterNotNull().map {
+                    mapper.convertFromDao(it)
+                }
+            }.first()
 
         // Просматриваем все плейлисты на наличие трека
         // Если находим искомый трек, помечаем флажок isUsed

@@ -16,7 +16,7 @@ interface PlayListDao {
 
     // Read all DB content
     @Query("SELECT * from PlayListDB")
-    fun getAllPlayLists(): Flow<List<PlayListEntity>>
+    fun getAllPlayLists(): Flow<List<PlayListEntity?>>
 
     @Query("SELECT * FROM PlayListDB WHERE id = :playlistId")
     fun getPlayListById(playlistId: Long): Flow<PlayListEntity>

@@ -149,6 +149,8 @@ open class NewPlaylistFragment : Fragment() {
             .placeholder(R.drawable.no_track_found)
             .signature(ObjectKey(System.currentTimeMillis()))
             .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(picCornerRad.toInt())))
+            //.apply(RequestOptions().transform( RoundedCorners(picCornerRad.toInt())))
+            //.apply(RequestOptions().transform(CenterCrop(),    RoundedCorners(requireContext().resources.getDimensionPixelSize(R.dimen.radius_cover_playlist))))
             .into(binding.imgAddPhoto)
     }
 
