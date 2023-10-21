@@ -2,60 +2,60 @@ package com.playlistmaker.presentation.ui.fragments
 
 import android.Manifest
 import android.content.DialogInterface
-import android.content.pm.PackageManager
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.markodevcic.peko.PermissionRequester
+import com.markodevcic.peko.PermissionResult
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.activities.MainActivity
 import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
 const val PLAYLIST_COVER = "PLAYLIST_COVERS"
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
 
-    private val vm: FragmentNewPlayListVm by viewModel()
+    protected open val vm: FragmentNewPlayListVm by viewModel()
 
-    private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+    open var _binding: FragmentNewPlaylistBinding? = null
+    protected val binding get() = _binding!!
+
+    val requester = PermissionRequester.instance()
 
     private var pickImageContent =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let { vm.handlePickedImage(it) }
         }
-
-    private val requestPermissions = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) {
-        if (it[Manifest.permission.READ_MEDIA_VIDEO] == true && it[Manifest.permission.READ_MEDIA_IMAGES] == true) {
-            //(requireActivity() as AlertMessaging).showSnackBar("GOOD")
-            pickImageFromGallery()
-        } else {
-            (requireActivity() as AlertMessaging).showSnackBar("Предоставьте приложению разрешение на доступ к изображениям в настройках")
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,6 +90,10 @@ class NewPlaylistFragment : Fragment() {
 
     private fun exitWithDialog() {
         if (vm.nothingChanged()) {
+            // Если нет изменений или название альбома не заполнено, выходим
+            exit()
+        } else if (vm.playListName.isEmpty()) {
+            //(requireActivity() as AlertMessaging).showSnackBar("Введите название альбома")
             exit()
         } else {
             MaterialAlertDialogBuilder(requireContext())
@@ -118,7 +122,7 @@ class NewPlaylistFragment : Fragment() {
 
     }
 
-    private fun setImageAsCover(uri: Uri) {
+    protected fun setImageAsCover(uri: Uri) {
         // Изменяем layout картинки
         with(binding.imgAddPhoto) {
             // Установите параметры ширины и высоты на wrap_content
@@ -129,14 +133,28 @@ class NewPlaylistFragment : Fragment() {
             requestLayout()
         }
 
+        // Скрываем пунктирную линию вокруг layout
+        binding.layoutAddPhoto.background = null
+
+        // Расчет радиуса скругления
+        val picCornerRad = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            COVER_BODY_RADIUS,
+            resources.displayMetrics
+        )
+
         // Загружаем изображение
         Glide.with(binding.root.context)
             .load(uri)
             .placeholder(R.drawable.no_track_found)
+            .signature(ObjectKey(System.currentTimeMillis()))
+            .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(picCornerRad.toInt())))
+            //.apply(RequestOptions().transform( RoundedCorners(picCornerRad.toInt())))
+            //.apply(RequestOptions().transform(CenterCrop(),    RoundedCorners(requireContext().resources.getDimensionPixelSize(R.dimen.radius_cover_playlist))))
             .into(binding.imgAddPhoto)
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri?) {
+    protected fun saveImageToPrivateStorage(uri: Uri?) {
         if (uri == null) return
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath = File(
@@ -149,8 +167,20 @@ class NewPlaylistFragment : Fragment() {
             filePath.mkdirs()
         }
 
-        //создаём экземпляр класса File, который указывает на файл внутри каталога
-        val file = File(filePath, "${vm.playListName}_cover.jpg")
+        var version = 1
+        var existence = true
+        var file: File? = null
+
+        while (existence) {
+            // создаём экземпляр класса File, который указывает на файл внутри каталога
+            // Так же добавляем к названию версию для вероятности выбора разных
+            // картинок для альбома с одним названием
+            file = File(filePath, "${vm.playListName}_cover_v$version.jpg")
+
+            if (file.exists()) version++
+            else existence = false
+        }
+
 
         // создаём входящий поток байтов из выбранной картинки
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
@@ -161,7 +191,7 @@ class NewPlaylistFragment : Fragment() {
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
 
         // Сохраняем путь к новому файлу обложки внутри нашей модели плейлиста
-        vm.updatePlayListCoverLocation(file)
+        vm.updatePlayListCoverLocation(file!!)
     }
 
     private fun directoryCheck() {
@@ -174,12 +204,8 @@ class NewPlaylistFragment : Fragment() {
         if (filePath.exists()) {
             val logString = StringBuilder()
             filePath.listFiles()?.forEachIndexed { index, element ->
-                logString.append("($index)-$element\n")
+                element.delete()
             }
-            Snackbar.make(binding.imgAddPhoto, logString.toString(), Snackbar.LENGTH_SHORT)
-                .setTextMaxLines(20)
-                .setAction("OK") {}
-                .show()
         }
     }
 
@@ -214,45 +240,59 @@ class NewPlaylistFragment : Fragment() {
 
     }
 
-    private fun checkAndAskPermission(permission: String) {
-        when {
-            haveRequiredPermission(permission) -> {
-                // You can use the API that requires the permission.
-                pickImageFromGallery()
-            }
+    private fun choosePermission(): String {
+        // This permission is enforced starting in API level Build.VERSION_CODES.TIRAMISU .
+        // An app which targets Build.VERSION_CODES.TIRAMISU  or higher and needs to read image files
+        // from external storage must hold this permission; READ_EXTERNAL_STORAGE  is not required.
+        // For apps with a targetSdkVersion of Build.VERSION_CODES.S_V2  or lower, the READ_EXTERNAL_STORAGE
+        // permission is required, instead, to read image files.
+        // Permission request logic
 
-            shouldShowRequestPermissionRationale(permission) -> {
-                (requireActivity() as AlertMessaging).showSnackBar("Необходимо разрешение на доступ к изображениям на телефоне!")
-            }
-
-            else -> {
-                // You can directly ask for the permission.
-                // The registered ActivityResultCallback gets the result of this request.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    requestPermissions.launch(
-                        arrayOf(
-                            Manifest.permission.READ_MEDIA_IMAGES,
-                            Manifest.permission.READ_MEDIA_VIDEO
-                        )
-                    )
-                } else {
-                    requestPermissions.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
-                }
-            }
-        }
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            Manifest.permission.READ_MEDIA_IMAGES
+        else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P)
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        else Manifest.permission.INTERNET
     }
 
-    private fun haveRequiredPermission(permissionToCheck: String): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(),
-            permissionToCheck
-        ) == PackageManager.PERMISSION_GRANTED
+    fun checkAndAskPermission(permission: String) {
+        Log.e("LOG", Build.VERSION.SDK_INT.toString())
+        if (choosePermission().isEmpty()) pickImageFromGallery()
+        else {
+            lifecycleScope.launch {
+                requester.request(choosePermission())
+                    .collect { p ->
+                        when (p) {
+                            is PermissionResult.Granted -> {
+                                pickImageFromGallery()
+                            }
+
+                            is PermissionResult.Denied.DeniedPermanently -> {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                intent.data =
+                                    Uri.fromParts("package", requireContext().packageName, null)
+                                requireContext().startActivity(intent)
+                            }
+
+                            is PermissionResult.Denied.NeedsRationale -> {
+                                (requireActivity() as AlertMessaging).showSnackBar(
+                                    "Разрешение на доступ к изображениям необходимо, для добавления обложки плейлиста"
+                                )
+                            }
+
+                            is PermissionResult.Cancelled -> {
+                                return@collect
+                            }
+                        }
+                    }
+            }
+        }
+
     }
 
     private fun pickImageFromGallery() {
-        if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())) {
-            pickImageContent.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        }
+        pickImageContent.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     private fun exit() {
@@ -278,7 +318,7 @@ class NewPlaylistFragment : Fragment() {
 
     companion object {
         const val FRAGMENT_NEW_PLAY_LIST_REQUEST_KEY = "NEW_PLAYLIST_DESTROY"
-        private const val REQUEST_PERMISSION_CODE = 101
+        const val COVER_BODY_RADIUS = 8.0F
     }
 
 }

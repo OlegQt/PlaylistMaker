@@ -27,4 +27,6 @@
     <dimen name="history_article_top_margin">50dp</dimen>
     <dimen name="night_theme_margin_top">40dp</dimen>
 
+    <dimen name="radius_cover_playlist">8dp</dimen>
+
 </resources>

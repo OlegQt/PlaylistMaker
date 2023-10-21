@@ -15,8 +15,11 @@ interface PlayListDao {
     suspend fun addNewPlayList(playList: PlayListEntity)
 
     // Read all DB content
-    @Query("SELECT * from PlayListDB ORDER BY playlist_name DESC")
-    fun getAllPlayLists(): Flow<List<PlayListEntity>>
+    @Query("SELECT * from PlayListDB")
+    fun getAllPlayLists(): Flow<List<PlayListEntity?>>
+
+    @Query("SELECT * FROM PlayListDB WHERE id = :playlistId")
+    fun getPlayListById(playlistId: Long): Flow<PlayListEntity>
 
 
     @Delete

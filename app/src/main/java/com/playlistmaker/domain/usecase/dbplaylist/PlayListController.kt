@@ -7,13 +7,28 @@ import kotlinx.coroutines.flow.Flow
 interface PlayListController {
     suspend fun savePlaylist(playList: PlayList)
 
-    suspend fun loadAllPlayLists(): Flow<List<PlayList>>
+    fun loadAllPlayLists(): Flow<List<PlayList>>
 
-    suspend fun  clearBD()
+    fun loadPlayListById(id: Long): Flow<PlayList>
+
+    suspend fun clearBD()
 
     suspend fun updatePlayList(playListToUpdate: PlayList)
 
-    suspend fun safeMusicTrackToTrackListDB(musicTrackToSafe:MusicTrack)
+    suspend fun deletePlayList(playList: PlayList)
 
-    suspend fun loadAllTracksFromTrackListDB():Flow<List<MusicTrack>>
+    suspend fun deleteTrackFromPlayList(playListToUpdate: PlayList, trackId: Long)
+
+    // Ниже функционал для работы с таблицей треков
+
+    suspend fun safeMusicTrackToTrackListDB(musicTrackToSafe: MusicTrack)
+
+    fun loadAllTracksFromTrackListDB(): Flow<List<MusicTrack>>
+
+    suspend fun getMusicTracksMatchedIds(ids: List<Long>): List<MusicTrack>
+
+    fun getFlowMusicTracksMatchedIds(ids: List<Long>): Flow<List<MusicTrack>>
+
+    suspend fun checkIfTrackIsUnused(id: Long)
+
 }

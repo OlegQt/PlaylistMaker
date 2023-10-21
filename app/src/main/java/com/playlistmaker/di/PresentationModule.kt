@@ -4,6 +4,8 @@ import com.playlistmaker.presentation.ui.viewmodel.ActivityMainVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentFavouriteTracksVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentNewPlayListVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListEditorVm
+import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListViewerVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentSearchVm
 import com.playlistmaker.presentation.ui.viewmodel.FragmentSettingsVm
@@ -49,4 +51,9 @@ val presentationModule = module {
             playListController = get()
         )
     }
+
+    viewModel{FragmentPlayListViewerVm(playListController = get())}
+
+    viewModel{FragmentPlayListEditorVm(playListController = get())}
+
 }

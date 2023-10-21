@@ -26,7 +26,7 @@ import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
-import com.playlistmaker.presentation.ui.fragments.recycleradapter.PlayListAdapter
+import com.playlistmaker.presentation.ui.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -15,7 +15,6 @@
         android:src="@drawable/red_heart"
 
         android:background="@drawable/image_rounded_cover_2dp"
-        android:clipToOutline="true"
         android:scaleType="centerCrop"
 
         app:layout_constraintStart_toStartOf="parent"

@@ -16,4 +16,10 @@ interface TrackListDao {
     // Read all tracks from DB
     @Query("SELECT * from all_tracks_table")
     fun readAllTrackList(): Flow<List<MusicTrackEntity>>
+
+    @Query("DELETE FROM all_tracks_table")
+    suspend fun deleteAll()
+
+    @Query("DELETE FROM all_tracks_table WHERE id = :idToDelete")
+    fun deleteTrackById(idToDelete:Long)
 }

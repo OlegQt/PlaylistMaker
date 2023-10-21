@@ -1,6 +1,7 @@
 package com.playlistmaker.presentation.ui.fragments.medialibrary
 
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,13 +15,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.playlistmaker.R
 import com.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.playlistmaker.domain.models.PlayList
-import com.playlistmaker.presentation.ui.fragments.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
+import com.playlistmaker.presentation.ui.fragments.PLAYLIST_COVER
+import com.playlistmaker.presentation.ui.fragments.PlayListViewerFragment
+import com.playlistmaker.presentation.ui.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentPlayListsVm
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 
 class PlayListsFragment : Fragment() {
@@ -30,8 +34,21 @@ class PlayListsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val playListFromDB = mutableListOf<PlayList>()
-    private val playlistAdapter = PlayListAdapter(playListFromDB, PlayListAdapter.RecyclerType.LARGE,){
-        //(requireActivity() as AlertMessaging).showSnackBar(it.toString())
+    private val playlistAdapter =
+        PlayListAdapter(playListFromDB, PlayListAdapter.RecyclerType.LARGE) {
+            navigateToPlayList(playListToSend = playListFromDB[it])
+        }
+
+    private fun navigateToPlayList(playListToSend: PlayList) {
+        // Инициализируем навигатор
+        val navigator = parentFragmentManager.findFragmentById(R.id.root_placeholder) as NavHostFragment
+        val navController = navigator.navController
+        navController.navigate(R.id.action_mediaLibraryFragment_to_playListEditorFragment,
+
+            Bundle().apply {
+                // По заданию, передаем только id
+                putLong(PlayListViewerFragment.PLAYLIST_ID_ARG, playListToSend.id)
+            })
     }
 
     private fun setScreenState(newState: FragmentPlaylistsState) {
@@ -40,6 +57,7 @@ class PlayListsFragment : Fragment() {
                 binding.favouriteTracksRecycler.visibility = View.GONE
                 binding.stubLayout.visibility = View.VISIBLE
             }
+
             is FragmentPlaylistsState.Content -> {
                 binding.favouriteTracksRecycler.visibility = View.VISIBLE
                 binding.stubLayout.visibility = View.GONE
@@ -49,6 +67,8 @@ class PlayListsFragment : Fragment() {
                 playListFromDB.addAll(newState.playLists)
                 playlistAdapter.notifyItemRangeChanged(0, playListFromDB.size)
             }
+
+            else -> {}
         }
     }
 
@@ -86,9 +106,35 @@ class PlayListsFragment : Fragment() {
         }
 
         binding.btnClearDb.setOnClickListener { vm.clearPlayListBD() }
+        binding.btnClearDb.setOnLongClickListener {
+            directoryCheck()
+            true
+        }
 
         binding.favouriteTracksRecycler.adapter = playlistAdapter
         binding.favouriteTracksRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
+    }
+
+    private fun directoryCheck() {
+        // Функция считывает все обложки, сохраненные внутри каталога приложения
+        val filePath = File(
+            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            PLAYLIST_COVER
+        )
+
+        if (filePath.exists()) {
+            val logString = StringBuilder()
+            filePath.listFiles()?.forEachIndexed { index, element ->
+                Log.e("LOG",element.absolutePath)
+                    //element.delete()
+            }
+        }
+        Log.e("LOG","__________________________________________")
+        this.playListFromDB.forEach{
+            Log.e("LOG",it.cover)
+        }
+
+
     }
 
     override fun onResume() {

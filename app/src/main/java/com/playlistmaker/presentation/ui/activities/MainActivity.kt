@@ -32,7 +32,9 @@ class MainActivity : AppCompatActivity(), AlertMessaging {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.newPlaylistFragment -> binding.rootNavigationBar.visibility = View.GONE
+                R.id.playListEditorFragment -> binding.rootNavigationBar.visibility = View.GONE
                 else -> binding.rootNavigationBar.visibility = View.VISIBLE
+
             }
         }
     }

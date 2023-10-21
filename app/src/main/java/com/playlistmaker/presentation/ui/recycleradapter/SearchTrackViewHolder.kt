@@ -1,4 +1,4 @@
-package com.playlistmaker.presentation.ui.fragments.recycleradapter
+package com.playlistmaker.presentation.ui.recycleradapter
 
 import android.content.res.Resources
 import android.util.Log
@@ -37,6 +37,8 @@ class SearchTrackViewHolder(
     private fun getFullDurationFromLong(duration: Long): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(duration)
     }
+
+    fun getRootView():View = item
 
     fun bind(musTrack: MusicTrack) {
         txtTrackName.text = musTrack.trackName

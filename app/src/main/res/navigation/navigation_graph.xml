@@ -16,22 +16,36 @@
         <action
             android:id="@+id/action_mediaLibraryFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_playListEditorFragment"
+            app:destination="@id/playListEditorFragment" />
+
     </fragment>
+
+
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.playlistmaker.presentation.ui.fragments.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search"
         />
+
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.playlistmaker.presentation.ui.fragments.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings">
-
     </fragment>
+
     <fragment
         android:id="@+id/newPlaylistFragment"
         android:name="com.playlistmaker.presentation.ui.fragments.NewPlaylistFragment"
-        android:label="NewPlaylistFragment" />
+        android:label="NewPlaylistFragment"
+        tools:layout="@layout/fragment_new_playlist"/>
+    <fragment
+        android:id="@+id/playListEditorFragment"
+        android:name="com.playlistmaker.presentation.ui.fragments.PlayListViewerFragment"
+        android:label="fragment_playlist_editor"
+        tools:layout="@layout/fragment_playlist_editor" />
+
 </navigation>

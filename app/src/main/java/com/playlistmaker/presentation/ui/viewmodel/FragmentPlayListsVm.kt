@@ -1,5 +1,6 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,10 +30,11 @@ class FragmentPlayListsVm(
     val errorMsg = _errorMsg as LiveData<String>
 
     init {
+        Log.e("LOG","INIT inside FragmentPlayListsVm")
         loadPlaylists()
     }
 
-    fun loadPlaylists() {
+    private fun loadPlaylists() {
         // TODO: Здесь прописать загрузку избранных треков
         val errorHandler = CoroutineExceptionHandler { _, throwable ->
             _errorMsg.value = throwable.message
