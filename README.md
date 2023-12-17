@@ -16,3 +16,10 @@
 + Сохранение истории поиска (10 последних треков)
 + Взаимодействие с внешними приложениями
 + Изменение темы приложения (тёмная/светлая)
+
+# Скриншоты
+<div style="display: flex; flex-direction: row;">
+  <img src="https://github.com/OlegQt/PlaylistMaker/blob/master/MainScreen.jpg" alt="mainScreen" width="300">
+  <img src="https://github.com/OlegQt/PlaylistMaker/blob/master/MediaLibraryScreen.jpg" alt="mediaLibraryScreen" width="300">
+  <img src="https://github.com/OlegQt/PlaylistMaker/blob/master/PlaylistScreen.jpg" alt="playlistScreen" width="300">
+</div>
