@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -31,10 +32,11 @@ class PlaybackButtonView @JvmOverloads constructor(
     @StyleRes defStyleRes: Int = 0,
 ) : View(context, attrs, defStyleAttr, defStyleRes) {
 
-    private var currentButtonState: PlaybackButtonState = PlaybackButtonState.IS_PLAYING
+    private var currentButtonState: PlaybackButtonState = PlaybackButtonState.PLAY
     private var imagePause: Bitmap? = null
     private var imagePlay: Bitmap? = null
     private val paint = Paint().apply { isAntiAlias = true }
+    private var imageRect: RectF = RectF()
 
     init {
         context.theme.obtainStyledAttributes(
@@ -57,10 +59,16 @@ class PlaybackButtonView @JvmOverloads constructor(
                 recycle()
             }
         }
+
     }
 
     override fun performClick(): Boolean {
         return super.performClick()
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        imageRect = RectF(0f, 0f, measuredWidth.toFloat(), measuredHeight.toFloat())
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -74,8 +82,6 @@ class PlaybackButtonView @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> true
             else -> true
         }
-
-        return super.onTouchEvent(event)
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -83,12 +89,12 @@ class PlaybackButtonView @JvmOverloads constructor(
 
         val backgroundImage =
             when (currentButtonState) {
-                PlaybackButtonState.IS_PLAYING -> imagePlay
-                PlaybackButtonState.IS_PAUSED -> imagePause
+                PlaybackButtonState.PLAY -> imagePlay
+                PlaybackButtonState.PAUSE -> imagePause
             }
 
         backgroundImage?.let {
-            canvas?.drawBitmap(it, 0f, 0f, paint)
+            canvas?.drawBitmap(it, null, imageRect, null)
         }
     }
 
@@ -100,14 +106,14 @@ class PlaybackButtonView @JvmOverloads constructor(
 
     private fun getOppositeState(): PlaybackButtonState {
         return when (currentButtonState) {
-            PlaybackButtonState.IS_PLAYING -> PlaybackButtonState.IS_PAUSED
-            PlaybackButtonState.IS_PAUSED -> PlaybackButtonState.IS_PLAYING
+            PlaybackButtonState.PLAY -> PlaybackButtonState.PAUSE
+            PlaybackButtonState.PAUSE -> PlaybackButtonState.PLAY
         }
     }
 
     companion object {
         enum class PlaybackButtonState() {
-            IS_PLAYING, IS_PAUSED
+            PLAY, PAUSE
         }
     }
 

@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -95,8 +94,8 @@ class MusicPlayerFragment : Fragment() {
                 PlayerState.STATE_COMPLETE -> {
                     // Проигрывание трека завершилось
                     changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-                    binding.btnPlayback.changeState(PlaybackButtonView.Companion.PlaybackButtonState.IS_PAUSED)
-                    binding.btnPlayback.invalidate()
+
+                    binding.btnPlayback.changeState(PlaybackButtonView.Companion.PlaybackButtonState.PLAY)
                 }
 
                 PlayerState.STATE_PREPARED -> {
@@ -150,10 +149,7 @@ class MusicPlayerFragment : Fragment() {
 
         binding.playerBtnPlay.setOnClickListener { vm.pushPlayPauseButton() }
 
-        binding.btnPlayback.setOnClickListener {
-            Toast.makeText(context,"push",Toast.LENGTH_SHORT).show()
-            vm.pushPlayPauseButton()
-        }
+        binding.btnPlayback.setOnClickListener { vm.pushPlayPauseButton() }
 
         binding.addToFavBtn.setOnClickListener { vm.pushAddToFavButton() }
 
