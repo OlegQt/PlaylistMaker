@@ -2,7 +2,7 @@
 <resources>
     <declare-styleable name="PlaybackButtonView">
         <attr name="start_txt" format="string" />
-        <attr name="pause_image" format="reference" />
-        <attr name="play_image" format="reference" />
+        <attr name="pause_image_res_id" format="reference" />
+        <attr name="play_image_res_id" format="reference" />
     </declare-styleable>
 </resources>
