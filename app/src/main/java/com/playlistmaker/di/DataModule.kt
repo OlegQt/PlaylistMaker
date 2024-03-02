@@ -77,7 +77,7 @@ val dataModule = module {
         )
     }
 
-    single { RetrofitNetworkClient(mediaApi = get(), get()) }
+    single { RetrofitNetworkClient(mediaApi = get(), context = get()) }
 
     single { Room.databaseBuilder(androidContext(), MusicDB::class.java, "music_app_database").build() }
 

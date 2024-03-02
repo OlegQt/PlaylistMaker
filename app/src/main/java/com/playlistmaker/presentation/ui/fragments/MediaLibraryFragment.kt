@@ -52,6 +52,7 @@ class MediaLibraryFragment : Fragment(), AlertMessaging {
         // Инициализация адаптера для
         adapter = MediaPager(requireActivity(), fragmentMap)
         binding.mediaStorageFragmentPlaceholder.adapter = adapter
+
         mediator = TabLayoutMediator(
             binding.mediaStorageTab,
             binding.mediaStorageFragmentPlaceholder
