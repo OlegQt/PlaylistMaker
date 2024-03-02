@@ -83,7 +83,7 @@
             android:text="The Beatles"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/player_btn_play"
+            app:layout_constraintBottom_toTopOf="@id/btn_playback"
             app:layout_constraintEnd_toStartOf="@id/right_guideline"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/left_guideline" />
@@ -99,7 +99,7 @@
             android:src="@drawable/plus_track"
             android:theme="@style/Oval_drawable_button"
             app:layout_constraintStart_toEndOf="@id/left_guideline"
-            app:layout_constraintTop_toTopOf="@id/player_btn_play" />
+            app:layout_constraintTop_toTopOf="@id/btn_playback" />
 
         <ImageButton
             android:id="@+id/add_to_fav_btn"
@@ -112,7 +112,7 @@
             android:theme="@style/Oval_drawable_button"
 
             app:layout_constraintEnd_toStartOf="@id/right_guideline"
-            app:layout_constraintTop_toTopOf="@id/player_btn_play" />
+            app:layout_constraintTop_toTopOf="@id/btn_playback" />
 
         <ImageButton
             android:id="@+id/player_btn_play"
@@ -122,22 +122,28 @@
             android:background="@null"
             android:contentDescription="@string/app_name"
             android:src="@drawable/play_track"
+
+            android:visibility="gone"
+
             app:layout_constraintBottom_toTopOf="@id/player_play_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <com.playlistmaker.presentation.ui.customview.PlaybackButtonView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@color/black"
+            android:id="@+id/btn_playback"
 
-            app:pause_image="@drawable/playerpause"
-            app:play_image="@drawable/play_track"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:layout_marginBottom="12dp"
 
-            app:start_txt="StartButton"
+            app:layout_constraintBottom_toTopOf="@id/player_play_time"
+            app:layout_constraintEnd_toEndOf="parent"
 
-            app:layout_constraintStart_toEndOf="@id/player_btn_play"
-            app:layout_constraintTop_toBottomOf="@id/player_btn_play" />
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:pause_image_res_id="@drawable/player_pause"
+            app:play_image_res_id="@drawable/play_track"
+            app:start_txt="StartButton" />
 
 
         <!--  current duration -->

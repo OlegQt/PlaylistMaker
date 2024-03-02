@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -26,6 +27,7 @@ import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
+import com.playlistmaker.presentation.ui.customview.PlaybackButtonView
 import com.playlistmaker.presentation.ui.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import kotlinx.coroutines.Dispatchers
@@ -93,6 +95,8 @@ class MusicPlayerFragment : Fragment() {
                 PlayerState.STATE_COMPLETE -> {
                     // Проигрывание трека завершилось
                     changeBtnPlayPause(ButtonState.BUTTON_PLAY)
+                    binding.btnPlayback.changeState(PlaybackButtonView.Companion.PlaybackButtonState.IS_PAUSED)
+                    binding.btnPlayback.invalidate()
                 }
 
                 PlayerState.STATE_PREPARED -> {
@@ -146,6 +150,11 @@ class MusicPlayerFragment : Fragment() {
 
         binding.playerBtnPlay.setOnClickListener { vm.pushPlayPauseButton() }
 
+        binding.btnPlayback.setOnClickListener {
+            Toast.makeText(context,"push",Toast.LENGTH_SHORT).show()
+            vm.pushPlayPauseButton()
+        }
+
         binding.addToFavBtn.setOnClickListener { vm.pushAddToFavButton() }
 
         binding.addToFavBtn.setOnLongClickListener { vm.showAllFavouriteTracks() }
@@ -191,7 +200,7 @@ class MusicPlayerFragment : Fragment() {
     private fun changeBtnPlayPause(state: ButtonState) {
         when (state) {
             ButtonState.BUTTON_PLAY -> binding.playerBtnPlay.setImageResource(R.drawable.play_track)
-            ButtonState.BUTTON_PAUSE -> binding.playerBtnPlay.setImageResource(R.drawable.playerpause)
+            ButtonState.BUTTON_PAUSE -> binding.playerBtnPlay.setImageResource(R.drawable.player_pause)
         }
     }
 
