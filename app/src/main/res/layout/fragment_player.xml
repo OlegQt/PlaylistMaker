@@ -126,6 +126,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <com.playlistmaker.presentation.ui.customview.PlaybackButtonView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@color/black"
+
+            app:pause_image="@drawable/playerpause"
+            app:play_image="@drawable/play_track"
+
+            app:start_txt="StartButton"
+
+            app:layout_constraintStart_toEndOf="@id/player_btn_play"
+            app:layout_constraintTop_toBottomOf="@id/player_btn_play" />
+
 
         <!--  current duration -->
         <TextView
@@ -233,21 +246,22 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View android:id="@+id/overlay"
+    <View
+        android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#99000000"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/standard_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="560dp"
-        android:orientation="vertical"
-        app:behavior_hideable="true"
-
-
         android:background="@drawable/bottom_sheet_rounded"
+        android:orientation="vertical"
+
+
+        app:behavior_hideable="true"
 
         app:behavior_peekHeight="0dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -261,11 +275,11 @@
 
         <TextView
             style="@style/settings_text_back"
-            android:layout_marginTop="30dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
 
-            android:textSize="19sp"
-            android:text="Добавить в плейлист" />
+            android:text="Добавить в плейлист"
+            android:textSize="19sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_new_playlist"
@@ -273,21 +287,21 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="28dp"
+            android:fontFamily="@font/ys_display_medium"
             android:paddingHorizontal="@dimen/search_stub_btn_hor_pad"
             android:paddingVertical="6dp"
             android:text="@string/Create_new_playlist"
-            android:fontFamily="@font/ys_display_medium"
             android:textAllCaps="false"
             android:textColor="?attr/colorOnSecondary"
             android:textSize="14sp"
             app:backgroundTint="?attr/colorOnPrimary"
-            app:cornerRadius="54dp"/>
+            app:cornerRadius="54dp" />
 
-       <androidx.recyclerview.widget.RecyclerView
-           android:id="@+id/playlists_recycler"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           tools:listitem="@layout/playlist_short_item"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playlists_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/playlist_short_item" />
     </LinearLayout>
 
 

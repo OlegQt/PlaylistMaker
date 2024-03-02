@@ -61,6 +61,7 @@ class FragmentMusicPlayerVm(
 
         // Запуск отслеживания БД плейлистов
         updateListOfPlaylistFromDB()
+        //_errorMsg.value = "Start test"
     }
 
     fun loadCurrentMusicTrack(trackToPlay: MusicTrack) {
