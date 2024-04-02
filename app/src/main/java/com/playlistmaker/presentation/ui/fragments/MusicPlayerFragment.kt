@@ -24,6 +24,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.playlistmaker.R
+import com.playlistmaker.appstart.App
 import com.playlistmaker.databinding.FragmentPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
@@ -82,7 +83,8 @@ class MusicPlayerFragment : Fragment() {
             }
         }
 
-        startMusicPlayerService()
+        // TODO: Delete this comment (new fun)
+        startMusicPlayerService(musicTrackToPlay = musicTrack)
 
         vm.playingTime.observe(viewLifecycleOwner) {
             binding.playerPlayTime.text = it.toTimeMmSs()
@@ -301,7 +303,7 @@ class MusicPlayerFragment : Fragment() {
         vm.onPlayListClick(clickedPlayList = playListClicked)
     }
 
-    private fun startMusicPlayerService() {
+    private fun startMusicPlayerService(musicTrackToPlay:MusicTrack = MusicTrack()) {
         musicServiceConnection = object : ServiceConnection {
             override fun onServiceConnected(className: ComponentName, service: IBinder) {
 
@@ -314,9 +316,12 @@ class MusicPlayerFragment : Fragment() {
         }
 
         Intent(requireContext(), MusicPlayerService::class.java).also {
+            it.putExtra(App.MUSIC_PLAYER_SERVICE_TRACK_MODEL,musicTrack)
+            Log.e("LOG","startIntent")
+
+
             musicServiceConnection?.let { connection ->
                 requireContext().bindService(it, connection, Context.BIND_AUTO_CREATE)
-                Log.e("LOG","Connection to service")
             }
         }
     }

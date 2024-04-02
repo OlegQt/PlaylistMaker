@@ -8,7 +8,6 @@ import com.playlistmaker.di.domainModule
 import com.playlistmaker.di.presentationModule
 import com.playlistmaker.domain.models.Theme
 import com.playlistmaker.domain.usecase.apppreferences.SettingsController
-import com.playlistmaker.domain.usecase.apppreferences.SettingsControllerImpl
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.logger.AndroidLogger
@@ -35,7 +34,7 @@ class App : Application() {
         PermissionRequester.initialize(context = baseContext)
     }
 
-    private fun applyTheme(themeMode:Theme) {
+    private fun applyTheme(themeMode: Theme) {
         when (themeMode) {
             Theme.DAY_THEME -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             Theme.NIGHT_THEME -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -44,7 +43,8 @@ class App : Application() {
 
     companion object {
         // Для удобного доступа к App
-        lateinit var instance: App
-            private set // Менять значение можно только внутри этого класса
+        lateinit var instance: App private set
+
+        const val MUSIC_PLAYER_SERVICE_TRACK_MODEL = "com.playlist_maker.track_url"
     }
 }
