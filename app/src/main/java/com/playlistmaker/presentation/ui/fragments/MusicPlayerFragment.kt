@@ -1,7 +1,12 @@
 package com.playlistmaker.presentation.ui.fragments
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,6 +32,7 @@ import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.customview.PlaybackButtonView
+import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
 import com.playlistmaker.presentation.ui.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +59,8 @@ class MusicPlayerFragment : Fragment() {
             onPlayListClick(playListFromDB[it])
         }
 
+    private var musicServiceConnection: ServiceConnection? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -73,6 +81,8 @@ class MusicPlayerFragment : Fragment() {
                 vm.loadCurrentMusicTrack(trackToPlay = musicTrack)
             }
         }
+
+        startMusicPlayerService()
 
         vm.playingTime.observe(viewLifecycleOwner) {
             binding.playerPlayTime.text = it.toTimeMmSs()
@@ -144,7 +154,6 @@ class MusicPlayerFragment : Fragment() {
             }
             vm.turnOffPlayer()
             (requireActivity() as ActivityPlayerB).exitPlayerActivity()
-
         }
 
         binding.playerBtnPlay.setOnClickListener { vm.pushPlayPauseButton() }
@@ -290,6 +299,26 @@ class MusicPlayerFragment : Fragment() {
 
     private fun onPlayListClick(playListClicked: PlayList) {
         vm.onPlayListClick(clickedPlayList = playListClicked)
+    }
+
+    private fun startMusicPlayerService() {
+        musicServiceConnection = object : ServiceConnection {
+            override fun onServiceConnected(className: ComponentName, service: IBinder) {
+
+                // We've bound to LocalService, cast the IBinder and get LocalService instance.
+                val binder = service as MusicPlayerService.LocalBinder
+                val mService = binder.getService()
+            }
+
+            override fun onServiceDisconnected(arg0: ComponentName) {}
+        }
+
+        Intent(requireContext(), MusicPlayerService::class.java).also {
+            musicServiceConnection?.let { connection ->
+                requireContext().bindService(it, connection, Context.BIND_AUTO_CREATE)
+                Log.e("LOG","Connection to service")
+            }
+        }
     }
 
     companion object {

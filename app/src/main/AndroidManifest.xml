@@ -50,6 +50,9 @@
                 android:value="" />
         </activity>
 
+        <service android:name=".presentation.ui.musicservice.MusicPlayerService"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
