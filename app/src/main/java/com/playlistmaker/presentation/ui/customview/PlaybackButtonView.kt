@@ -3,6 +3,7 @@ package com.playlistmaker.presentation.ui.customview
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -35,7 +36,12 @@ class PlaybackButtonView @JvmOverloads constructor(
     private var currentButtonState: PlaybackButtonState = PlaybackButtonState.PLAY
     private var imagePause: Bitmap? = null
     private var imagePlay: Bitmap? = null
-    private val paint = Paint().apply { isAntiAlias = true }
+    private val paint = Paint().apply {
+        isAntiAlias = true
+        style = Paint.Style.FILL
+        color = Color.RED
+        textSize = 36.0f
+    }
     private var imageRect: RectF = RectF()
 
     init {
@@ -59,7 +65,6 @@ class PlaybackButtonView @JvmOverloads constructor(
                 recycle()
             }
         }
-
     }
 
     override fun performClick(): Boolean {
@@ -74,7 +79,7 @@ class PlaybackButtonView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return when (event.action) {
             MotionEvent.ACTION_UP -> {
-                changeState(newState = getOppositeState())
+                //changeState(newState = getOppositeState())
                 performClick()
                 true
             }
@@ -95,6 +100,7 @@ class PlaybackButtonView @JvmOverloads constructor(
 
         backgroundImage?.let {
             canvas?.drawBitmap(it, null, imageRect, null)
+            if (!isEnabled) canvas?.drawRect(0.0f, 0.0f, 100.0f, 100.0f, paint)
         }
     }
 

@@ -46,5 +46,6 @@ class App : Application() {
         lateinit var instance: App private set
 
         const val MUSIC_PLAYER_SERVICE_TRACK_MODEL = "com.playlist_maker.track_url"
+        const val MUSIC_PLAYER_PROGRESS_FREQUENCY = 200L
     }
 }

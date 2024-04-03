@@ -10,4 +10,6 @@ sealed class MusicPlayerState(val playProgress: Int? = null) {
     class MusicReadyToPlay() : MusicPlayerState(null)
 
     class MusicPlayingCompleted() : MusicPlayerState(null)
+
+    class PlayerLoad():MusicPlayerState()
 }

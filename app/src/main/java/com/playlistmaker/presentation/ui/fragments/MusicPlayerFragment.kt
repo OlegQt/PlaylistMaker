@@ -28,16 +28,15 @@ import com.playlistmaker.appstart.App
 import com.playlistmaker.databinding.FragmentPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
-import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.customview.PlaybackButtonView
 import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
+import com.playlistmaker.presentation.ui.musicservice.MusicPlayerState
 import com.playlistmaker.presentation.ui.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -91,34 +90,6 @@ class MusicPlayerFragment : Fragment() {
             binding.playerPlayTime.text = it.toTimeMmSs()
         }
 
-        vm.playerState.observe(viewLifecycleOwner) {
-            Log.e("LOG", "Пришел state от плеера $it")
-            when (it) {
-                PlayerState.STATE_PLAYING -> {
-                    changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
-                    vm.startTrackPlayingTimer()
-                }
-
-                PlayerState.STATE_PAUSED -> {
-                    changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-                    vm.stopTrackPlayingTimer()
-                }
-
-                PlayerState.STATE_COMPLETE -> {
-                    // Проигрывание трека завершилось
-                    changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-
-                    binding.btnPlayback.changeState(PlaybackButtonView.Companion.PlaybackButtonState.PLAY)
-                }
-
-                PlayerState.STATE_PREPARED -> {
-                    binding.playerBtnPlay.isEnabled = true
-                }
-
-                else -> {}
-            }
-        }
-
         vm.currentMusTrack.observe(viewLifecycleOwner) { this.showTrackInfo(it) }
 
         vm.errorMsg.observe(viewLifecycleOwner) { showSnackBar(it) }
@@ -144,20 +115,13 @@ class MusicPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Кнопка будет недоступна до момента загрузки музыкального плеера
-        // Until STATE_PREPARED
-        binding.playerBtnPlay.isEnabled = false
+        binding.btnPlayback.isEnabled = false
 
         binding.playerBtnBack.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                // Если не вызвать выключение плеера, то его выключение произойдет в методе
-                // onDestroy фрагмента, если к тому моменту activity уже закончит работу, возникнет ошибка
-                // Поэтому последовательно отключаем плеер и, после этого, закрываем activity
-                //vm.turnOffPlayer()
-                //(requireActivity() as ActivityPlayerB).exitPlayerActivity()
+                //TODO: Продумать поведение сервиса при выходе
+                (requireActivity() as ActivityPlayerB).exitPlayerActivity()
             }
-            vm.turnOffPlayer()
-            (requireActivity() as ActivityPlayerB).exitPlayerActivity()
         }
 
         binding.playerBtnPlay.setOnClickListener { vm.pushPlayPauseButton() }
@@ -204,13 +168,7 @@ class MusicPlayerFragment : Fragment() {
         // Добавляем адаптер для просмотра списка плейлистов внутрь Recycler
         binding.playlistsRecycler.adapter = this.adapterPlayList
         binding.playlistsRecycler.layoutManager = LinearLayoutManager(this.requireContext())
-    }
 
-    private fun changeBtnPlayPause(state: ButtonState) {
-        when (state) {
-            ButtonState.BUTTON_PLAY -> binding.playerBtnPlay.setImageResource(R.drawable.play_track)
-            ButtonState.BUTTON_PAUSE -> binding.playerBtnPlay.setImageResource(R.drawable.player_pause)
-        }
     }
 
     private fun showTrackInfo(track: MusicTrack) {
@@ -276,24 +234,13 @@ class MusicPlayerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        Log.e(
-            "LOG",
-            "Fragment Player ушел в паузу в момент когда statePlayer = \n ${vm.playerState.value}"
-        )
-        // Если onPause вызвана временной паузой фрагмента, то останавливаем проигрывание музыки
-        // с проверкой, что плеер находится в состоянии проигрывания трека
-        if (vm.playerState.value == PlayerState.STATE_PLAYING) {
-            vm.playPauseMusic(isPlaying = false)
-        }
+        //TODO: Продумать код при постановке activity на паузу
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.e(
-            "LOG",
-            "Fragment Player Destroy в момент когда statePlayer = \n ${vm.playerState.value}"
-        )
-        vm.turnOffPlayer()
+        //TODO: Продумать код при выключении activity
+
         _binding = null
     }
 
@@ -309,7 +256,14 @@ class MusicPlayerFragment : Fragment() {
         musicServiceConnection = object : ServiceConnection {
             override fun onServiceConnected(className: ComponentName, service: IBinder) {
                 // We've bound to LocalService, cast the IBinder and get LocalService instance.
-                vm.setNewMusicPlayerService(newPlayer = (service as MusicPlayerService.LocalBinder).getService())
+                val mService = (service as MusicPlayerService.LocalBinder).getService()
+
+                vm.setNewMusicPlayerService(newPlayer = mService)
+
+                lifecycleScope.launch {
+                    mService.playerState.collect { updateUiByPlayerState(it) }
+                }
+
             }
 
             override fun onServiceDisconnected(arg0: ComponentName) {}
@@ -324,6 +278,33 @@ class MusicPlayerFragment : Fragment() {
         }
     }
 
+    private fun updateUiByPlayerState(playerState: MusicPlayerState) {
+        when (playerState) {
+            is MusicPlayerState.MusicPlaying -> {
+                binding.playerPlayTime.text = playerState.playProgress?.toLong()?.toTimeMmSs()
+                binding.btnPlayback.changeState(PlaybackButtonView.Companion.PlaybackButtonState.PAUSE)
+            }
+
+            is MusicPlayerState.MusicPaused -> {
+                binding.playerPlayTime.text = playerState.playProgress?.toLong()?.toTimeMmSs()
+                binding.btnPlayback.changeState(PlaybackButtonView.Companion.PlaybackButtonState.PLAY)
+            }
+
+            is MusicPlayerState.MusicPlayingCompleted -> {
+                showSnackBar("completed")
+            }
+
+            is MusicPlayerState.MusicReadyToPlay -> {
+                showSnackBar(binding.btnPlayback.isEnabled.toString())
+                binding.btnPlayback.isEnabled = true
+            }
+
+            else -> {
+
+            }
+        }
+    }
+
     companion object {
         fun newInstance(musicTrackToPlay: MusicTrack?): MusicPlayerFragment {
             return MusicPlayerFragment().apply {
@@ -332,11 +313,6 @@ class MusicPlayerFragment : Fragment() {
                 }
             }
         }
-    }
-
-    enum class ButtonState {
-        BUTTON_PLAY,
-        BUTTON_PAUSE
     }
 }
 

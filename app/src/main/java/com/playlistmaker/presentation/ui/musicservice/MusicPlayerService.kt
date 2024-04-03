@@ -10,17 +10,23 @@ import android.os.Parcelable
 import android.util.Log
 import com.playlistmaker.appstart.App
 import com.playlistmaker.domain.models.MusicTrack
-import com.playlistmaker.domain.models.PlayerState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class MusicPlayerService : Service() {
 
     // Binder given to clients.
     private val binder = LocalBinder()
 
-    val _playerState = MutableStateFlow<MusicPlayerState>(MusicPlayerState.MusicPaused(0))
+    private val _playerState = MutableStateFlow<MusicPlayerState>(MusicPlayerState.PlayerLoad())
     val playerState = _playerState.asStateFlow()
+
+    private var playerProgressUpdateJob: Job? = null
 
     private val player = MediaPlayer()
 
@@ -48,7 +54,13 @@ class MusicPlayerService : Service() {
         }
 
         player.setOnCompletionListener {
-            _playerState.value = MusicPlayerState.MusicPlayingCompleted()
+            // Go to musicTrack start position and pause player manually
+            player.seekTo(0)
+            player.pause()
+
+            // Stop coroutine watching progress and send new State to Fragment
+            stopProgressUpdate()
+            _playerState.value = MusicPlayerState.MusicPaused(player.currentPosition)
         }
 
         player.setDataSource(trackToPlay.previewUrl)
@@ -65,17 +77,38 @@ class MusicPlayerService : Service() {
     }
 
     private fun startPlayingMusic() {
+        // If player is not yet prepared -> return
+        if (_playerState.value is MusicPlayerState.PlayerLoad) return
+
+        // else start playing music
         player.start()
-        _playerState.value = MusicPlayerState.MusicPlaying(0)
+        startProgressUpdate()
     }
 
     private fun stopPlayingMusic() {
         player.pause()
+        stopProgressUpdate()
         _playerState.value = MusicPlayerState.MusicPaused(player.currentPosition)
     }
 
     private fun releasePlayerResources() {
 
+    }
+
+    private fun startProgressUpdate() {
+        playerProgressUpdateJob = CoroutineScope(Dispatchers.Default).launch {
+            while (player.isPlaying) {
+                delay(App.MUSIC_PLAYER_PROGRESS_FREQUENCY)
+                _playerState.value = MusicPlayerState.MusicPlaying(
+                    currentProgress = player.currentPosition
+                )
+            }
+        }
+    }
+
+    private fun stopProgressUpdate() {
+        playerProgressUpdateJob?.cancel()
+        playerProgressUpdateJob = null
     }
 
     private fun <T> getParcelableVersionIndependent(
