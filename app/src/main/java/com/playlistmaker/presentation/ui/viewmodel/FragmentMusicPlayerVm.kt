@@ -15,13 +15,17 @@ import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouri
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
+import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
+import com.playlistmaker.presentation.ui.musicservice.MusicPlayerState
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 
 const val TRACK_DURATION_UPDATE_mills = 300L
 
@@ -48,20 +52,26 @@ class FragmentMusicPlayerVm(
     private val _bottomSheetIsShown = MutableLiveData<Boolean>()
     val bottomSheetIsShown = _bottomSheetIsShown as LiveData<Boolean>
 
-    // LiveData для состояния экрана фрагмента
-    // FragmentPlaylistsState.NothingFound - Показывать заглушку
-    // FragmentPlaylistsState.Content - Показывать плейлисты
     private val _playlistState =
         MutableStateFlow<FragmentPlaylistsState>(FragmentPlaylistsState.NothingFound(null))
     val playlistState = _playlistState as StateFlow<FragmentPlaylistsState>
 
     private var trackPlayingTimerListener: Job? = null
 
-    init {
+    private var musicServiceRef:WeakReference<MusicPlayerService?>? = null
+    private val musicService:MusicPlayerService? get() = musicServiceRef?.get()
 
-        // Запуск отслеживания БД плейлистов
+    val mState = musicService?._playerState?.asStateFlow()
+
+    init {
+        // Flow collecting the playLists list from dataBase
         updateListOfPlaylistFromDB()
-        //_errorMsg.value = "Start test"
+    }
+
+    fun setNewMusicPlayerService(newPlayer: MusicPlayerService) {
+        //TODO: new fun, which replaces internal player with service player
+        musicServiceRef = WeakReference(newPlayer)
+        //musicService?.startPlayingMusic()
     }
 
     fun loadCurrentMusicTrack(trackToPlay: MusicTrack) {
@@ -82,8 +92,11 @@ class FragmentMusicPlayerVm(
     }
 
     fun playPauseMusic(isPlaying: Boolean) {
-        if (isPlaying) musicalPlayer.playMusic()
-        else musicalPlayer.pauseMusic()
+        //if (isPlaying) musicalPlayer.playMusic()
+        //else musicalPlayer.pauseMusic()
+
+        //TODO: replace player controller with service
+        musicService?.playPauseMusic()
     }
 
     fun stopTrackPlayingTimer() {

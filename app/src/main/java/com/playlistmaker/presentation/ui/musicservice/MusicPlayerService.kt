@@ -10,11 +10,19 @@ import android.os.Parcelable
 import android.util.Log
 import com.playlistmaker.appstart.App
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.domain.models.PlayerState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class MusicPlayerService : Service() {
 
     // Binder given to clients.
     private val binder = LocalBinder()
+
+    val _playerState = MutableStateFlow<MusicPlayerState>(MusicPlayerState.MusicPaused(0))
+    val playerState = _playerState.asStateFlow()
+
+    private val player = MediaPlayer()
 
     override fun onBind(intent: Intent?): IBinder {
 
@@ -35,24 +43,35 @@ class MusicPlayerService : Service() {
     }
 
     private fun initialisePlayer(trackToPlay: MusicTrack) {
-        val player = MediaPlayer()
-
         player.setOnPreparedListener {
-            it.start()
+            _playerState.value = MusicPlayerState.MusicReadyToPlay()
+        }
+
+        player.setOnCompletionListener {
+            _playerState.value = MusicPlayerState.MusicPlayingCompleted()
         }
 
         player.setDataSource(trackToPlay.previewUrl)
         player.prepareAsync()
+    }
 
-
+    fun playPauseMusic() {
+        when (_playerState.value) {
+            is MusicPlayerState.MusicPaused -> startPlayingMusic()
+            is MusicPlayerState.MusicReadyToPlay -> startPlayingMusic()
+            is MusicPlayerState.MusicPlaying -> stopPlayingMusic()
+            else -> {}
+        }
     }
 
     private fun startPlayingMusic() {
-
+        player.start()
+        _playerState.value = MusicPlayerState.MusicPlaying(0)
     }
 
     private fun stopPlayingMusic() {
-
+        player.pause()
+        _playerState.value = MusicPlayerState.MusicPaused(player.currentPosition)
     }
 
     private fun releasePlayerResources() {
@@ -75,6 +94,4 @@ class MusicPlayerService : Service() {
         // Return this instance of LocalService so clients can call public methods.
         fun getService(): MusicPlayerService = this@MusicPlayerService
     }
-
-
 }

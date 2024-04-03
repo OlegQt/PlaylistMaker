@@ -7,4 +7,7 @@ sealed class MusicPlayerState(val playProgress: Int? = null) {
     class MusicPlaying(private val currentProgress: Int) :
         MusicPlayerState(playProgress = currentProgress)
 
+    class MusicReadyToPlay() : MusicPlayerState(null)
+
+    class MusicPlayingCompleted() : MusicPlayerState(null)
 }

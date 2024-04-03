@@ -37,6 +37,7 @@ import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
 import com.playlistmaker.presentation.ui.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -138,6 +139,7 @@ class MusicPlayerFragment : Fragment() {
 
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -303,22 +305,18 @@ class MusicPlayerFragment : Fragment() {
         vm.onPlayListClick(clickedPlayList = playListClicked)
     }
 
-    private fun startMusicPlayerService(musicTrackToPlay:MusicTrack = MusicTrack()) {
+    private fun startMusicPlayerService(musicTrackToPlay: MusicTrack = MusicTrack()) {
         musicServiceConnection = object : ServiceConnection {
             override fun onServiceConnected(className: ComponentName, service: IBinder) {
-
                 // We've bound to LocalService, cast the IBinder and get LocalService instance.
-                val binder = service as MusicPlayerService.LocalBinder
-                val mService = binder.getService()
+                vm.setNewMusicPlayerService(newPlayer = (service as MusicPlayerService.LocalBinder).getService())
             }
 
             override fun onServiceDisconnected(arg0: ComponentName) {}
         }
 
         Intent(requireContext(), MusicPlayerService::class.java).also {
-            it.putExtra(App.MUSIC_PLAYER_SERVICE_TRACK_MODEL,musicTrack)
-            Log.e("LOG","startIntent")
-
+            it.putExtra(App.MUSIC_PLAYER_SERVICE_TRACK_MODEL, musicTrack)
 
             musicServiceConnection?.let { connection ->
                 requireContext().bindService(it, connection, Context.BIND_AUTO_CREATE)
