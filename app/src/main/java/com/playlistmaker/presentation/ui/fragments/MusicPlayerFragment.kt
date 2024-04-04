@@ -115,8 +115,6 @@ class MusicPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnPlayback.isEnabled = false
-
         binding.playerBtnBack.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
                 //TODO: Продумать поведение сервиса при выходе
@@ -291,16 +289,16 @@ class MusicPlayerFragment : Fragment() {
             }
 
             is MusicPlayerState.MusicPlayingCompleted -> {
-                showSnackBar("completed")
+
+            }
+
+            is MusicPlayerState.PlayerLoad -> {
+                // Unable to push play button until track is not fully loaded
+                binding.btnPlayback.isEnabled = false
             }
 
             is MusicPlayerState.MusicReadyToPlay -> {
-                showSnackBar(binding.btnPlayback.isEnabled.toString())
                 binding.btnPlayback.isEnabled = true
-            }
-
-            else -> {
-
             }
         }
     }
