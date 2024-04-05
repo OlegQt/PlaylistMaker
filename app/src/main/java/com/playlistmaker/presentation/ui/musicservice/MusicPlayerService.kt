@@ -92,7 +92,12 @@ class MusicPlayerService : Service() {
     }
 
     private fun releasePlayerResources() {
+        stopPlayingMusic()
 
+        player.stop()
+        player.setOnPreparedListener(null)
+        player.setOnCompletionListener(null)
+        player.release()
     }
 
     private fun startProgressUpdate() {

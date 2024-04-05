@@ -236,10 +236,17 @@ class MusicPlayerFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-        //TODO: Продумать код при выключении activity
+        Log.e("LOG", "onDestroy Activity Fragment")
 
+
+        //TODO: Продумать код при выключении activity
+        musicServiceConnection?.let { connection ->
+            requireContext().unbindService(connection)
+            //requireContext().stopService(Intent(requireContext(),MusicPlayerService::class.java))
+        }
         _binding = null
+
+        super.onDestroyView()
     }
 
     private fun Long.toTimeMmSs(): String {
@@ -268,7 +275,7 @@ class MusicPlayerFragment : Fragment() {
         }
 
         Intent(requireContext(), MusicPlayerService::class.java).also {
-            it.putExtra(App.MUSIC_PLAYER_SERVICE_TRACK_MODEL, musicTrack)
+            it.putExtra(App.MUSIC_PLAYER_SERVICE_TRACK_MODEL, musicTrackToPlay)
 
             musicServiceConnection?.let { connection ->
                 requireContext().bindService(it, connection, Context.BIND_AUTO_CREATE)
