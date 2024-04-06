@@ -7,7 +7,6 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.playlistmaker.R
 import com.playlistmaker.appstart.App
@@ -44,8 +43,6 @@ class MusicPlayerService : Service() {
     }
 
     override fun onDestroy() {
-        Log.e("LOG", "Destroy Service")
-
         releasePlayerResources()
         super.onDestroy()
     }
@@ -130,7 +127,8 @@ class MusicPlayerService : Service() {
                 .build()
 
         // Create the notification to display while the service is running
-        startForeground(100, notification)
+        // only if music is playing
+        if (_playerState.value is MusicPlayerState.MusicPlaying) startForeground(100, notification)
     }
 
     fun hideForegroundNotification() {

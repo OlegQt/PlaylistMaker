@@ -1,10 +1,13 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
+import android.Manifest
+import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.markodevcic.peko.PermissionRequester
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTrackToFavouritesUseCase
@@ -16,7 +19,6 @@ import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -46,8 +48,6 @@ class FragmentMusicPlayerVm(
         MutableStateFlow<FragmentPlaylistsState>(FragmentPlaylistsState.NothingFound(null))
     val playlistState = _playlistState as StateFlow<FragmentPlaylistsState>
 
-    private var trackPlayingTimerListener: Job? = null
-
     private var musicServiceRef: WeakReference<MusicPlayerService?>? = null
     private val musicService: MusicPlayerService? get() = musicServiceRef?.get()
 
@@ -71,6 +71,8 @@ class FragmentMusicPlayerVm(
     }
 
     fun showServiceNotification() {
+        if (!checkPermissionForeGroundNotifications()) return
+
         currentMusTrack.value?.let {
             musicService?.showForegroundNotification(
                 trackName = it.trackName,
@@ -79,7 +81,14 @@ class FragmentMusicPlayerVm(
         }
     }
 
-    fun hideServiceNotification(){
+    fun checkPermissionForeGroundNotifications(): Boolean {
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) true
+        else PermissionRequester.instance().areGranted(Manifest.permission.POST_NOTIFICATIONS).also {
+            _errorMsg.value = "POST_NOTIFICATIONS permission = $it"
+        }
+    }
+
+    fun hideServiceNotification() {
         musicService?.hideForegroundNotification()
     }
 
