@@ -309,12 +309,12 @@ class MusicPlayerFragment : Fragment() {
         when (playerState) {
             is MusicPlayerState.MusicPlaying -> {
                 binding.playerPlayTime.text = playerState.playProgress?.toLong()?.toTimeMmSs()
-                binding.btnPlayback.changeState(PlaybackButtonView.Companion.PlaybackButtonState.PAUSE)
+                binding.btnPlayback.changeState(PlaybackButtonView.PlaybackButtonState.PAUSE)
             }
 
             is MusicPlayerState.MusicPaused -> {
                 binding.playerPlayTime.text = playerState.playProgress?.toLong()?.toTimeMmSs()
-                binding.btnPlayback.changeState(PlaybackButtonView.Companion.PlaybackButtonState.PLAY)
+                binding.btnPlayback.changeState(PlaybackButtonView.PlaybackButtonState.PLAY)
             }
 
             is MusicPlayerState.MusicPlayingCompleted -> {

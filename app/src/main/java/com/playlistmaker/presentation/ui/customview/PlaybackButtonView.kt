@@ -14,18 +14,6 @@ import androidx.annotation.StyleRes
 import androidx.core.graphics.drawable.toBitmap
 import com.playlistmaker.R
 
-/*
-class PlaybackButtonView(
-    context: Context,
-    attrs: AttributeSet?,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
-) : View(context) {
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0, 0)
-    constructor(context: Context) : this(context, null, 0, 0)
-
-}*/
-
 class PlaybackButtonView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -39,7 +27,8 @@ class PlaybackButtonView @JvmOverloads constructor(
     private val paint = Paint().apply {
         isAntiAlias = true
         style = Paint.Style.FILL
-        color = Color.RED
+        color = Color.GRAY
+        alpha = 100
         textSize = 36.0f
     }
     private var imageRect: RectF = RectF()
@@ -85,22 +74,28 @@ class PlaybackButtonView @JvmOverloads constructor(
             }
 
             MotionEvent.ACTION_DOWN -> true
-            else -> true
+            else -> super.onTouchEvent(event)
         }
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        val backgroundImage =
-            when (currentButtonState) {
-                PlaybackButtonState.PLAY -> imagePlay
-                PlaybackButtonState.PAUSE -> imagePause
-            }
+        when (currentButtonState) {
+            PlaybackButtonState.PLAY ->
+                imagePlay?.also { canvas?.drawBitmap(it, null, imageRect, null) }
 
-        backgroundImage?.let {
-            canvas?.drawBitmap(it, null, imageRect, null)
-            if (!isEnabled) canvas?.drawRect(0.0f, 0.0f, 100.0f, 100.0f, paint)
+            PlaybackButtonState.PAUSE ->
+                imagePause?.also { canvas?.drawBitmap(it, null, imageRect, null) }
+        }
+
+        if (!isEnabled) {
+            canvas?.drawCircle(
+                imageRect.right / 2,
+                imageRect.bottom / 2,
+                imageRect.right / 2,
+                paint
+            )
         }
     }
 
@@ -117,10 +112,9 @@ class PlaybackButtonView @JvmOverloads constructor(
         }
     }
 
-    companion object {
-        enum class PlaybackButtonState() {
-            PLAY, PAUSE
-        }
+    enum class PlaybackButtonState() {
+        PLAY, PAUSE
+
     }
 
 }
