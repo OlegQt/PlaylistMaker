@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -61,6 +62,15 @@ class MusicPlayerFragment : Fragment() {
         }
 
     private var musicServiceConnection: ServiceConnection? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // System back pressed listener
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            exitFragmentAndStopService()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -117,8 +127,7 @@ class MusicPlayerFragment : Fragment() {
 
         binding.playerBtnBack.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                //TODO: Продумать поведение сервиса при выходе
-                (requireActivity() as ActivityPlayerB).exitPlayerActivity()
+                exitFragmentAndStopService()
             }
         }
 
@@ -231,22 +240,35 @@ class MusicPlayerFragment : Fragment() {
     }
 
     override fun onPause() {
+        vm.showServiceNotification()
+
         super.onPause()
-        //TODO: Продумать код при постановке activity на паузу
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.hideServiceNotification()
     }
 
     override fun onDestroyView() {
-        Log.e("LOG", "onDestroy Activity Fragment")
-
-
-        //TODO: Продумать код при выключении activity
         musicServiceConnection?.let { connection ->
             requireContext().unbindService(connection)
+
+            // Надо ли дополнительно уничтожать сервис такой функцией?
             //requireContext().stopService(Intent(requireContext(),MusicPlayerService::class.java))
         }
-        _binding = null
 
+        _binding = null
         super.onDestroyView()
+    }
+
+    private fun exitFragmentAndStopService() {
+        musicServiceConnection?.let {
+            requireContext().unbindService(it)
+        }
+        musicServiceConnection = null
+
+        (requireActivity() as ActivityPlayerB).exitPlayerActivity()
     }
 
     private fun Long.toTimeMmSs(): String {

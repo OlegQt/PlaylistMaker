@@ -1,6 +1,9 @@
 package com.playlistmaker.appstart
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.markodevcic.peko.PermissionRequester
 import com.playlistmaker.di.dataModule
@@ -32,6 +35,9 @@ class App : Application() {
 
         // Initialise Peko
         PermissionRequester.initialize(context = baseContext)
+
+        // Register notification channel with the system
+        registerNotificationChannel()
     }
 
     private fun applyTheme(themeMode: Theme) {
@@ -41,11 +47,37 @@ class App : Application() {
         }
     }
 
+    /**
+     *  Caution: Check build version inside registerNotificationChannel function
+     *  only Android 8.0 (API level 26) and higher,
+     *  because the notification channels APIs aren't available in the Support Library.
+     */
+    private fun registerNotificationChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+
+        val mChannel = NotificationChannel(
+            MUSIC_PLAYER_NOTIFICATION_CHANNEL_ID,
+            MUSIC_PLAYER_NOTIFICATION_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Playing track name"
+        }
+
+        // Register the channel with the system. You can't change the importance
+        // or other notification behaviors after this.
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.createNotificationChannel(mChannel)
+    }
+
     companion object {
         // Для удобного доступа к App
         lateinit var instance: App private set
 
         const val MUSIC_PLAYER_SERVICE_TRACK_MODEL = "com.playlist_maker.track_url"
+        const val MUSIC_PLAYER_NOTIFICATION_CHANNEL_NAME = "PlayListMaker notifications"
+        const val MUSIC_PLAYER_NOTIFICATION_CHANNEL_ID =
+            "com.playlist.maker_notification_channel_id"
         const val MUSIC_PLAYER_PROGRESS_FREQUENCY = 200L
     }
 }

@@ -1,6 +1,5 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
-import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTrackToFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.DeleteMusicTrackFromFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksUseCase
@@ -16,18 +14,13 @@ import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayer
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
-import com.playlistmaker.presentation.ui.musicservice.MusicPlayerState
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-
-const val TRACK_DURATION_UPDATE_mills = 300L
 
 class FragmentMusicPlayerVm(
     private val musicalPlayer: MusicPlayerController,
@@ -55,8 +48,8 @@ class FragmentMusicPlayerVm(
 
     private var trackPlayingTimerListener: Job? = null
 
-    private var musicServiceRef:WeakReference<MusicPlayerService?>? = null
-    private val musicService:MusicPlayerService? get() = musicServiceRef?.get()
+    private var musicServiceRef: WeakReference<MusicPlayerService?>? = null
+    private val musicService: MusicPlayerService? get() = musicServiceRef?.get()
 
     init {
         // Flow collecting the playLists list from dataBase
@@ -77,8 +70,17 @@ class FragmentMusicPlayerVm(
         musicService?.playPauseMusic()
     }
 
-    fun stopTrackPlayingTimer() {
-        trackPlayingTimerListener?.cancel()
+    fun showServiceNotification() {
+        currentMusTrack.value?.let {
+            musicService?.showForegroundNotification(
+                trackName = it.trackName,
+                trackSinger = it.artistName
+            )
+        }
+    }
+
+    fun hideServiceNotification(){
+        musicService?.hideForegroundNotification()
     }
 
     fun pushAddToFavButton() {

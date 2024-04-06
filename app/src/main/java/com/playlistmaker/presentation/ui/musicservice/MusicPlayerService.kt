@@ -8,6 +8,8 @@ import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import com.playlistmaker.R
 import com.playlistmaker.appstart.App
 import com.playlistmaker.domain.models.MusicTrack
 import kotlinx.coroutines.CoroutineScope
@@ -54,6 +56,9 @@ class MusicPlayerService : Service() {
         }
 
         player.setOnCompletionListener {
+            // StopForeground and remove notification
+            hideForegroundNotification()
+
             // Go to musicTrack start position and pause player manually
             player.seekTo(0)
             player.pause()
@@ -116,7 +121,23 @@ class MusicPlayerService : Service() {
         playerProgressUpdateJob = null
     }
 
-    private fun <T> getParcelableVersionIndependent(
+    fun showForegroundNotification(trackName: String, trackSinger: String) {
+        val notification =
+            NotificationCompat.Builder(this, App.MUSIC_PLAYER_NOTIFICATION_CHANNEL_ID)
+                .setContentTitle(trackSinger.plus(" - ").plus(trackName))
+                .setSubText(getString(R.string.app_name))
+                .setSmallIcon(R.drawable.ic_media)
+                .build()
+
+        // Create the notification to display while the service is running
+        startForeground(100, notification)
+    }
+
+    fun hideForegroundNotification() {
+        stopForeground(STOP_FOREGROUND_REMOVE)
+    }
+
+    private inline fun <reified T> getParcelableVersionIndependent(
         intent: Intent?,
         name: String,
         clazz: Class<T>

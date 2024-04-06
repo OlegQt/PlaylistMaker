@@ -12,6 +12,9 @@
     <!-- No permission is needed to add files to shared storage on Android 10 (API level 29) or higher  -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application
         android:name=".appstart.App"
         android:allowBackup="true"
