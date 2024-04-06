@@ -83,7 +83,7 @@ class ActivityPlayer : AppCompatActivity() {
 
     private fun changeBtnPlayPause(state: ButtonState) {
         if (state == ButtonState.BUTTON_PLAY) binding.playerBtnPlay.setImageResource(R.drawable.play_track)
-        else binding.playerBtnPlay.setImageResource(R.drawable.playerpause)
+        else binding.playerBtnPlay.setImageResource(R.drawable.player_pause)
     }
 
     private fun showAlertDialog(msg: String) {
