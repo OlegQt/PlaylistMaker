@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import com.playlistmaker.R
 import com.playlistmaker.appstart.App
 import com.playlistmaker.domain.models.MusicTrack
+import com.playlistmaker.domain.usecase.mediaplayer.MusicPlayerController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,8 +19,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
+import org.koin.core.Koin
 
-class MusicPlayerService : Service() {
+class MusicPlayerService : Service() ,MusicPlayerController{
 
     // Binder given to clients.
     private val binder = LocalBinder()
@@ -29,7 +32,8 @@ class MusicPlayerService : Service() {
 
     private var playerProgressUpdateJob: Job? = null
 
-    private val player = MediaPlayer()
+    // TODO здесь проблема
+    private val player = Koin().get<MediaPlayer>()
 
     override fun onBind(intent: Intent?): IBinder {
 
@@ -47,7 +51,7 @@ class MusicPlayerService : Service() {
         super.onDestroy()
     }
 
-    private fun initialisePlayer(trackToPlay: MusicTrack) {
+    override fun initialisePlayer(trackToPlay: MusicTrack) {
         player.setOnPreparedListener {
             _playerState.value = MusicPlayerState.MusicReadyToPlay()
         }
@@ -69,7 +73,7 @@ class MusicPlayerService : Service() {
         player.prepareAsync()
     }
 
-    fun playPauseMusic() {
+    override fun playPauseMusic() {
         when (_playerState.value) {
             is MusicPlayerState.MusicPaused -> startPlayingMusic()
             is MusicPlayerState.MusicReadyToPlay -> startPlayingMusic()
@@ -93,7 +97,7 @@ class MusicPlayerService : Service() {
         _playerState.value = MusicPlayerState.MusicPaused(player.currentPosition)
     }
 
-    private fun releasePlayerResources() {
+    override fun releasePlayerResources() {
         stopPlayingMusic()
 
         player.stop()
@@ -118,7 +122,7 @@ class MusicPlayerService : Service() {
         playerProgressUpdateJob = null
     }
 
-    fun showForegroundNotification(trackName: String, trackSinger: String) {
+    override fun showForegroundNotification(trackName: String, trackSinger: String) {
         val notification =
             NotificationCompat.Builder(this, App.MUSIC_PLAYER_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(trackSinger.plus(" - ").plus(trackName))
@@ -131,7 +135,7 @@ class MusicPlayerService : Service() {
         if (_playerState.value is MusicPlayerState.MusicPlaying) startForeground(100, notification)
     }
 
-    fun hideForegroundNotification() {
+    override fun hideForegroundNotification() {
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
 

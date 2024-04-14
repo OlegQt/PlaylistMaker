@@ -1,6 +1,7 @@
 package com.playlistmaker.di
 
 import android.content.Context
+import android.media.MediaPlayer
 import androidx.room.Room
 import com.google.gson.Gson
 import com.playlistmaker.data.db.favourite.MusicDB
@@ -49,6 +50,8 @@ val dataModule = module {
 
     factory { Gson() }
 
+    factory { MediaPlayer() }
+
     single { androidContext().getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE) }
 
 
@@ -84,6 +87,4 @@ val dataModule = module {
     factory { MusicTrackMapper() }
 
     factory { PlayListMapper() }
-
-
 }

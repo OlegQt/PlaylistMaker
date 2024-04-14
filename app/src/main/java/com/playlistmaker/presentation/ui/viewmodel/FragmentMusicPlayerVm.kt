@@ -13,8 +13,8 @@ import com.playlistmaker.domain.models.PlayList
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTrackToFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.DeleteMusicTrackFromFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksUseCase
-import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
+import com.playlistmaker.domain.usecase.mediaplayer.MusicPlayerController
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
 class FragmentMusicPlayerVm(
-    private val musicalPlayer: MusicPlayerController,
     private val addToFavoriteUseCase: AddMusicTrackToFavouritesUseCase,
     private val loadFavouriteUseCase: LoadFavouriteTracksUseCase,
     private val deleteFavouriteUseCase: DeleteMusicTrackFromFavouritesUseCase,
@@ -51,6 +50,7 @@ class FragmentMusicPlayerVm(
     private var musicServiceRef: WeakReference<MusicPlayerService?>? = null
     private val musicService: MusicPlayerService? get() = musicServiceRef?.get()
 
+
     init {
         // Flow collecting the playLists list from dataBase
         updateListOfPlaylistFromDB()
@@ -59,7 +59,6 @@ class FragmentMusicPlayerVm(
     fun setNewMusicPlayerService(newPlayer: MusicPlayerService) {
         //TODO: new fun, which replaces internal player with service player
         musicServiceRef = WeakReference(newPlayer)
-        //musicService?.startPlayingMusic()
     }
 
     fun loadCurrentMusicTrack(trackToPlay: MusicTrack) {
