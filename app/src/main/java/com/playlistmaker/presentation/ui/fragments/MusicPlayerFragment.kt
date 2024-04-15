@@ -14,6 +14,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -63,6 +65,7 @@ class MusicPlayerFragment : Fragment() {
 
     private var musicServiceConnection: ServiceConnection? = null
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -70,6 +73,8 @@ class MusicPlayerFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             exitFragmentAndStopService()
         }
+
+        checkPermission()
     }
 
     override fun onCreateView(
@@ -239,9 +244,19 @@ class MusicPlayerFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkPermission(){
+        requireActivity().registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // Если выдали разрешение — привязываемся к сервису.
+                vm.showServiceNotification()
+            }
+        }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+
     override fun onPause() {
         vm.showServiceNotification()
-
         super.onPause()
     }
 

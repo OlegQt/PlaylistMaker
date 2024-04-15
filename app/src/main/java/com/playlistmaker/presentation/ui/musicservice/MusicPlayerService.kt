@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -32,8 +33,7 @@ class MusicPlayerService : Service() ,MusicPlayerController{
 
     private var playerProgressUpdateJob: Job? = null
 
-    // TODO здесь проблема
-    private val player = Koin().get<MediaPlayer>()
+    private val player:MediaPlayer = get()
 
     override fun onBind(intent: Intent?): IBinder {
 
@@ -137,6 +137,10 @@ class MusicPlayerService : Service() ,MusicPlayerController{
 
     override fun hideForegroundNotification() {
         stopForeground(STOP_FOREGROUND_REMOVE)
+    }
+
+    override fun getCurrentPlayerState(): StateFlow<MusicPlayerState> {
+        return playerState
     }
 
     private inline fun <reified T> getParcelableVersionIndependent(

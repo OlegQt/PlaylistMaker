@@ -52,6 +52,9 @@ class App : Application() {
      *  only Android 8.0 (API level 26) and higher,
      *  because the notification channels APIs aren't available in the Support Library.
      */
+    // Вопрос выноса создания канала в Application обсуждался с наставником. Quote:
+    // Лучше всего делать это в Application::onCreate, так как это ускорит запуск сервиса, что иногда критично.
+    // Создание канала нотификаций все равно должно произойти, так что лучше вынести инициализации именно на момент старта приложения
     private fun registerNotificationChannel() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
@@ -63,8 +66,6 @@ class App : Application() {
             description = "Playing track name"
         }
 
-        // Register the channel with the system. You can't change the importance
-        // or other notification behaviors after this.
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         notificationManager.createNotificationChannel(mChannel)

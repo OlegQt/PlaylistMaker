@@ -83,7 +83,6 @@ class FragmentMusicPlayerVm(
     fun checkPermissionForeGroundNotifications(): Boolean {
         return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) true
         else PermissionRequester.instance().areGranted(Manifest.permission.POST_NOTIFICATIONS).also {
-            _errorMsg.value = "POST_NOTIFICATIONS permission = $it"
         }
     }
 
