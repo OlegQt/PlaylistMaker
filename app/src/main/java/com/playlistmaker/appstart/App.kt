@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import com.markodevcic.peko.PermissionRequester
+import com.playlistmaker.R
 import com.playlistmaker.di.dataModule
 import com.playlistmaker.di.domainModule
 import com.playlistmaker.di.presentationModule
@@ -60,10 +61,10 @@ class App : Application() {
 
         val mChannel = NotificationChannel(
             MUSIC_PLAYER_NOTIFICATION_CHANNEL_ID,
-            MUSIC_PLAYER_NOTIFICATION_CHANNEL_NAME,
+            getString(R.string.channel_name),
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
-            description = "Playing track name"
+            description = getString(R.string.channel_description)
         }
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -76,7 +77,6 @@ class App : Application() {
         lateinit var instance: App private set
 
         const val MUSIC_PLAYER_SERVICE_TRACK_MODEL = "com.playlist_maker.track_url"
-        const val MUSIC_PLAYER_NOTIFICATION_CHANNEL_NAME = "PlayListMaker notifications"
         const val MUSIC_PLAYER_NOTIFICATION_CHANNEL_ID =
             "com.playlist.maker_notification_channel_id"
         const val MUSIC_PLAYER_PROGRESS_FREQUENCY = 200L

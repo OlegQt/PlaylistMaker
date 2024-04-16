@@ -54,4 +54,8 @@
     <!-- fragment playlistEditor -->
     <string name="empty_playlist">Плейлист пуст</string>
 
+    <!-- Notification channel -->
+    <string name="channel_name">PlayListMaker notifications</string>
+    <string name="channel_description">Playing track name/string</string>
+
 </resources>
