@@ -65,7 +65,6 @@ class MusicPlayerFragment : Fragment() {
 
     private var musicServiceConnection: ServiceConnection? = null
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -73,8 +72,6 @@ class MusicPlayerFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             exitFragmentAndStopService()
         }
-
-        checkPermission()
     }
 
     override fun onCreateView(
@@ -122,6 +119,10 @@ class MusicPlayerFragment : Fragment() {
                 }
             }
         }
+
+        // Check foreground notification permission
+        // Запросит разрешение у пользователя, если его нет
+        checkPermission()
 
         return binding.root
     }
@@ -244,14 +245,11 @@ class MusicPlayerFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun checkPermission(){
-        requireActivity().registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                // Если выдали разрешение — привязываемся к сервису.
-                vm.showServiceNotification()
-            }
-        }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
 
