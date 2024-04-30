@@ -44,7 +44,6 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
 
     fun exitPlayerActivity() {
         finish()
-        //supportFragmentManager.popBackStack()
     }
 
     override fun onDestroy() {
@@ -53,7 +52,6 @@ class ActivityPlayerB : AppCompatActivity(), AlertMessaging {
     }
 
     override fun showAlertDialog(alertMessage: String) {
-        //
     }
 
     override fun showSnackBar(messageToShow: String) {

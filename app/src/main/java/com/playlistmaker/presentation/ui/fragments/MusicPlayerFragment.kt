@@ -1,13 +1,21 @@
 package com.playlistmaker.presentation.ui.fragments
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -19,14 +27,16 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.playlistmaker.R
+import com.playlistmaker.appstart.App
 import com.playlistmaker.databinding.FragmentPlayerBinding
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
-import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.presentation.models.AlertMessaging
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
 import com.playlistmaker.presentation.ui.activities.ActivityPlayerB
 import com.playlistmaker.presentation.ui.customview.PlaybackButtonView
+import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
+import com.playlistmaker.presentation.ui.musicservice.MusicPlayerState
 import com.playlistmaker.presentation.ui.recycleradapter.PlayListAdapter
 import com.playlistmaker.presentation.ui.viewmodel.FragmentMusicPlayerVm
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +63,17 @@ class MusicPlayerFragment : Fragment() {
             onPlayListClick(playListFromDB[it])
         }
 
+    private var musicServiceConnection: ServiceConnection? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // System back pressed listener
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            exitFragmentAndStopService()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,36 +95,11 @@ class MusicPlayerFragment : Fragment() {
             }
         }
 
+        // TODO: Delete this comment (new fun)
+        startMusicPlayerService(musicTrackToPlay = musicTrack)
+
         vm.playingTime.observe(viewLifecycleOwner) {
             binding.playerPlayTime.text = it.toTimeMmSs()
-        }
-
-        vm.playerState.observe(viewLifecycleOwner) {
-            Log.e("LOG", "Пришел state от плеера $it")
-            when (it) {
-                PlayerState.STATE_PLAYING -> {
-                    changeBtnPlayPause(ButtonState.BUTTON_PAUSE)
-                    vm.startTrackPlayingTimer()
-                }
-
-                PlayerState.STATE_PAUSED -> {
-                    changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-                    vm.stopTrackPlayingTimer()
-                }
-
-                PlayerState.STATE_COMPLETE -> {
-                    // Проигрывание трека завершилось
-                    changeBtnPlayPause(ButtonState.BUTTON_PLAY)
-
-                    binding.btnPlayback.changeState(PlaybackButtonView.Companion.PlaybackButtonState.PLAY)
-                }
-
-                PlayerState.STATE_PREPARED -> {
-                    binding.playerBtnPlay.isEnabled = true
-                }
-
-                else -> {}
-            }
         }
 
         vm.currentMusTrack.observe(viewLifecycleOwner) { this.showTrackInfo(it) }
@@ -124,27 +120,21 @@ class MusicPlayerFragment : Fragment() {
             }
         }
 
+        // Check foreground notification permission
+        // Запросит разрешение у пользователя, если его нет
+        checkPermission()
+
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Кнопка будет недоступна до момента загрузки музыкального плеера
-        // Until STATE_PREPARED
-        binding.playerBtnPlay.isEnabled = false
-
         binding.playerBtnBack.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                // Если не вызвать выключение плеера, то его выключение произойдет в методе
-                // onDestroy фрагмента, если к тому моменту activity уже закончит работу, возникнет ошибка
-                // Поэтому последовательно отключаем плеер и, после этого, закрываем activity
-                //vm.turnOffPlayer()
-                //(requireActivity() as ActivityPlayerB).exitPlayerActivity()
+                exitFragmentAndStopService()
             }
-            vm.turnOffPlayer()
-            (requireActivity() as ActivityPlayerB).exitPlayerActivity()
-
         }
 
         binding.playerBtnPlay.setOnClickListener { vm.pushPlayPauseButton() }
@@ -191,13 +181,7 @@ class MusicPlayerFragment : Fragment() {
         // Добавляем адаптер для просмотра списка плейлистов внутрь Recycler
         binding.playlistsRecycler.adapter = this.adapterPlayList
         binding.playlistsRecycler.layoutManager = LinearLayoutManager(this.requireContext())
-    }
 
-    private fun changeBtnPlayPause(state: ButtonState) {
-        when (state) {
-            ButtonState.BUTTON_PLAY -> binding.playerBtnPlay.setImageResource(R.drawable.play_track)
-            ButtonState.BUTTON_PAUSE -> binding.playerBtnPlay.setImageResource(R.drawable.player_pause)
-        }
     }
 
     private fun showTrackInfo(track: MusicTrack) {
@@ -261,27 +245,43 @@ class MusicPlayerFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        Log.e(
-            "LOG",
-            "Fragment Player ушел в паузу в момент когда statePlayer = \n ${vm.playerState.value}"
-        )
-        // Если onPause вызвана временной паузой фрагмента, то останавливаем проигрывание музыки
-        // с проверкой, что плеер находится в состоянии проигрывания трека
-        if (vm.playerState.value == PlayerState.STATE_PLAYING) {
-            vm.playPauseMusic(isPlaying = false)
+    private fun checkPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
+
+    override fun onPause() {
+        vm.showServiceNotification()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.hideServiceNotification()
+    }
+
     override fun onDestroyView() {
-        super.onDestroyView()
-        Log.e(
-            "LOG",
-            "Fragment Player Destroy в момент когда statePlayer = \n ${vm.playerState.value}"
-        )
-        vm.turnOffPlayer()
+        musicServiceConnection?.let { connection ->
+            requireContext().unbindService(connection)
+
+            // Надо ли дополнительно уничтожать сервис такой функцией?
+            //requireContext().stopService(Intent(requireContext(),MusicPlayerService::class.java))
+        }
+
         _binding = null
+        super.onDestroyView()
+    }
+
+    private fun exitFragmentAndStopService() {
+        musicServiceConnection?.let {
+            requireContext().unbindService(it)
+        }
+        musicServiceConnection = null
+
+        (requireActivity() as ActivityPlayerB).exitPlayerActivity()
     }
 
     private fun Long.toTimeMmSs(): String {
@@ -292,6 +292,59 @@ class MusicPlayerFragment : Fragment() {
         vm.onPlayListClick(clickedPlayList = playListClicked)
     }
 
+    private fun startMusicPlayerService(musicTrackToPlay: MusicTrack = MusicTrack()) {
+        musicServiceConnection = object : ServiceConnection {
+            override fun onServiceConnected(className: ComponentName, service: IBinder) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance.
+                val mService = (service as MusicPlayerService.LocalBinder).getService()
+
+                vm.setNewMusicPlayerService(newPlayer = mService)
+
+                lifecycleScope.launch {
+                    mService.playerState.collect { updateUiByPlayerState(it) }
+                }
+
+            }
+
+            override fun onServiceDisconnected(arg0: ComponentName) {}
+        }
+
+        Intent(requireContext(), MusicPlayerService::class.java).also {
+            it.putExtra(App.MUSIC_PLAYER_SERVICE_TRACK_MODEL, musicTrackToPlay)
+
+            musicServiceConnection?.let { connection ->
+                requireContext().bindService(it, connection, Context.BIND_AUTO_CREATE)
+            }
+        }
+    }
+
+    private fun updateUiByPlayerState(playerState: MusicPlayerState) {
+        when (playerState) {
+            is MusicPlayerState.MusicPlaying -> {
+                binding.playerPlayTime.text = playerState.playProgress?.toLong()?.toTimeMmSs()
+                binding.btnPlayback.changeState(PlaybackButtonView.PlaybackButtonState.PAUSE)
+            }
+
+            is MusicPlayerState.MusicPaused -> {
+                binding.playerPlayTime.text = playerState.playProgress?.toLong()?.toTimeMmSs()
+                binding.btnPlayback.changeState(PlaybackButtonView.PlaybackButtonState.PLAY)
+            }
+
+            is MusicPlayerState.MusicPlayingCompleted -> {
+
+            }
+
+            is MusicPlayerState.PlayerLoad -> {
+                // Unable to push play button until track is not fully loaded
+                binding.btnPlayback.isEnabled = false
+            }
+
+            is MusicPlayerState.MusicReadyToPlay -> {
+                binding.btnPlayback.isEnabled = true
+            }
+        }
+    }
+
     companion object {
         fun newInstance(musicTrackToPlay: MusicTrack?): MusicPlayerFragment {
             return MusicPlayerFragment().apply {
@@ -300,11 +353,6 @@ class MusicPlayerFragment : Fragment() {
                 }
             }
         }
-    }
-
-    enum class ButtonState {
-        BUTTON_PLAY,
-        BUTTON_PAUSE
     }
 }
 

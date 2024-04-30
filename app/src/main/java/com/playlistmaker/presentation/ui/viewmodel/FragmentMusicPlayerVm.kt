@@ -1,40 +1,35 @@
 package com.playlistmaker.presentation.ui.viewmodel
 
-import android.util.Log
+import android.Manifest
+import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.markodevcic.peko.PermissionRequester
 import com.playlistmaker.domain.models.MusicTrack
 import com.playlistmaker.domain.models.PlayList
-import com.playlistmaker.domain.models.PlayerState
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTrackToFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.DeleteMusicTrackFromFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksUseCase
-import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
+import com.playlistmaker.domain.usecase.mediaplayer.MusicPlayerController
 import com.playlistmaker.presentation.models.FragmentPlaylistsState
+import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
-const val TRACK_DURATION_UPDATE_mills = 300L
+import java.lang.ref.WeakReference
 
 class FragmentMusicPlayerVm(
-    private val musicalPlayer: MusicPlayerController,
     private val addToFavoriteUseCase: AddMusicTrackToFavouritesUseCase,
     private val loadFavouriteUseCase: LoadFavouriteTracksUseCase,
     private val deleteFavouriteUseCase: DeleteMusicTrackFromFavouritesUseCase,
     private val playListController: PlayListController
 ) : ViewModel() {
-    // Состояние плеера
-    private var _playerState = MutableLiveData<PlayerState>()
-    val playerState = _playerState as LiveData<PlayerState>
 
     private val _playingTime = MutableLiveData<Long>()
     val playingTime = _playingTime as LiveData<Long>
@@ -48,70 +43,51 @@ class FragmentMusicPlayerVm(
     private val _bottomSheetIsShown = MutableLiveData<Boolean>()
     val bottomSheetIsShown = _bottomSheetIsShown as LiveData<Boolean>
 
-    // LiveData для состояния экрана фрагмента
-    // FragmentPlaylistsState.NothingFound - Показывать заглушку
-    // FragmentPlaylistsState.Content - Показывать плейлисты
     private val _playlistState =
         MutableStateFlow<FragmentPlaylistsState>(FragmentPlaylistsState.NothingFound(null))
     val playlistState = _playlistState as StateFlow<FragmentPlaylistsState>
 
-    private var trackPlayingTimerListener: Job? = null
+    private var musicServiceRef: WeakReference<MusicPlayerService?>? = null
+    private val musicService: MusicPlayerService? get() = musicServiceRef?.get()
+
 
     init {
-
-        // Запуск отслеживания БД плейлистов
+        // Flow collecting the playLists list from dataBase
         updateListOfPlaylistFromDB()
-        //_errorMsg.value = "Start test"
+    }
+
+    fun setNewMusicPlayerService(newPlayer: MusicPlayerService) {
+        //TODO: new fun, which replaces internal player with service player
+        musicServiceRef = WeakReference(newPlayer)
     }
 
     fun loadCurrentMusicTrack(trackToPlay: MusicTrack) {
-        musicalPlayer.setMusicPlayerStateListener { _playerState.postValue(it) }
-        musicalPlayer.preparePlayer(musTrackUrl = trackToPlay.previewUrl)
         _currentPlayingMusTrack.value = trackToPlay
     }
 
     fun pushPlayPauseButton() {
-        Log.e("LOG", "PUSH BUTTON PLAY ${_playerState.value}")
-        when (_playerState.value) {
-            PlayerState.STATE_PLAYING -> playPauseMusic(false)
-            PlayerState.STATE_PAUSED -> playPauseMusic(true)
-            PlayerState.STATE_PREPARED -> playPauseMusic(true)
-            PlayerState.STATE_COMPLETE -> playPauseMusic(true)
-            else -> _errorMsg.value = "UncorrectedState"
+        musicService?.playPauseMusic()
+    }
+
+    fun showServiceNotification() {
+        if (!checkPermissionForeGroundNotifications()) return
+
+        currentMusTrack.value?.let {
+            musicService?.showForegroundNotification(
+                trackName = it.trackName,
+                trackSinger = it.artistName
+            )
         }
     }
 
-    fun playPauseMusic(isPlaying: Boolean) {
-        if (isPlaying) musicalPlayer.playMusic()
-        else musicalPlayer.pauseMusic()
-    }
-
-    fun stopTrackPlayingTimer() {
-        trackPlayingTimerListener?.cancel()
-    }
-
-    fun startTrackPlayingTimer() {
-        trackPlayingTimerListener = viewModelScope.launch {
-            while (_playerState.value == PlayerState.STATE_PLAYING) {
-                delay(TRACK_DURATION_UPDATE_mills)
-                updatePlayingTime()
-            }
+    fun checkPermissionForeGroundNotifications(): Boolean {
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) true
+        else PermissionRequester.instance().areGranted(Manifest.permission.POST_NOTIFICATIONS).also {
         }
     }
 
-    private fun updatePlayingTime() {
-        _playingTime.value = musicalPlayer.getCurrentPos().toLong()
-    }
-
-    fun turnOffPlayer() {
-        trackPlayingTimerListener?.cancel()
-        trackPlayingTimerListener = null
-
-        musicalPlayer.turnOffPlayer()
-
-        // В случае вызова функции onPause фрагмента при данном state действия с
-        // плеером не будут производиться
-        _playerState.value = PlayerState.STATE_DEFAULT
+    fun hideServiceNotification() {
+        musicService?.hideForegroundNotification()
     }
 
     fun pushAddToFavButton() {

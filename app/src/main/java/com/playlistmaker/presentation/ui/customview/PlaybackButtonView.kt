@@ -3,6 +3,7 @@ package com.playlistmaker.presentation.ui.customview
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -12,18 +13,6 @@ import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 import androidx.core.graphics.drawable.toBitmap
 import com.playlistmaker.R
-
-/*
-class PlaybackButtonView(
-    context: Context,
-    attrs: AttributeSet?,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
-) : View(context) {
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0, 0)
-    constructor(context: Context) : this(context, null, 0, 0)
-
-}*/
 
 class PlaybackButtonView @JvmOverloads constructor(
     context: Context,
@@ -35,7 +24,13 @@ class PlaybackButtonView @JvmOverloads constructor(
     private var currentButtonState: PlaybackButtonState = PlaybackButtonState.PLAY
     private var imagePause: Bitmap? = null
     private var imagePlay: Bitmap? = null
-    private val paint = Paint().apply { isAntiAlias = true }
+    private val paint = Paint().apply {
+        isAntiAlias = true
+        style = Paint.Style.FILL
+        color = Color.GRAY
+        alpha = 100
+        textSize = 36.0f
+    }
     private var imageRect: RectF = RectF()
 
     init {
@@ -59,7 +54,6 @@ class PlaybackButtonView @JvmOverloads constructor(
                 recycle()
             }
         }
-
     }
 
     override fun performClick(): Boolean {
@@ -74,27 +68,34 @@ class PlaybackButtonView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return when (event.action) {
             MotionEvent.ACTION_UP -> {
-                changeState(newState = getOppositeState())
+                //changeState(newState = getOppositeState())
                 performClick()
                 true
             }
 
             MotionEvent.ACTION_DOWN -> true
-            else -> true
+            else -> super.onTouchEvent(event)
         }
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        val backgroundImage =
-            when (currentButtonState) {
-                PlaybackButtonState.PLAY -> imagePlay
-                PlaybackButtonState.PAUSE -> imagePause
-            }
+        when (currentButtonState) {
+            PlaybackButtonState.PLAY ->
+                imagePlay?.also { canvas?.drawBitmap(it, null, imageRect, null) }
 
-        backgroundImage?.let {
-            canvas?.drawBitmap(it, null, imageRect, null)
+            PlaybackButtonState.PAUSE ->
+                imagePause?.also { canvas?.drawBitmap(it, null, imageRect, null) }
+        }
+
+        if (!isEnabled) {
+            canvas?.drawCircle(
+                imageRect.right / 2,
+                imageRect.bottom / 2,
+                imageRect.right / 2,
+                paint
+            )
         }
     }
 
@@ -111,10 +112,9 @@ class PlaybackButtonView @JvmOverloads constructor(
         }
     }
 
-    companion object {
-        enum class PlaybackButtonState() {
-            PLAY, PAUSE
-        }
+    enum class PlaybackButtonState() {
+        PLAY, PAUSE
+
     }
 
 }

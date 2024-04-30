@@ -1,7 +1,5 @@
 package com.playlistmaker.di
 
-import com.playlistmaker.data.playerimpl.MusicPlayerControllerImpl
-import com.playlistmaker.domain.models.OnPlayerStateListener
 import com.playlistmaker.domain.usecase.apppreferences.SettingsController
 import com.playlistmaker.domain.usecase.apppreferences.SettingsControllerImpl
 import com.playlistmaker.domain.usecase.dbfavouritetracks.AddMusicTrackToFavouritesUseCaseImpl
@@ -12,9 +10,9 @@ import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.AddMusicTra
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.DeleteMusicTrackFromFavouritesUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksIdsUseCase
 import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.LoadFavouriteTracksUseCase
-import com.playlistmaker.domain.usecase.dbfavouritetracks.interfaces.MusicPlayerController
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListController
 import com.playlistmaker.domain.usecase.dbplaylist.PlayListControllerImpl
+import com.playlistmaker.domain.usecase.mediaplayer.MusicPlayerController
 import com.playlistmaker.domain.usecase.searchhistory.DeleteMusicSearchHistoryUseCaseImpl
 import com.playlistmaker.domain.usecase.searchhistory.LoadMusicSearchHistoryUseCaseImpl
 import com.playlistmaker.domain.usecase.searchhistory.SafeMusicSearchHistoryUseCaseImpl
@@ -23,6 +21,7 @@ import com.playlistmaker.domain.usecase.searchhistory.interfaces.LoadMusicSearch
 import com.playlistmaker.domain.usecase.searchhistory.interfaces.SafeMusicSearchHistoryUseCase
 import com.playlistmaker.domain.usecase.searchmusic.SearchMusicUseCase
 import com.playlistmaker.domain.usecase.searchmusic.SearchMusicUseCaseImpl
+import com.playlistmaker.presentation.ui.musicservice.MusicPlayerService
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -38,12 +37,8 @@ val domainModule = module {
     // UseCase для удаления истории найденных музыкальных треков
     factory<DeleteMusicSearchHistoryUseCase> { DeleteMusicSearchHistoryUseCaseImpl(musicRepository = get()) }
 
-    // UseCase для загрузки контроллера проигрыванием музыки
-/*    factory<MusicPlayerController> { (externalListener: OnPlayerStateListener) ->
-        MusicPlayerControllerImpl(listener = externalListener)
-    }*/
 
-    factory <MusicPlayerController> { MusicPlayerControllerImpl() }
+    //factory <MusicPlayerController> { MusicPlayerService() }
 
     // UseCase для загрузки контроллера настроек приложения
     factory<SettingsController> { SettingsControllerImpl(settingsRepository = get()) }
